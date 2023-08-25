@@ -27,7 +27,7 @@ const Feed = ({
   readonly = false,
   isHiddenProfile = false,
 }) => {
-  const enablePostTargetPicker = targetType === PostTargetType.GlobalFeed;
+  const enablePostTargetPicker = false;
 
   const [posts, hasMore, loadMore, loading, loadingMore] = useFeed({
     targetType,
