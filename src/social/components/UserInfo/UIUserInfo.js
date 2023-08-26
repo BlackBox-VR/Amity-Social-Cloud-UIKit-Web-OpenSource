@@ -118,13 +118,8 @@ const UIUserInfo = ({
         />
         <ActionButtonContainer>
           <ConditionalRender condition={isMyProfile}>
-            <Button
-              data-qa-anchor="user-info-edit-profile-button"
-              disabled={!connected}
-              onClick={() => onEditUser(userId)}
-            >
-              <PencilIcon /> <FormattedMessage id="user.editProfile" />
-            </Button>
+            <>
+            </>
             <>
               {isPrivateNetwork && isFollowPending && (
                 <Button disabled={!connected} onClick={() => onFollowDecline()}>
@@ -161,7 +156,7 @@ const UIUserInfo = ({
         >
           {toHumanString(followingCount)}
         </ClickableCount>
-        <FormattedMessage id="counter.followings" />
+        <FormattedMessage id="counter.following" />
         <ClickableCount
           onClick={() => {
             setActiveTab(UserFeedTabs.FOLLOWERS);

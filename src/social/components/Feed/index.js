@@ -68,13 +68,27 @@ const Feed = ({
 
           {loading && renderLoadingSkeleton()}
 
+          {!loading && posts.length > 0 && targetType !== PostTargetType.GlobalFeed && 
+              posts.filter((post) => post.postedUserId === targetId).length < 10 && hasMore && loadMore()}
+                  
+
           {!loading && posts.length > 0 && (
             <LoadMore hasMore={hasMore} loadMore={loadMore} className="load-more no-border">
-              {posts.map(({ postId }) => (
+              {targetType !== PostTargetType.GlobalFeed && posts.filter((post) => post.postedUserId === targetId).
+              sort((a, b) => b.createdAt - a.createdAt).map(({ postId }) => (
+                <Post
+                    key={postId}
+                    postId={postId}
+                    hidePostTarget={true}
+                    readonly={readonly}
+                />
+                ))}
+              
+              {targetType === PostTargetType.GlobalFeed && posts.sort((a, b) => b.createdAt - a.createdAt).map(({ postId }) => (
                 <Post
                   key={postId}
                   postId={postId}
-                  hidePostTarget={targetType !== PostTargetType.GlobalFeed}
+                  hidePostTarget={true}
                   readonly={readonly}
                 />
               ))}

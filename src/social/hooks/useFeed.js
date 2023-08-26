@@ -6,16 +6,28 @@ const QUERY_LIMIT = 10;
 
 const useFeed = ({ targetType, targetId, feedType }) => {
   const FeedQueryTypes = {
+    // [PostTargetType.GlobalFeed]: queryAllPosts.bind(this, {
+    //   limit: QUERY_LIMIT,
+    // }),
+    // [PostTargetType.CommunityFeed]: queryCommunityPosts.bind(this, {
+    //   communityId: targetId,
+    //   feedType,
+    //   limit: QUERY_LIMIT,
+    // }),
+    // [PostTargetType.UserFeed]: queryUserPosts.bind(this, { userId: targetId, limit: QUERY_LIMIT }),
+    // [PostTargetType.MyFeed]: queryMyPosts.bind(this, { limit: QUERY_LIMIT }),
     [PostTargetType.GlobalFeed]: queryAllPosts.bind(this, {
       limit: QUERY_LIMIT,
     }),
-    [PostTargetType.CommunityFeed]: queryCommunityPosts.bind(this, {
-      communityId: targetId,
-      feedType,
+    [PostTargetType.CommunityFeed]: queryAllPosts.bind(this, {
       limit: QUERY_LIMIT,
     }),
-    [PostTargetType.UserFeed]: queryUserPosts.bind(this, { userId: targetId, limit: QUERY_LIMIT }),
-    [PostTargetType.MyFeed]: queryMyPosts.bind(this, { limit: QUERY_LIMIT }),
+    [PostTargetType.UserFeed]: queryAllPosts.bind(this, {
+      limit: QUERY_LIMIT,
+    }),
+    [PostTargetType.MyFeed]: queryAllPosts.bind(this, {
+      limit: QUERY_LIMIT,
+    }),
   };
 
   // Override default resolver because for MyFeed and GlobalFeed there does not need to be a targetId.
