@@ -156,7 +156,7 @@ const UIUserInfo = ({
         >
           {toHumanString(followingCount)}
         </ClickableCount>
-        <FormattedMessage id="counter.following" />
+        <FormattedMessage id="counter.followings" />
         <ClickableCount
           onClick={() => {
             setActiveTab(UserFeedTabs.FOLLOWERS);

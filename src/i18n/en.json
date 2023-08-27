@@ -112,7 +112,7 @@
   "upload.fileSizeLimit": "One of the selected file is larger than 1GB. Please select a new file.",
   "user.editProfile": "Edit profile",
   "user.message": "Message",
-  "follow.placeholder.noFollowings": "No followings found",
+  "follow.placeholder.noFollowings": "Not following anyone yet",
   "follow.placeholder.noFollowers": "No followers found",
 
   "ProfileSettings.editProfile": "Edit profile",
@@ -202,7 +202,7 @@
 
   "CommentComposeBar.addComment": "Add comment",
   "CommentComposeBar.replayTo": "Reply to ",
-  "CommentComposeBar.saySomething": "Say something nice",
+  "CommentComposeBar.saySomething": "",
 
   "CommentComposeBar.unableToPost": "Unable to post",
   "CommentComposeBar.overCharacter": "You have reached maximum 50,000 characters in a post.",
@@ -237,7 +237,7 @@
   "tabs.editProfile": "Edit profile",
   "tabs.timeline": "Timeline",
   "tabs.followers": "Followers",
-  "tabs.followings": "Followings",
+  "tabs.followings": "Following",
   "tabs.pending": "Pending",
   "tabs.members": "Members",
   "tabs.moderators": "Moderators",
