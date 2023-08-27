@@ -61,7 +61,7 @@ const CommentComposeBar = ({ className, userToReply, onSubmit, currentUserId, po
 
   const placeholder = userToReply
     ? formatMessage({ id: 'CommentComposeBar.replayTo' }) + userToReply
-    : formatMessage({ id: 'CommentComposeBar.saySomething' });
+    : "";
   const submitButtonText = userToReply
     ? formatMessage({ id: 'reply' })
     : formatMessage({ id: 'CommentComposeBar.addComment' });

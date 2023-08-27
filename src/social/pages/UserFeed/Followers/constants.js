@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 export const FollowersTabs = {
-  FOLLOWINGS: 'Followings',
+  FOLLOWINGS: 'Following',
   FOLLOWERS: 'Followers',
 };
 

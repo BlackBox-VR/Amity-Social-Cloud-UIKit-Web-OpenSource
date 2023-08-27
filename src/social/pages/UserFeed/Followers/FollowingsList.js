@@ -10,7 +10,7 @@ const FollowingsList = ({ currentUserId, profileUserId, setUserFeedTab }) => {
     <List
       profileUserId={profileUserId}
       currentUserId={currentUserId}
-      emptyMessage={formatMessage({ id: 'follow.placeholder.noFollowings' })}
+      emptyMessage={"Not following anyone yet"}
       hook={useFollowingsList}
       setUserFeedTab={setUserFeedTab}
     />
