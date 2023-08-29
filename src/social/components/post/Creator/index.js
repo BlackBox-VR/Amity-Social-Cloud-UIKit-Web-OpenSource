@@ -245,6 +245,8 @@ const PostCreatorBar = ({
 
   return (
     <PostCreatorContainer className={cx('postComposeBar', className)}>
+      {currentUserId}
+      {"Hello"}
       {isPollModalOpened && (
         <PollModal
           targetId={creatorTargetId}
