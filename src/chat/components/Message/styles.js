@@ -93,7 +93,6 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
     `
       : `
       background: white;
-      color: #000;
       border-radius: 6px 0px 6px 6px;
   `}
 `;
