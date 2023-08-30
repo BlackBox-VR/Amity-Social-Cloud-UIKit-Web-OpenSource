@@ -21,6 +21,7 @@ import UiKitSocialSearch from '~/social/components/SocialSearch';
 import PropTypes from "prop-types";
 import UiKitProvider from "~/core/providers/UiKitProvider";
 import Search from '~/social/pages/Search';
+import { useSDK } from '~/core/hooks/useSDK';
 
 const ApplicationContainer = styled.div`
   height: 100%;
@@ -44,6 +45,7 @@ const Community = forwardRef(
         },
         ref,
     ) => {
+        const { currentUserId } = useSDK();
         const {page, lastPage, onChangePage} = useNavigation(landingPage);
 
         if (landingPage && !hasLanded && landingPage !== PageTypes.NewsFeed) {
@@ -80,7 +82,7 @@ const Community = forwardRef(
 
                     {page.type === PageTypes.UserEdit && <ProfileSettings userId={page.userId}/>}
                     
-                    {page.type === PageTypes.Search && <Search />}
+                    {page.type === PageTypes.Search && <Search userId={currentUserId}/>}
                 </MainLayout>
             </ApplicationContainer>
         );

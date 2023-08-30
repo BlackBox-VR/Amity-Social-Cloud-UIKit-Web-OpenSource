@@ -138,9 +138,14 @@ const PostCreatorBar = ({
       overCharacterModal();
       return;
     }
+    
+    const postTarget = {
+        targetType: PostTargetType.CommunityFeed,
+        targetId: "64af01593714fddb10e0c7d2",
+    };
 
     const createPostParams = {
-      ...target,
+      ...postTarget,
       data,
       attachments,
       metadata: {},
@@ -246,8 +251,8 @@ const PostCreatorBar = ({
           targetType={creatorTargetType}
           onCreatePoll={(pollId, text, pollMentionees, metadata) =>
             createPost({
-              targetId: creatorTargetId,
-              targetType: creatorTargetType,
+              targetId: PostTargetType.CommunityFeed,
+              targetType: "64af01593714fddb10e0c7d2",
               data: { pollId, text },
               dataType: 'poll',
               mentionees: pollMentionees,

@@ -13,6 +13,15 @@ import CommentText from './CommentText';
 import { backgroundImage as UserImage } from '~/icons/User';
 import BanIcon from '~/icons/Ban';
 
+import {UnityMessageBaseURLs, UnityMessageKeys} from "~/social/constants";
+
+const OnLikeSuccess = () => {
+  location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + "=1";
+}
+const OnUnlikeSuccess = () => {
+  location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + "=-1";
+}
+
 import {
   Avatar,
   Content,
@@ -124,7 +133,9 @@ const StyledComment = ({
 
         {!isEditing && (canLike || canReply || options.length > 0) && (
           <InteractionBar>
-            {canLike && <CommentLikeButton commentId={commentId} />}
+            {canLike && <CommentLikeButton commentId={commentId} 
+                                           onLikeSuccess={OnLikeSuccess} 
+                                           onUnlikeSuccess={OnUnlikeSuccess} />}
 
             {canReply && (
               <ReplyButton data-qa-anchor="comment-reply-button" onClick={onClickReply}>

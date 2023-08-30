@@ -33,3 +33,13 @@ export const VideoQuality = Object.freeze({
 });
 
 export const MP4MimeType = 'video/mp4';
+
+export const UnityMessageBaseURLs = {
+  QUEST: 'uniwebview://quest?',
+}
+
+export const UnityMessageKeys = {
+    LIKE: 'like',
+    COMMENT: 'comment',
+    TEAM_POST: 'team-post',
+}

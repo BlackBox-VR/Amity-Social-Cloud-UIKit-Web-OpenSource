@@ -18,6 +18,8 @@ import {
 import { backgroundImage as UserImage } from '~/icons/User';
 import { extractMetadata } from '../../../helpers/utils';
 
+import {UnityMessageBaseURLs, UnityMessageKeys} from "~/social/constants";
+
 const TOTAL_MENTIONEES_LIMIT = 30;
 const COMMENT_LENGTH_LIMIT = 50000;
 
@@ -54,6 +56,7 @@ const CommentComposeBar = ({ className, userToReply, onSubmit, currentUserId, po
     const { metadata, mentionees } = extractMetadata(mentions);
 
     onSubmit(text, mentionees, metadata);
+    location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.COMMENT + "=1";
     clearAll();
   };
 
@@ -61,7 +64,7 @@ const CommentComposeBar = ({ className, userToReply, onSubmit, currentUserId, po
 
   const placeholder = userToReply
     ? formatMessage({ id: 'CommentComposeBar.replayTo' }) + userToReply
-    : formatMessage({ id: 'CommentComposeBar.saySomething' });
+    : "";
   const submitButtonText = userToReply
     ? formatMessage({ id: 'reply' })
     : formatMessage({ id: 'CommentComposeBar.addComment' });
