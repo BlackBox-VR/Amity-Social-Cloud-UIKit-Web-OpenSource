@@ -18,7 +18,16 @@ import {
 } from './styles';
 import CommentList from '~/social/components/CommentList';
 
+import {UnityMessageBaseURLs, UnityMessageKeys} from "~/social/constants";
+
 const COMMENTS_PER_PAGE = 5;
+
+const OnLikeSuccess = () => {
+  location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + "=1";
+}
+const OnUnlikeSuccess = () => {
+    location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + "=-1";
+}
 
 const UIEngagementBar = ({
   postId,
@@ -49,7 +58,7 @@ const UIEngagementBar = ({
     <ConditionalRender condition={!readonly}>
       <>
         <InteractionBar>
-          <PostLikeButton postId={postId} />
+          <PostLikeButton postId={postId} onLikeSuccess={OnLikeSuccess} onUnlikeSuccess={OnUnlikeSuccess}/>
           <SecondaryButton data-qa-anchor="engagement-bar-comment-button" onClick={onClickComment}>
             <CommentIcon /> <FormattedMessage id="comment" />
           </SecondaryButton>
