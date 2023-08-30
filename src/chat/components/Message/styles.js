@@ -92,8 +92,8 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
       border-radius: 0px 6px 6px 6px;
     `
       : `
-      background: ${theme.palette.primary.main};
-      color: #fff;
+      background: white;
+      color: #000;
       border-radius: 6px 0px 6px 6px;
   `}
 `;
