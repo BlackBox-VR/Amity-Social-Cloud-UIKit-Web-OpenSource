@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import cx from 'classnames';
 
 // equals to 1 GB
-const MAX_FILE_SIZE = 1073741824;
+const MAX_FILE_SIZE = 10;
 const MIN_FILES_LIMIT = 1;
 
 export const FileLoaderContainer = styled.label`
