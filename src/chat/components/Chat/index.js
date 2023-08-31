@@ -56,7 +56,7 @@ const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails, showSystem
         onChatDetailsClick={onChatDetailsClick}
       /> */}
       <MessageList channelId={channelId} />
-      {showSystemMessage && <b><center>{chatSystemMessage}</center></b>}
+      {/* showSystemMessage && <b><center>{chatSystemMessage}</center></b> */}
       <MessageComposeBar onSubmit={sendMessage} />
     </ChannelContainer>
   );
