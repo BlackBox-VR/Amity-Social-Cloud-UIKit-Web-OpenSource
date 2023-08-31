@@ -251,8 +251,8 @@ const PostCreatorBar = ({
           targetType={creatorTargetType}
           onCreatePoll={(pollId, text, pollMentionees, metadata) =>
             createPost({
-              targetId: PostTargetType.CommunityFeed,
-              targetType: "64af01593714fddb10e0c7d2",
+              targetId: "64af01593714fddb10e0c7d2",
+              targetType: PostTargetType.CommunityFeed,
               data: { pollId, text },
               dataType: 'poll',
               mentionees: pollMentionees,
