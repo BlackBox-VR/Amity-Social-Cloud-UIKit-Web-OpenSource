@@ -13,7 +13,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   padding: 0 20px 0 0;
-  background: #f7f7f8;
+  background: linear-gradient(#c2a0b5, #300155);
 `;
 
 const Main = styled.div`
