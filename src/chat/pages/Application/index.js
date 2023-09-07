@@ -108,6 +108,7 @@ const ChatApplication = ({
 
           // Team chat channel was found, so enter it if you're a member
           setSelectedChannel(customChannel);
+          setSystemMessage("");
           // If you're not a member, join the channel, and then enter it
         }
         else
@@ -136,6 +137,7 @@ const ChatApplication = ({
           {
             console.log(`Channel created successfully! ${model.channelId}`);
             setSelectedChannel(customChannel);
+            setSystemMessage("");
           });
           
           liveChannel.once('dataError', error => 
