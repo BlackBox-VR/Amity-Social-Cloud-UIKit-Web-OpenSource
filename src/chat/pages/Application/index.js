@@ -65,8 +65,7 @@ const ChatApplication = ({
   const { currentUserId, client } = useSDK();
   const [userModel, setUserModel] = useState(null);
   const [selectedChannel, setSelectedChannel] = useState("");
-  const [showSystemMessage, setShowSystemMessage] = useState(false);
-  const [chatSystemMessage, setChatSystemMessage] = useState("");
+  const [systemMessage, setSystemMessage] = useState("");
   const [channelLoaded, setChannelLoaded] = useState(false);
 
   if (channelLoaded === true)
@@ -89,8 +88,7 @@ const ChatApplication = ({
       else
       {
         console.log("Retrieved user, but without proper team metadata. Returning.");
-        setShowSystemMessage(true);
-        setChatSystemMessage("You do not have the required team meta data.");
+        setSystemMessage("You do not have the required team meta data.");
         return;
       }
 
@@ -99,7 +97,7 @@ const ChatApplication = ({
 
       // Check if a team chat channel exists by that teamId
       let searchingChannel = ChannelRepository.getChannel(customChannel)
-      setSelectedChannel(customChannel);
+      //setSelectedChannel(customChannel);
       
       // A channel with that channelId was successfully found
       searchingChannel.once('dataUpdated', data => 
@@ -109,7 +107,7 @@ const ChatApplication = ({
           console.log("Channel '" + data.displayName + "' exists! Entering...");
 
           // Team chat channel was found, so enter it if you're a member
-          //setSelectedChannel(customChannel);
+          setSelectedChannel(customChannel);
           // If you're not a member, join the channel, and then enter it
         }
         else
@@ -131,13 +129,13 @@ const ChatApplication = ({
             channelId: customChannel,
             type: ChannelType.Live,
             displayName : userModel.metadata.teamName,
-            userIds: [ userModel.userId, 'abhishek' ],
+            userIds: [ userModel.userId ],
           })
 
           liveChannel.once('dataUpdated', model => 
           {
             console.log(`Channel created successfully! ${model.channelId}`);
-            //setSelectedChannel(customChannel);
+            setSelectedChannel(customChannel);
           });
           
           liveChannel.once('dataError', error => 
@@ -152,8 +150,7 @@ const ChatApplication = ({
           console.log("The user '"+userModel.displayName+"' ("+userModel.userId+") is not the team leader. Channel creation delayed. Returning.");
 
           // Display message that leader needs to log-in first to create chat channel
-          setShowSystemMessage(true);
-          setChatSystemMessage("The Team Leader is required to log-in to generate this team's chat channel!");
+          setSystemMessage("The Team Leader is required to log-in to generate this team's chat channel!");
           return;
         }
 
@@ -180,23 +177,12 @@ const ChatApplication = ({
 
   return (
     <ApplicationContainer>
-      {/* <RecentChat
-        selectedChannelId={currentChannelData?.channelId}
-        membershipFilter={membershipFilter}
-        onChannelSelect={handleChannelSelect}
-        onAddNewChannelClick={() => {
-          openChatModal();
-          onAddNewChannel();
-        }}
-      />
-      */}
       {currentChannelData && (
         <Chat
           channelId={currentChannelData.channelId}
           shouldShowChatDetails={shouldShowChatDetails}
           onChatDetailsClick={showChatDetails}
-          showLeaderRequiredMessage = {showSystemMessage}
-          chatSystemMessage = {chatSystemMessage}
+          chatSystemMessage = {systemMessage}
         />
       )}
       {shouldShowChatDetails && currentChannelData && (
