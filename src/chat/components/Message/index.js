@@ -58,11 +58,12 @@ const Message = ({
   return (
     <MessageReservedRow isIncoming={isIncoming}>
       <MessageWrapper>
-        {(
-          <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
-        )}
+        
+        <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
+        
 
         <MessageContainer data-qa-anchor="message">
+          <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
           {<UserName>{userDisplayName}</UserName>}
           <MessageBody
             type={type}
