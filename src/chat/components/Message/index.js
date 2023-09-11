@@ -62,8 +62,7 @@ const Message = ({
         <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
         
 
-        <MessageContainer data-qa-anchor="message">
-          <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
+        <MessageContainer data-qa-anchor="message">          
           {<UserName>{userDisplayName}</UserName>}
           <MessageBody
             type={type}
@@ -71,6 +70,7 @@ const Message = ({
             isDeleted={isDeleted}
             isSupportedMessageType={isSupportedMessageType}
           >
+            <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
             {!isDeleted && (
               <BottomLine>
