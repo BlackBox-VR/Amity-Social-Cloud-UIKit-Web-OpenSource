@@ -46,10 +46,12 @@ const Message = ({
   isConsequent,
   userDisplayName,
   containerRef,
-  autoPostType
+  autoPostTags
 }) => {
   const shouldShowUserName = isIncoming && !isConsequent && userDisplayName;
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
+  const isAutoPost = autoPostTags != null && "autopost" == autoPostTags[0];
+  const autoPostType = autoPostTags[0];
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -59,16 +61,16 @@ const Message = ({
   return (
     <MessageReservedRow isIncoming={isIncoming}>
       <MessageWrapper>        
-        <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>  
+        {!isAutoPost && <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>} 
         <MessageContainer data-qa-anchor="message">          
-          {<UserName>{userDisplayName}{autoPostType != null && "autopost" == autoPostType[0] && " (autopost)"}</UserName>}
+          {<UserName>{userDisplayName}{isAutoPost && " (autopost)"}</UserName>}
           <MessageBody
             type={type}
             isIncoming={isIncoming}
             isDeleted={isDeleted}
             isSupportedMessageType={isSupportedMessageType}
           >
-            <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
+            {isAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
             {!isDeleted && (
               <BottomLine>
