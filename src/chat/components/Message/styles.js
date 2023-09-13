@@ -98,6 +98,11 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
   `}
 `;
 
+export const MemberActivityAutoPostBody = styled(CommonMessageBody)`     
+      background: black; 
+      border-radius: 0px 6px 6px 6px;    
+`;
+
 export const DeletedMessageBody = styled(CommonMessageBody)`
   text-align: ${({ isIncoming }) => (isIncoming ? 'left' : 'right')};
 `;

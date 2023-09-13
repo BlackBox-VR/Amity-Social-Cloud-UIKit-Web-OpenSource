@@ -32,6 +32,10 @@ const MessageBody = ({ isDeleted, type, isSupportedMessageType, ...otherProps })
     return <UnsupportedMessageBody {...otherProps} data-qa-anchor="message-body-unsupported" />;
   }
 
+  if (isAutoPost){
+    return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-member-activity" />;
+  }
+
   return <GeneralMessageBody {...otherProps} data-qa-anchor="message-body-general" />;
 };
 
@@ -104,6 +108,7 @@ Message.propTypes = {
   isConsequent: PropTypes.bool,
   avatar: PropTypes.string,
   containerRef: PropTypes.object.isRequired,
+  messageTags: PropTypes.array
 };
 
 Message.defaultProps = {
@@ -112,6 +117,7 @@ Message.defaultProps = {
   isDeleted: false,
   isIncoming: false,
   isConsequent: false,
+  messageTags: []
 };
 
 export default customizableComponent('Message', Message);
