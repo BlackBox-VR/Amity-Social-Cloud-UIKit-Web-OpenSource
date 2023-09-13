@@ -102,7 +102,7 @@ export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
       background: black; 
       color: white;
       border-radius: 10px 10px 10px 10px;  
-      box-shadow: inset 0px 0px 6px 1px rgba(255, 255, 255, 0.6);
+      box-shadow: inset 0px 0px 7px 1px rgba(255, 255, 255, 0.65);
 `;
 
 export const DeletedMessageBody = styled(CommonMessageBody)`
