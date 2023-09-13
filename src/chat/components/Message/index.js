@@ -63,7 +63,7 @@ const Message = ({
       <MessageWrapper>        
         {!isAutoPost && <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>} 
         <MessageContainer data-qa-anchor="message">          
-          {<UserName>{userDisplayName}{isAutoPost && " (autopost)"}</UserName>}
+          {!isAutoPost && <UserName>{userDisplayName}</UserName>}
           <MessageBody
             type={type}
             isIncoming={isIncoming}
