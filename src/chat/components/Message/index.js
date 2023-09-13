@@ -23,7 +23,7 @@ import {
   MessageDate,
 } from './styles';
 
-const MessageBody = ({ isDeleted, type, isSupportedMessageType, ...otherProps }) => {
+const MessageBody = ({ isDeleted, type, isSupportedMessageType, isAutoPost, ...otherProps }) => {
   if (isDeleted) {
     return <DeletedMessageBody {...otherProps} data-qa-anchor="message-body-deleted" />;
   }
