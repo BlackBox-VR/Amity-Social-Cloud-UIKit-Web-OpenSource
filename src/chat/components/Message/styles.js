@@ -100,7 +100,7 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
 
 export const MemberActivityAutoPostBody = styled(CommonMessageBody)`     
       background: black; 
-      border-radius: 0px 6px 6px 6px;    
+      border-radius: 10px 10px 10px 10px;    
 `;
 
 export const DeletedMessageBody = styled(CommonMessageBody)`

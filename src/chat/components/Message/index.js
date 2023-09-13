@@ -24,16 +24,16 @@ import {
 } from './styles';
 
 const MessageBody = ({ isDeleted, type, isSupportedMessageType, isAutoPost, ...otherProps }) => {
+  if (isAutoPost){
+    return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-member-activity" />;
+  }
+
   if (isDeleted) {
     return <DeletedMessageBody {...otherProps} data-qa-anchor="message-body-deleted" />;
   }
 
   if (!isSupportedMessageType) {
     return <UnsupportedMessageBody {...otherProps} data-qa-anchor="message-body-unsupported" />;
-  }
-
-  if (isAutoPost){
-    return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-member-activity" />;
   }
 
   return <GeneralMessageBody {...otherProps} data-qa-anchor="message-body-general" />;
