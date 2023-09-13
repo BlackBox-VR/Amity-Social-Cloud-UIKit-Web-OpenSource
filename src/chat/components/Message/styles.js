@@ -94,13 +94,15 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
       : `
       background: white;
       color: #000;
-      border-radius: 6px 0px 6px 6px;
+      border-radius: 6px 0px 6px 6px; message-body-member-activity
   `}
 `;
 
 export const MemberActivityAutoPostBody = styled(CommonMessageBody)`     
       background: black; 
-      border-radius: 10px 10px 10px 10px;    
+      color: white;
+      border-radius: 10px 10px 10px 10px;  
+      box-shadow: inset 0px 0px 20px 10px rgba(1, 1, 1, 0.5);
 `;
 
 export const DeletedMessageBody = styled(CommonMessageBody)`
