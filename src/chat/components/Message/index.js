@@ -18,6 +18,7 @@ import {
   GeneralMessageBody,
   DeletedMessageBody,
   UnsupportedMessageBody,
+  MemberActivityAutoPostBody,
   UserName,
   BottomLine,
   MessageDate,
