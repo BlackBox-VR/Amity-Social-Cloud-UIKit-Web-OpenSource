@@ -24,7 +24,7 @@ import {
 } from './styles';
 
 const MessageBody = ({ isDeleted, type, isSupportedMessageType, isAutoPost, ...otherProps }) => {
-  if (isAutoPost){
+  if (true){
     return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-member-activity" />;
   }
 
