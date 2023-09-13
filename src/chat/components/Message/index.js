@@ -46,12 +46,12 @@ const Message = ({
   isConsequent,
   userDisplayName,
   containerRef,
-  autoPostTags
+  messageTags
 }) => {
   const shouldShowUserName = isIncoming && !isConsequent && userDisplayName;
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
-  const isAutoPost = autoPostTags != null && "autopost" == autoPostTags[0];
-  const autoPostType = autoPostTags[0];
+  const isAutoPost = messageTags != null && "autopost" == messageTags[0];
+  const autoPostType = messageTags[0];
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };

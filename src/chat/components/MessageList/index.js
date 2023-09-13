@@ -63,7 +63,7 @@ const MessageList = ({ client, channelId }) => {
                 isConsequent={isConsequent}
                 isIncoming={isIncoming}
                 containerRef={containerRef}
-                autoPostType={message.tags}
+                messageTags={message.tags}
               />
             );
           })}
