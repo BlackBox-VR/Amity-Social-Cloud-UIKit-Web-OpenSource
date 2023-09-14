@@ -77,7 +77,7 @@ const CommonMessageBody = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
-  padding: 8px;
+  padding: 8px 10px 8px 10px;
   word-break: break-word;
 
   & pre {
