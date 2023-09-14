@@ -48,8 +48,7 @@ const MessageList = ({ client, channelId }) => {
           {messages.map((message, i) => {
             const isAutoPost = message.tags != null && message.tags.indexOf('autopost') > -1;
             const nextMessage = messages[i + 1];
-            const isConsequent =
-              false && nextMessage && nextMessage.userId === message.userId && !isAutoPost;
+            const isConsequent = nextMessage && nextMessage.userId === message.userId && (message.tags == null || message.tags.indexOf('autopost') <= 0);
             const isIncoming = message.userId !== client.currentUserId;
 
             return (
