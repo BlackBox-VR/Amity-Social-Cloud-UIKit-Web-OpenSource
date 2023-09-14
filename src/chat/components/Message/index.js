@@ -27,20 +27,22 @@ import {
   MessageDate,
 } from './styles';
 
-const MessageBody = ({ isDeleted, type, isSupportedMessageType, isAutoPost, ...otherProps }) => {
-  if (isAutoPost){
+const MessageBody = ({ isDeleted, type, isSupportedMessageType, isMemberActivityAutoPost, 
+  isSharedQuestAutoPost, isAnnouncementsAutoPost, isArenaRaidAutoPost, ...otherProps }) => 
+  {
+  if (isMemberActivityAutoPost){
     return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (true){
+  if (isSharedQuestAutoPost){
     return <SharedQuestsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (true){
+  if (tisAnnouncementsAutoPostrue){
     return <AnnouncementsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (true){
+  if (isArenaRaidAutoPost){
     return <ArenaRaidAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
@@ -70,8 +72,12 @@ const Message = ({
 }) => {
   const shouldShowUserName = isIncoming && !isConsequent && userDisplayName;
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
-  const isAutoPost = messageTags != null && "autopost" == messageTags[0];
-  const autoPostType = messageTags[0];
+
+  const isAutoPost = messageTags != null && messageTags.indexOf("autopost") > -1;
+  const isMemberActivityAutoPost = isAutoPost && messageTags.indexOf("memberActivity") > -1;
+  const isSharedQuestAutoPost = isAutoPost && messageTags.indexOf("sharedQuests") > -1;
+  const isAnnouncementsAutoPost = isAutoPost && messageTags.indexOf("announcements") > -1;
+  const isArenaRaidAutoPost = isAutoPost && messageTags.indexOf("arenaRaid") > -1;
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -89,7 +95,10 @@ const Message = ({
             isIncoming={isIncoming}
             isDeleted={isDeleted}
             isSupportedMessageType={isSupportedMessageType}
-            isAutoPost={isAutoPost}
+            isMemberActivityAutoPost={isMemberActivityAutoPost}
+            isSharedQuestAutoPost={isSharedQuestAutoPost}
+            isAnnouncementsAutoPost={isAnnouncementsAutoPost}
+            isArenaRaidAutoPost={isArenaRaidAutoPost}
           >
             {isAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
