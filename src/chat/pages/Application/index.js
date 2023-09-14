@@ -75,7 +75,7 @@ const ChatApplication = ({
     // Check if user model was properly set and has the metadata we need
     if (null !== userModel && userModel.metadata.teamId)
     {
-      console.log("Retrieved User '"+userModel.displayName+"' ("+userModel.userId+") teamId: " + userModel.metadata.teamId); // + ",  " + JSON.stringify(userModel));
+      //console.log("Retrieved User '"+userModel.displayName+"' ("+userModel.userId+") teamId: " + userModel.metadata.teamId); // + ",  " + JSON.stringify(userModel));
     }
     else
     {
