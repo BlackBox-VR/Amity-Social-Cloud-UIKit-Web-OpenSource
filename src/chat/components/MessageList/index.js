@@ -46,8 +46,10 @@ const MessageList = ({ client, channelId }) => {
       >
         <MessageListContainer ref={containerRef} data-qa-anchor="message-list">
           {messages.map((message, i) => {
+            const isAutoPost = message.tags != null && message.tags.indexOf('autopost') > -1;
             const nextMessage = messages[i + 1];
-            const isConsequent = nextMessage && nextMessage.userId === message.userId;
+            const isConsequent =
+              nextMessage && nextMessage.userId === message.userId && !isAutoPost;
             const isIncoming = message.userId !== client.currentUserId;
 
             return (
