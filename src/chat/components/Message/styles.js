@@ -102,7 +102,25 @@ export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
       background: black; 
       color: white;
       border-radius: 10px 10px 10px 10px;  
-      box-shadow: inset 0px 0px 7px 1px rgba(255, 255, 255, 0.65);
+      box-shadow: inset 0px 0px 6px 1px rgba(255, 255, 255, 0.65);
+`;
+
+export const SharedQuestsAutoPostBody = styled(CommonMessageBody)`     
+      background: linear-gradient(#00A4EA, #5433FF); 
+      color: white;
+      border-radius: 10px 10px 10px 10px;  
+`;
+
+export const AnnouncementsAutoPostBody = styled(CommonMessageBody)`     
+      background: linear-gradient(#FFC700, #E65C00); 
+      color: white;
+      border-radius: 10px 10px 10px 10px;  
+`;
+
+export const ArenaRaidAutoPostBody = styled(CommonMessageBody)`     
+      background: linear-gradient(#FF008A, #FF2D2D); 
+      color: white;
+      border-radius: 10px 10px 10px 10px;  
 `;
 
 export const DeletedMessageBody = styled(CommonMessageBody)`

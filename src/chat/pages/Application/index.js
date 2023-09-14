@@ -25,7 +25,7 @@ const ChatApplication = ({
   onAddNewChannel,
   onEditChatMember,
 }) => {  
-  console.log(`Hit the application page. channelId: ${defaultChannelId}`);
+  //console.log(`Hit the application page. channelId: ${defaultChannelId}`);
 
   const { formatMessage } = useIntl();
   const [currentChannelData, setCurrentChannelData] = useState(null);

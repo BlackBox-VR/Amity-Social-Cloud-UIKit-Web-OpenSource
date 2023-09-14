@@ -19,14 +19,29 @@ import {
   DeletedMessageBody,
   UnsupportedMessageBody,
   MemberActivityAutoPostBody,
+  SharedQuestsAutoPostBody,
+  AnnouncementsAutoPostBody,
+  ArenaRaidAutoPostBody,
   UserName,
   BottomLine,
   MessageDate,
 } from './styles';
 
 const MessageBody = ({ isDeleted, type, isSupportedMessageType, isAutoPost, ...otherProps }) => {
+  if (isAutoPost){
+    return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
   if (true){
-    return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-member-activity" />;
+    return <SharedQuestsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
+  if (true){
+    return <AnnouncementsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
+  if (true){
+    return <ArenaRaidAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
   if (isDeleted) {
@@ -74,6 +89,7 @@ const Message = ({
             isIncoming={isIncoming}
             isDeleted={isDeleted}
             isSupportedMessageType={isSupportedMessageType}
+            isAutoPost={isAutoPost}
           >
             {isAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
