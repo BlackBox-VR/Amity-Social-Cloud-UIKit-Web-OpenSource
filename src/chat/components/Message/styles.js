@@ -77,7 +77,7 @@ const CommonMessageBody = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
-  padding: 8px 10px 8px 10px;
+  padding: 8px 12px 8px 12px;
   word-break: break-word;
 
   & pre {
@@ -103,7 +103,7 @@ export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
       background: black; 
       color: white;
       border-radius: 10px 10px 10px 10px;  
-      box-shadow: inset 0px 0px 6px 1px rgba(255, 255, 255, 0.65);
+      box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
 `;
 
 export const SharedQuestsAutoPostBody = styled(CommonMessageBody)`     
