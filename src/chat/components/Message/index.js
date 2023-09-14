@@ -107,13 +107,13 @@ const Message = ({
                 <MessageDate>
                   <FormattedTime value={createdAt} />
                 </MessageDate>
-                <Options
+                {!isAutoPost && <Options
                   messageId={messageId}
                   data={data}
                   isIncoming={isIncoming}
                   isSupportedMessageType={isSupportedMessageType}
                   popupContainerRef={containerRef}
-                />
+                />}
               </BottomLine>
             )}
           </MessageBody>
