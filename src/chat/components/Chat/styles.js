@@ -47,7 +47,7 @@ export const Label = styled.label`
 `;
 
 export const LabelContainer = styled.div`
-  width: 700px;
+  width: 500px;
   margin-right: 20px;
 `;
 

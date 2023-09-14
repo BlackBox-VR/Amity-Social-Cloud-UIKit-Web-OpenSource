@@ -18,12 +18,34 @@ import {
   GeneralMessageBody,
   DeletedMessageBody,
   UnsupportedMessageBody,
+  MemberActivityAutoPostBody,
+  SharedQuestsAutoPostBody,
+  AnnouncementsAutoPostBody,
+  ArenaRaidAutoPostBody,
   UserName,
   BottomLine,
   MessageDate,
 } from './styles';
 
-const MessageBody = ({ isDeleted, type, isSupportedMessageType, ...otherProps }) => {
+const MessageBody = ({ isDeleted, type, isSupportedMessageType, isMemberActivityAutoPost, 
+  isSharedQuestAutoPost, isAnnouncementsAutoPost, isArenaRaidAutoPost, ...otherProps }) => 
+  {
+  if (isMemberActivityAutoPost){
+    return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
+  if (isSharedQuestAutoPost){
+    return <SharedQuestsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
+  if (isAnnouncementsAutoPost){
+    return <AnnouncementsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
+  if (isArenaRaidAutoPost){
+    return <ArenaRaidAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
+  }
+
   if (isDeleted) {
     return <DeletedMessageBody {...otherProps} data-qa-anchor="message-body-deleted" />;
   }
@@ -46,9 +68,16 @@ const Message = ({
   isConsequent,
   userDisplayName,
   containerRef,
+  messageTags
 }) => {
   const shouldShowUserName = isIncoming && !isConsequent && userDisplayName;
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
+
+  const isAutoPost = messageTags != null && messageTags.indexOf("autopost") > -1;
+  const isMemberActivityAutoPost = isAutoPost && messageTags.indexOf("memberActivity") > -1;
+  const isSharedQuestAutoPost = isAutoPost && messageTags.indexOf("sharedQuests") > -1;
+  const isAnnouncementsAutoPost = isAutoPost && messageTags.indexOf("announcements") > -1;
+  const isArenaRaidAutoPost = isAutoPost && messageTags.indexOf("arenaRaid") > -1;
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -57,32 +86,34 @@ const Message = ({
 
   return (
     <MessageReservedRow isIncoming={isIncoming}>
-      <MessageWrapper>
-        {(
-          <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
-        )}
-
-        <MessageContainer data-qa-anchor="message">
-          {<UserName>{userDisplayName}</UserName>}
+      <MessageWrapper>        
+        {!isAutoPost && <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>} 
+        <MessageContainer data-qa-anchor="message">          
+          {!isAutoPost && <UserName>{userDisplayName}</UserName>}
           <MessageBody
             type={type}
             isIncoming={isIncoming}
             isDeleted={isDeleted}
             isSupportedMessageType={isSupportedMessageType}
+            isMemberActivityAutoPost={isMemberActivityAutoPost}
+            isSharedQuestAutoPost={isSharedQuestAutoPost}
+            isAnnouncementsAutoPost={isAnnouncementsAutoPost}
+            isArenaRaidAutoPost={isArenaRaidAutoPost}
           >
+            {isMemberActivityAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
             {!isDeleted && (
               <BottomLine>
                 <MessageDate>
                   <FormattedTime value={createdAt} />
                 </MessageDate>
-                <Options
+                {!isAutoPost && <Options
                   messageId={messageId}
                   data={data}
                   isIncoming={isIncoming}
                   isSupportedMessageType={isSupportedMessageType}
                   popupContainerRef={containerRef}
-                />
+                />}
               </BottomLine>
             )}
           </MessageBody>
@@ -103,6 +134,7 @@ Message.propTypes = {
   isConsequent: PropTypes.bool,
   avatar: PropTypes.string,
   containerRef: PropTypes.object.isRequired,
+  messageTags: PropTypes.array
 };
 
 Message.defaultProps = {
@@ -111,6 +143,7 @@ Message.defaultProps = {
   isDeleted: false,
   isIncoming: false,
   isConsequent: false,
+  messageTags: []
 };
 
 export default customizableComponent('Message', Message);
