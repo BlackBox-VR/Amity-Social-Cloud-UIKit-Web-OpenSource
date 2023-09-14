@@ -58,7 +58,7 @@ export const MessageWrapper = styled.div`
 `;
 
 export const MessageContainer = styled.div`
-  min-width: 265px;
+  min-width: 200px;
 `;
 
 export const AvatarWrapper = styled.div`
@@ -100,7 +100,7 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
 `;
 
 export const MemberActivityAutoPostBody = styled(CommonMessageBody)`     
-      background: black; 
+      background: #242424; 
       color: white;
       border-radius: 10px 10px 10px 10px;  
       box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
