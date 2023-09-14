@@ -38,7 +38,7 @@ const MessageBody = ({ isDeleted, type, isSupportedMessageType, isMemberActivity
     return <SharedQuestsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (tisAnnouncementsAutoPostrue){
+  if (isAnnouncementsAutoPost){
     return <AnnouncementsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
