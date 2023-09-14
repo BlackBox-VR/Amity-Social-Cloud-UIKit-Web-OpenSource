@@ -100,7 +100,7 @@ const Message = ({
             isAnnouncementsAutoPost={isAnnouncementsAutoPost}
             isArenaRaidAutoPost={isArenaRaidAutoPost}
           >
-            {isAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
+            {isMemberActivityAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
             {!isDeleted && (
               <BottomLine>

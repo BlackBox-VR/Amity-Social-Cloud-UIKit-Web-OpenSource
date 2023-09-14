@@ -36,6 +36,7 @@ export const CloseIcon = styled(Close)`
 `;
 
 export const MessageOptionsIcon = styled(EllipsisV).attrs({ width: 11, height: 11 })`
+  color: white;
   opacity: 0.5;
   margin: 0 5px;
   cursor: pointer;
@@ -135,7 +136,7 @@ export const UnsupportedMessageBody = styled(CommonMessageBody)`
 
 export const MessageDate = styled.div`
   font-size: 13px;
-  opacity: 0.5;
+  opacity: 0.65;
   margin-left: auto;
 `;
 
