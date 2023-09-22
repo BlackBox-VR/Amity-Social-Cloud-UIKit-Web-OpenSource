@@ -65,6 +65,7 @@ const MessageList = ({ client, channelId }) => {
                 isIncoming={isIncoming}
                 containerRef={containerRef}
                 messageTags={message.tags}
+                userId={message.userId}
               />
             );
           })}
