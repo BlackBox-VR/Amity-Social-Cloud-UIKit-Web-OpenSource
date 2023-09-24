@@ -2,7 +2,7 @@ import { PostRepository, PostTargetType } from '@amityco/js-sdk';
 import useLiveCollection from '~/core/hooks/useLiveCollection';
 
 const { queryAllPosts, queryCommunityPosts, queryUserPosts, queryMyPosts } = PostRepository;
-const QUERY_LIMIT = 1000;
+const QUERY_LIMIT = 500;
 
 const useFeed = ({ targetType, targetId, feedType }) => {
   const FeedQueryTypes = {
