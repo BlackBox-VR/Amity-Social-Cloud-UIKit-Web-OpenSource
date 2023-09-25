@@ -17,8 +17,8 @@ export const MessageHeaderAvatar = styled(UiKitAvatar)`
 export const MessageHeaderContent = styled.div`
   flex: 1;
   padding: 4px 10px;
-  background: ${(props) =>
-    props.background ? url(`${BANNER_SPRITES_URL}/${props.background}`) : 'black'};
+  background-image: url(${({ background }) => background});
+  background-color: black;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

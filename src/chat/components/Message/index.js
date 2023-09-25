@@ -112,7 +112,11 @@ const Message = ({
             isArenaRaidAutoPost={isArenaRaidAutoPost}
           >
             {isMemberActivityAutoPost && (
-              <MessageHeader avatar={getAvatarProps()} userId={userId} />
+              <MessageHeader
+                avatar={getAvatarProps()}
+                userId={userId}
+                userDisplayName={userDisplayName}
+              />
             )}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
             {!isDeleted && (
