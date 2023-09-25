@@ -77,7 +77,7 @@ const CommonMessageBody = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: 8px;
-  padding: 8px 12px 8px 12px;
+  padding: 10px;
   word-break: break-word;
 
   & pre {
@@ -99,29 +99,29 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
   `}
 `;
 
-export const MemberActivityAutoPostBody = styled(CommonMessageBody)`     
-      background: #242424; 
-      color: white;
-      border-radius: 10px 10px 10px 10px;  
-      box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
+export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
+  background: #242424;
+  color: white;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
 `;
 
-export const SharedQuestsAutoPostBody = styled(CommonMessageBody)`     
-      background: linear-gradient(#00A4EA, #5433FF); 
-      color: white;
-      border-radius: 10px 10px 10px 10px;  
+export const SharedQuestsAutoPostBody = styled(CommonMessageBody)`
+  background: linear-gradient(#00a4ea, #5433ff);
+  color: white;
+  border-radius: 10px;
 `;
 
-export const AnnouncementsAutoPostBody = styled(CommonMessageBody)`     
-      background: linear-gradient(#FFC700, #E65C00); 
-      color: white;
-      border-radius: 10px 10px 10px 10px;  
+export const AnnouncementsAutoPostBody = styled(CommonMessageBody)`
+  background: linear-gradient(#ffc700, #e65c00);
+  color: white;
+  border-radius: 10px;
 `;
 
-export const ArenaRaidAutoPostBody = styled(CommonMessageBody)`     
-      background: linear-gradient(#FF008A, #FF2D2D); 
-      color: white;
-      border-radius: 10px 10px 10px 10px;  
+export const ArenaRaidAutoPostBody = styled(CommonMessageBody)`
+  background: linear-gradient(#ff008a, #ff2d2d);
+  color: white;
+  border-radius: 10px;
 `;
 
 export const DeletedMessageBody = styled(CommonMessageBody)`
