@@ -8,6 +8,7 @@ import { backgroundImage as UserImage } from '~/icons/User';
 
 import Options from './Options';
 import MessageContent from './MessageContent';
+import MessageHeader from './MessageHeader';
 
 import {
   Avatar,
@@ -27,22 +28,29 @@ import {
   MessageDate,
 } from './styles';
 
-const MessageBody = ({ isDeleted, type, isSupportedMessageType, isMemberActivityAutoPost, 
-  isSharedQuestAutoPost, isAnnouncementsAutoPost, isArenaRaidAutoPost, ...otherProps }) => 
-  {
-  if (isMemberActivityAutoPost){
+const MessageBody = ({
+  isDeleted,
+  type,
+  isSupportedMessageType,
+  isMemberActivityAutoPost,
+  isSharedQuestAutoPost,
+  isAnnouncementsAutoPost,
+  isArenaRaidAutoPost,
+  ...otherProps
+}) => {
+  if (isMemberActivityAutoPost) {
     return <MemberActivityAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (isSharedQuestAutoPost){
+  if (isSharedQuestAutoPost) {
     return <SharedQuestsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (isAnnouncementsAutoPost){
+  if (isAnnouncementsAutoPost) {
     return <AnnouncementsAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
-  if (isArenaRaidAutoPost){
+  if (isArenaRaidAutoPost) {
     return <ArenaRaidAutoPostBody {...otherProps} data-qa-anchor="message-body-auto-post" />;
   }
 
@@ -68,16 +76,17 @@ const Message = ({
   isConsequent,
   userDisplayName,
   containerRef,
-  messageTags
+  messageTags,
+  userId,
 }) => {
   const shouldShowUserName = isIncoming && !isConsequent && userDisplayName;
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
 
-  const isAutoPost = messageTags != null && messageTags.indexOf("autopost") > -1;
-  const isMemberActivityAutoPost = isAutoPost && messageTags.indexOf("memberActivity") > -1;
-  const isSharedQuestAutoPost = isAutoPost && messageTags.indexOf("sharedQuests") > -1;
-  const isAnnouncementsAutoPost = isAutoPost && messageTags.indexOf("announcements") > -1;
-  const isArenaRaidAutoPost = isAutoPost && messageTags.indexOf("arenaRaid") > -1;
+  const isAutoPost = messageTags != null && messageTags.indexOf('autopost') > -1;
+  const isMemberActivityAutoPost = isAutoPost && messageTags.indexOf('memberActivity') > -1;
+  const isSharedQuestAutoPost = isAutoPost && messageTags.indexOf('sharedQuests') > -1;
+  const isAnnouncementsAutoPost = isAutoPost && messageTags.indexOf('announcements') > -1;
+  const isArenaRaidAutoPost = isAutoPost && messageTags.indexOf('arenaRaid') > -1;
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -86,9 +95,11 @@ const Message = ({
 
   return (
     <MessageReservedRow isIncoming={isIncoming}>
-      <MessageWrapper>        
-        {!isAutoPost && <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>} 
-        <MessageContainer data-qa-anchor="message">          
+      <MessageWrapper>
+        {!isAutoPost && (
+          <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
+        )}
+        <MessageContainer data-qa-anchor="message">
           {!isAutoPost && <UserName>{userDisplayName}</UserName>}
           <MessageBody
             type={type}
@@ -100,20 +111,28 @@ const Message = ({
             isAnnouncementsAutoPost={isAnnouncementsAutoPost}
             isArenaRaidAutoPost={isArenaRaidAutoPost}
           >
-            {isMemberActivityAutoPost && <AvatarWrapper>{<Avatar {...getAvatarProps()} />}</AvatarWrapper>}
+            {isMemberActivityAutoPost && (
+              <MessageHeader
+                avatar={getAvatarProps()}
+                userId={userId}
+                userDisplayName={userDisplayName}
+              />
+            )}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
             {!isDeleted && (
               <BottomLine>
                 <MessageDate>
                   <FormattedTime value={createdAt} />
                 </MessageDate>
-                {!isAutoPost && <Options
-                  messageId={messageId}
-                  data={data}
-                  isIncoming={isIncoming}
-                  isSupportedMessageType={isSupportedMessageType}
-                  popupContainerRef={containerRef}
-                />}
+                {!isAutoPost && (
+                  <Options
+                    messageId={messageId}
+                    data={data}
+                    isIncoming={isIncoming}
+                    isSupportedMessageType={isSupportedMessageType}
+                    popupContainerRef={containerRef}
+                  />
+                )}
               </BottomLine>
             )}
           </MessageBody>
@@ -134,7 +153,8 @@ Message.propTypes = {
   isConsequent: PropTypes.bool,
   avatar: PropTypes.string,
   containerRef: PropTypes.object.isRequired,
-  messageTags: PropTypes.array
+  messageTags: PropTypes.array,
+  userId: PropTypes.string,
 };
 
 Message.defaultProps = {
@@ -143,7 +163,8 @@ Message.defaultProps = {
   isDeleted: false,
   isIncoming: false,
   isConsequent: false,
-  messageTags: []
+  messageTags: [],
+  userId: '',
 };
 
 export default customizableComponent('Message', Message);
