@@ -16,11 +16,16 @@ import Header from '~/social/components/post/Header';
 import Content from '~/social/components/post/Post/Content';
 import useCommunity from '~/social/hooks/useCommunity';
 import useCommunityOneMember from '~/social/hooks/useCommunityOneMember';
+import AdditionalInfo from '~/social/components/post/Post/AdditionalInfo';
+import { ATHENA_API_URL, BANNER_SPRITES_URL } from '~/constants';
+import { useGETRequest } from '~/hooks/useApiResponse';
+
 import {
   ContentSkeleton,
   OptionMenu,
   PostContainer,
   PostHeadContainer,
+  PostMainContainer,
   ReviewButtonsContainer,
 } from './styles';
 
@@ -64,12 +69,16 @@ const DefaultPostRenderer = ({
   const openEditingPostModal = () => setIsEditing(true);
   const closeEditingPostModal = () => setIsEditing(false);
 
-  const { data, dataType, postId, targetId, targetType, metadata } = post;
+  const { data, dataType, postId, targetId, targetType, metadata, postedUserId } = post;
   const { community } = useCommunity(targetId, () => targetType !== PostTargetType.CommunityFeed);
   const { currentMember, canReviewCommunityPosts } = useCommunityOneMember(
     targetId,
     currentUserId,
     community.userId,
+  );
+
+  const { data: headerData } = useGETRequest(
+    `${ATHENA_API_URL}/gettitleandbannerdetails?userid=${postedUserId}`,
   );
 
   const [onReportClick] = useAsyncCallback(async () => {
@@ -166,58 +175,76 @@ const DefaultPostRenderer = ({
     (child) => child.dataType === PostDataType.LivestreamPost,
   );
 
+  const bannerCode = (headerData?.results?.profile_banner || '').toLowerCase();
+  const trophies = headerData?.results?.trophies || 0;
+  const xpTitle = headerData?.results?.xp_title || '';
+  const teamName = headerData?.results?.team_name || 'No Team Name';
+
   return (
     <PostContainer data-qa-anchor="post" className={className}>
-      <PostHeadContainer>
-        <Header hidePostTarget={hidePostTarget} postId={postId} loading={loading} />
+      <PostHeadContainer
+        isLoading={loading}
+        headerBgImage={bannerCode ? `${BANNER_SPRITES_URL}/${bannerCode}.png` : ''}
+      >
+        <Header
+          hidePostTarget={hidePostTarget}
+          postId={postId}
+          trophies={+trophies}
+          xpTitle={xpTitle}
+          teamName={teamName}
+          loading={loading}
+        />
         {!loading && <OptionMenu options={allOptions} data-qa-anchor="post-options-button" />}
       </PostHeadContainer>
 
-      {loading ? (
-        <ContentSkeleton />
-      ) : (
-        <>
-          <Content
-            data={livestreamContent?.data ?? data}
-            dataType={livestreamContent?.dataType ?? dataType}
-            postMaxLines={postMaxLines}
-            mentionees={metadata?.mentioned}
-          />
+      <PostMainContainer>
+        {loading ? (
+          <ContentSkeleton />
+        ) : (
+          <>
+            <AdditionalInfo postId={postId} />
+            <Content
+              data={livestreamContent?.data ?? data}
+              dataType={livestreamContent?.dataType ?? dataType}
+              postMaxLines={postMaxLines}
+              mentionees={metadata?.mentioned}
+            />
 
-          {hasChildrenPosts && <ChildrenContent>{childrenContent}</ChildrenContent>}
+            {hasChildrenPosts && <ChildrenContent>{childrenContent}</ChildrenContent>}
 
-          {!isUnderReview && <EngagementBar readonly={readonly} postId={postId} />}
+            {!isUnderReview && <EngagementBar readonly={readonly} postId={postId} />}
 
-          {isUnderReview && canReviewCommunityPosts && (
-            <ReviewButtonsContainer data-qa-anchor="post-review">
-              <PrimaryButton
-                data-qa-anchor="post-review-accept-button"
-                disabled={approving || declining}
-                onClick={onApprove}
+            {isUnderReview && canReviewCommunityPosts && (
+              <ReviewButtonsContainer data-qa-anchor="post-review">
+                <PrimaryButton
+                  data-qa-anchor="post-review-accept-button"
+                  disabled={approving || declining}
+                  onClick={onApprove}
+                >
+                  <FormattedMessage id="general.action.accept" />
+                </PrimaryButton>
+                <Button
+                  data-qa-anchor="post-review-decline-button"
+                  disabled={approving || declining}
+                  onClick={onDecline}
+                >
+                  <FormattedMessage id="general.action.decline" />
+                </Button>
+              </ReviewButtonsContainer>
+            )}
+
+            {isEditing && (
+              <Modal
+                data-qa-anchor="post-editor-modal"
+                title={formatMessage({ id: 'post.editPost' })}
+                onCancel={closeEditingPostModal}
               >
-                <FormattedMessage id="general.action.accept" />
-              </PrimaryButton>
-              <Button
-                data-qa-anchor="post-review-decline-button"
-                disabled={approving || declining}
-                onClick={onDecline}
-              >
-                <FormattedMessage id="general.action.decline" />
-              </Button>
-            </ReviewButtonsContainer>
-          )}
-
-          {isEditing && (
-            <Modal
-              data-qa-anchor="post-editor-modal"
-              title={formatMessage({ id: 'post.editPost' })}
-              onCancel={closeEditingPostModal}
-            >
-              <PostEditor postId={postId} onSave={closeEditingPostModal} />
-            </Modal>
-          )}
-        </>
-      )}
+                <PostEditor postId={postId} onSave={closeEditingPostModal} />
+              </Modal>
+            )}
+          </>
+        )}
+      </PostMainContainer>
     </PostContainer>
   );
 };

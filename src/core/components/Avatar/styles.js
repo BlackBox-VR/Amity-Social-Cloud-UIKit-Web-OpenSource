@@ -4,7 +4,11 @@ import Skeleton from '~/core/components/Skeleton';
 
 import { SIZES } from '~/core/hocs/withSize';
 
-export const AvatarContainer = styled(({ backgroundImage, children, loading, size, ...props }) => (
+export const AvatarContainer = styled.div`
+  position: relative;
+`;
+
+export const AvatarImage = styled(({ backgroundImage, children, loading, size, ...props }) => (
   <div {...props}>
     {loading ? (
       <Skeleton circle width="100%" height="100%" style={{ display: 'block' }} />
@@ -17,10 +21,11 @@ export const AvatarContainer = styled(({ backgroundImage, children, loading, siz
   flex-shrink: 0;
   overflow: hidden;
 
-  ${({ size, backgroundImage, theme }) => `
-    height: ${SIZES[size]}px;
-    width: ${SIZES[size]}px;
+  ${({ backgroundImage, theme }) => `
+    height: 52px;
+    width: 52px;
     background: ${backgroundImage || theme.palette.base.shade3}};
+    border: 3px solid #ECECEC;
   `};
 
   border-radius: 50%;
@@ -62,4 +67,25 @@ export const FileInput = styled.input.attrs({ type: 'file' })`
   }
 `;
 
-export const Label = styled.label``;
+export const Trophies = styled.div`
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background: #000;
+  width: 40px;
+  height: 12.5px;
+  border-radius: 6.5px;
+  color: #fff !important;
+  font-size: 7.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    margin-left: 2px;
+  }
+`;

@@ -46,6 +46,10 @@ module.exports = (_, argv = {}) => ({
           },
         ],
       },
+      {
+        test: /\.(woff|woff2|otf|ttf)$/,
+        loader: 'url-loader',
+      },
     ],
   },
 });
