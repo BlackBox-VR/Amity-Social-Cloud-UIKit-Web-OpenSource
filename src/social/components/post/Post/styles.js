@@ -6,22 +6,39 @@ import Skeleton from '~/core/components/Skeleton';
 
 export const OptionMenu = styled(UIOptionMenu)`
   margin-left: auto;
+  margin-right: 5px;
+
+  button:hover {
+    background-color: transparent !important;
+  }
 `;
 
 export const PostContainer = styled(({ className, ...props }) => (
   <div className={cx('post', className)} {...props} />
 ))`
-  padding: 16px;
-  padding-bottom: 8px;
   background: ${({ theme }) => theme.palette.system.background};
   border: 1px solid #edeef2;
-  border-radius: 4px;
+  border-radius: 30px 30px 0 0;
+  padding-bottom: 8px;
 `;
 
 export const PostHeadContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 14px;
+  padding: 2px 6px;
+  background: ${({ isLoading, headerBgImage }) =>
+    isLoading || !headerBgImage ? 'black' : `url(${headerBgImage})`};
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 30px 30px 0 0;
+
+  * {
+    color: #b1b1b1;
+  }
+`;
+
+export const PostMainContainer = styled.div`
+  padding: 12px;
 `;
 
 export const ReviewButtonsContainer = styled.div`

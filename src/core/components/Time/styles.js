@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 
 export const DateContainer = styled.div`
-  color: ${({ theme }) => theme.palette.neutral.shade1};
-  ${({ theme }) => theme.typography.caption}
-  & > * {
-    ${({ theme }) => theme.typography.caption}
-  }
+  color: #b1b1b1;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 134.766%;
 `;
+``;

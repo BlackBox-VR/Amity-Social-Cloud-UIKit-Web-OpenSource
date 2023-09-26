@@ -2,18 +2,16 @@ import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { PostTargetType } from '@amityco/js-sdk';
 import { FormattedMessage } from 'react-intl';
-import { isAdmin, isModerator } from '~/helpers/permissions';
 import usePost from '~/social/hooks/usePost';
 import useCommunity from '~/social/hooks/useCommunity';
 import { useNavigation } from '~/social/providers/NavigationProvider';
 import UIPostHeader from './UIPostHeader';
-import useCommunityOneMember from '~/social/hooks/useCommunityOneMember';
 
-const PostHeader = ({ postId, hidePostTarget, loading }) => {
+const PostHeader = ({ postId, hidePostTarget, trophies, xpTitle, teamName, loading }) => {
   const { onClickCommunity, onClickUser } = useNavigation();
   const { post, file, user } = usePost(postId);
 
-  const { targetId, targetType, postedUserId, createdAt, editedAt } = post;
+  const { targetId, targetType, postedUserId } = post;
 
   // If the post is targetting a community feed, get the name of that community.
   const isCommunityPost = targetType === PostTargetType.CommunityFeed;
@@ -21,11 +19,6 @@ const PostHeader = ({ postId, hidePostTarget, loading }) => {
   const postTargetName = isCommunityPost ? community?.displayName : null;
   const handleClickCommunity = isCommunityPost ? () => onClickCommunity(targetId) : null;
 
-  const { isCommunityModerator } = useCommunityOneMember(
-    community?.communityId,
-    user.userId,
-    community?.userId,
-  );
   const handleClickUser = () => onClickUser(postedUserId);
 
   return (
@@ -33,11 +26,11 @@ const PostHeader = ({ postId, hidePostTarget, loading }) => {
       avatarFileUrl={file.fileUrl}
       postAuthorName={user.displayName || <FormattedMessage id="anonymous" />}
       postTargetName={postTargetName}
-      timeAgo={createdAt}
-      isModerator={isCommunityModerator || isModerator(user.roles) || isAdmin(user.roles)}
-      isEdited={createdAt < editedAt}
       isBanned={user.isGlobalBan}
       hidePostTarget={hidePostTarget}
+      trophies={trophies}
+      xpTitle={xpTitle}
+      teamName={teamName}
       loading={loading}
       onClickCommunity={handleClickCommunity}
       onClickUser={handleClickUser}
@@ -48,6 +41,9 @@ const PostHeader = ({ postId, hidePostTarget, loading }) => {
 PostHeader.propTypes = {
   postId: PropTypes.string,
   hidePostTarget: PropTypes.bool,
+  trophies: PropTypes.number,
+  xpTitle: PropTypes.string,
+  teamName: PropTypes.string,
   loading: PropTypes.bool,
 };
 

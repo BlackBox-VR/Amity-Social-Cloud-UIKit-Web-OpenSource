@@ -1,87 +1,81 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 import TruncateMarkup from 'react-truncate-markup';
+
 import Skeleton from '~/core/components/Skeleton';
 import customizableComponent from '~/core/hocs/customization';
-import Time from '~/core/components/Time';
 import Avatar from '~/core/components/Avatar';
 import BanIcon from '~/icons/Ban';
 import { backgroundImage as UserImage } from '~/icons/User';
 import {
   Name,
   PostInfo,
-  ShieldIcon,
-  ModeratorBadge,
-  AdditionalInfo,
   ArrowSeparator,
   PostHeaderContainer,
   PostNamesContainer,
-  MessageContainer,
+  PostXpTeamName,
+  XpTitle,
+  Divider,
 } from './styles';
 
 const UIPostHeader = ({
   avatarFileUrl,
   postAuthorName,
   postTargetName,
-  timeAgo,
-  isModerator,
-  isEdited,
   onClickCommunity,
   onClickUser,
   hidePostTarget,
+  trophies,
+  xpTitle,
+  teamName,
   loading,
   isBanned,
 }) => {
   const renderPostNames = () => {
     return (
-      <PostNamesContainer data-qa-anchor="post-header-post-names">
-        <TruncateMarkup lines={3}>
-          <Name
-            data-qa-anchor="post-header-post-name"
-            className={cx({ clickable: !!onClickUser })}
-            onClick={onClickUser}
-          >
-            {postAuthorName}
-          </Name>
-        </TruncateMarkup>
-
-        {isBanned && <BanIcon height={14} width={14} />}
-
-        {postTargetName && !hidePostTarget && (
-          <>
-            <ArrowSeparator />
+      <>
+        <PostNamesContainer data-qa-anchor="post-header-post-names">
+          <TruncateMarkup lines={3}>
             <Name
-              data-qa-anchor="post-header-post-target-name"
-              className={cx({ clickable: !!onClickCommunity })}
-              onClick={onClickCommunity}
+              data-qa-anchor="post-header-post-name"
+              className={cx({ clickable: !!onClickUser })}
+              onClick={onClickUser}
             >
-              {postTargetName}
+              {postAuthorName}
             </Name>
-          </>
-        )}
-      </PostNamesContainer>
-    );
-  };
+          </TruncateMarkup>
 
-  const renderAdditionalInfo = () => {
-    return (
-      <AdditionalInfo data-qa-anchor="post-header-additional-info" showTime={!!timeAgo}>
-        {isModerator && (
-          <ModeratorBadge data-qa-anchor="post-header-additional-info-moderator-badge">
-            <ShieldIcon /> <FormattedMessage id="moderator" />
-          </ModeratorBadge>
-        )}
+          {isBanned && <BanIcon height={14} width={14} />}
 
-        {timeAgo && <Time data-qa-anchor="post-header-additional-info-time-ago" date={timeAgo} />}
+          {postTargetName && !hidePostTarget && (
+            <>
+              <ArrowSeparator />
+              <Name
+                data-qa-anchor="post-header-post-target-name"
+                className={cx({ clickable: !!onClickCommunity })}
+                onClick={onClickCommunity}
+              >
+                {postTargetName}
+              </Name>
+            </>
+          )}
+        </PostNamesContainer>
 
-        {isEdited && (
-          <MessageContainer data-qa-anchor="post-header-additional-info-edited-label">
-            <FormattedMessage id="post.edited" />
-          </MessageContainer>
-        )}
-      </AdditionalInfo>
+        <PostXpTeamName>
+          {xpTitle && (
+            <>
+              <XpTitle>
+                XP title: <span>{xpTitle}</span>
+              </XpTitle>
+              <Divider />
+            </>
+          )}
+          <XpTitle>
+            Team: <span>{teamName}</span>
+          </XpTitle>
+        </PostXpTeamName>
+      </>
     );
   };
 
@@ -91,6 +85,7 @@ const UIPostHeader = ({
         data-qa-anchor="post-header-avatar"
         avatar={avatarFileUrl}
         backgroundImage={UserImage}
+        trophies={trophies}
         loading={loading}
         onClick={onClickUser}
       />
@@ -103,10 +98,7 @@ const UIPostHeader = ({
             <Skeleton width={189} style={{ fontSize: 8 }} />
           </>
         ) : (
-          <>
-            {renderPostNames()}
-            {renderAdditionalInfo()}
-          </>
+          renderPostNames()
         )}
       </PostInfo>
     </PostHeaderContainer>
@@ -117,10 +109,10 @@ UIPostHeader.propTypes = {
   avatarFileUrl: PropTypes.string,
   postAuthorName: PropTypes.node,
   postTargetName: PropTypes.string,
-  timeAgo: PropTypes.instanceOf(Date),
-  isModerator: PropTypes.bool,
-  isEdited: PropTypes.bool,
   hidePostTarget: PropTypes.bool,
+  trophies: PropTypes.number,
+  xpTitle: PropTypes.string,
+  teamName: PropTypes.string,
   loading: PropTypes.bool,
   isBanned: PropTypes.bool,
   onClickCommunity: PropTypes.func,
@@ -131,10 +123,10 @@ UIPostHeader.defaultProps = {
   avatarFileUrl: '',
   postAuthorName: '',
   postTargetName: '',
-  timeAgo: null,
-  isModerator: false,
-  isEdited: false,
   hidePostTarget: false,
+  trophies: 0,
+  xpTitle: '',
+  teamName: 'No Team Name',
   loading: false,
   isBanned: false,
   onClickCommunity: null,
