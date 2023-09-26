@@ -14,6 +14,7 @@ import ConfigProvider from '~/social/providers/ConfigProvider';
 import NavigationProvider from '~/social/providers/NavigationProvider';
 import PostRendererProvider from '~/social/providers/PostRendererProvider';
 import Localisation from './Localisation';
+import GlobalFonts from '~/fonts/futura/fonts';
 import buildGlobalTheme from './theme';
 import { UIStyles } from './styles';
 
@@ -109,6 +110,7 @@ const UiKitProvider = forwardRef(
         </Helmet>
         <Localisation locale="en">
           <ThemeProvider theme={buildGlobalTheme(theme)}>
+            <GlobalFonts />
             <UIStyles>
               <SDKProvider {...SDKInfo}>
                 <ConfigProvider config={{ socialCommunityCreationButtonVisible }}>
