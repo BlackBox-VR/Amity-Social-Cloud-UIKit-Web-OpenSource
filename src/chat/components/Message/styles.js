@@ -100,7 +100,7 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
 `;
 
 export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
-  background: #242424;
+  background: #121212;
   color: white;
   border-radius: 10px;
   box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
