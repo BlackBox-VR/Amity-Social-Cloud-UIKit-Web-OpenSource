@@ -16,7 +16,6 @@ import {
   PostNamesContainer,
   PostXpTeamName,
   XpTitle,
-  Divider,
 } from './styles';
 
 const UIPostHeader = ({
@@ -68,12 +67,13 @@ const UIPostHeader = ({
               <XpTitle>
                 XP title: <span>{xpTitle}</span>
               </XpTitle>
-              <Divider />
             </>
           )}
-          <XpTitle>
-            Team: <span>{teamName}</span>
-          </XpTitle>
+          {teamName && (
+            <XpTitle>
+              Team: <span>{teamName}</span>
+            </XpTitle>
+          )}
         </PostXpTeamName>
       </>
     );
