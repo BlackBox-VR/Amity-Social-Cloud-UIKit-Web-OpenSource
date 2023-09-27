@@ -26,8 +26,8 @@ export const PostHeadContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 2px 6px;
-  background: ${({ isLoading, headerBgImage }) =>
-    isLoading || !headerBgImage ? 'black' : `url(${headerBgImage})`};
+  background-color: black;
+  background-image: url(${({ headerBgImage }) => headerBgImage});
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 30px 30px 0 0;
