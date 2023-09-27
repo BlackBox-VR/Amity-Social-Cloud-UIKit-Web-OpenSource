@@ -17,7 +17,6 @@ export const PostContainer = styled(({ className, ...props }) => (
   <div className={cx('post', className)} {...props} />
 ))`
   background: ${({ theme }) => theme.palette.system.background};
-  border: 1px solid #edeef2;
   border-radius: 30px 30px 0 0;
   padding-bottom: 8px;
 `;
@@ -39,6 +38,7 @@ export const PostHeadContainer = styled.div`
 
 export const PostMainContainer = styled.div`
   padding: 12px;
+  border: 1px solid #edeef2;
 `;
 
 export const ReviewButtonsContainer = styled.div`
