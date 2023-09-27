@@ -77,7 +77,7 @@ const DefaultPostRenderer = ({
     community.userId,
   );
 
-  const { data: headerData } = useGETRequest(
+  const { data: headerData, isLoading: isGetHeaderData } = useGETRequest(
     `${ATHENA_API_URL}/gettitleandbannerdetails?userid=${postedUserId}`,
   );
 
@@ -178,7 +178,7 @@ const DefaultPostRenderer = ({
   const bannerCode = (headerData?.results?.profile_banner || '').toLowerCase();
   const trophies = headerData?.results?.trophies || 0;
   const xpTitle = headerData?.results?.xp_title || '';
-  const teamName = headerData?.results?.team_name || 'No Team Name';
+  const teamName = headerData?.results?.team_name || (!isGetHeaderData ? 'No Team Name' : '');
 
   return (
     <PostContainer data-qa-anchor="post" className={className}>
