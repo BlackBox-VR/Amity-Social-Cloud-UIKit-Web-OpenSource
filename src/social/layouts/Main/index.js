@@ -9,10 +9,10 @@ const Container = styled.div`
   grid-template-areas: 'side main' 'none main';
   grid-template-columns: min-content auto;
   grid-template-rows: 100%;
-  grid-gap: 0 20px;
+  grid-gap: 0 10px;
   width: 100%;
   height: 100%;
-  padding: 0 20px 0 0;
+  padding: 0 10px 0 0;
   background: linear-gradient(#c2a0b5, #300155);
 `;
 

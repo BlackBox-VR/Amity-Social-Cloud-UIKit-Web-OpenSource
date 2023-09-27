@@ -52,27 +52,22 @@ export const PostNamesContainer = styled.div`
 
 export const PostXpTeamName = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 28px;
+  margin-bottom: 2px;
 `;
 
 export const XpTitle = styled.div`
   font-family: Futura;
-  font-size: 12px;
+  font-size: 11px;
   font-style: normal;
   font-weight: 450;
   line-height: normal;
   text-transform: uppercase;
   color: #b1b1b1;
-  margin-bottom: 2px;
 
   span {
     color: #f1f1f1;
   }
-`;
-
-export const Divider = styled.div`
-  width: 1px;
-  height: 21px;
-  background: #828282;
-  margin: 0 3px 3px;
 `;
