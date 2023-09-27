@@ -16,7 +16,6 @@ import {
   PostNamesContainer,
   PostXpTeamName,
   XpTitle,
-  Divider,
 } from './styles';
 
 const UIPostHeader = ({
@@ -68,12 +67,13 @@ const UIPostHeader = ({
               <XpTitle>
                 XP title: <span>{xpTitle}</span>
               </XpTitle>
-              <Divider />
             </>
           )}
-          <XpTitle>
-            Team: <span>{teamName}</span>
-          </XpTitle>
+          {teamName && (
+            <XpTitle>
+              Team: <span>{teamName}</span>
+            </XpTitle>
+          )}
         </PostXpTeamName>
       </>
     );
@@ -93,9 +93,12 @@ const UIPostHeader = ({
         {loading ? (
           <>
             <div>
-              <Skeleton width={96} style={{ fontSize: 8 }} />
+              <Skeleton width={96} style={{ fontSize: 10 }} />
             </div>
-            <Skeleton width={189} style={{ fontSize: 8 }} />
+            <div>
+              <Skeleton width={189} style={{ fontSize: 4 }} />
+            </div>
+            <Skeleton width={189} style={{ fontSize: 4, top: -8 }} />
           </>
         ) : (
           renderPostNames()
