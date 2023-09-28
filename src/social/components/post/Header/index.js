@@ -22,7 +22,7 @@ const PostHeader = ({ postId, hidePostTarget, loading }) => {
   const handleClickUser = () => onClickUser(postedUserId);
 
   const trophies = user?.metadata?.trophies || 0;
-  const xpTitle = 'XP Title';
+  const xpTitle = user?.metadata?.xpTitle?.title || '';
   const teamName = user?.metadata?.teamName || 'No Team';
 
   return (

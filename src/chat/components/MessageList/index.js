@@ -51,7 +51,7 @@ const MessageList = ({ client, channelId }) => {
             const isConsequent = nextMessage && nextMessage.userId === message.userId && isAutoPost;
             const isIncoming = message.userId !== client.currentUserId;
 
-            const { bannerShortcode = [] } = message.user?.metadata ?? {};
+            const { bannerShortcode = [], xpTitle = {} } = message.user?.metadata ?? {};
 
             return (
               <MessageComponent
@@ -70,7 +70,7 @@ const MessageList = ({ client, channelId }) => {
                 bannerCode={
                   bannerShortcode.length > 0 ? bannerShortcode[0].shortCode.toLowerCase() : ''
                 }
-                xpTitle={''}
+                xpTitle={xpTitle.title || ''}
               />
             );
           })}
