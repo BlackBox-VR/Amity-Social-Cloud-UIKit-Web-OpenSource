@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ATHENA_API_URL, BANNER_SPRITES_URL } from '~/constants';
-import { useGETRequest } from '~/hooks/useApiResponse';
+import { BANNER_SPRITES_URL } from '~/constants';
 
 import {
   MessageHeaderWrapper,
@@ -12,18 +11,13 @@ import {
   XpTitle,
 } from './styles';
 
-const MessageHeader = ({ avatar, userId, userDisplayName }) => {
-  const { data } = useGETRequest(`${ATHENA_API_URL}/gettitleandbannerdetails?userid=${userId}`);
-
-  const bannerCode = (data?.results?.profile_banner || '').toLowerCase();
-  const xpTitle = data?.results?.xp_title || '';
+const MessageHeader = ({ avatar, userDisplayName, bannerCode, xpTitle }) => {
+  const headerBgImage = !!bannerCode ? `${BANNER_SPRITES_URL}/${bannerCode}.png` : '';
 
   return (
     <MessageHeaderWrapper>
       <MessageHeaderAvatar {...avatar} />
-      <MessageHeaderContent
-        background={bannerCode ? `${BANNER_SPRITES_URL}/${bannerCode}.png` : ''}
-      >
+      <MessageHeaderContent background={headerBgImage}>
         <MessageHeaderUserName>{userDisplayName}</MessageHeaderUserName>
         <XpTitle>
           <span>XP Title: </span>
@@ -40,8 +34,9 @@ MessageHeader.defaultProps = {
 
 MessageHeader.propTypes = {
   children: PropTypes.object,
-  userId: PropTypes.string,
   userDisplayName: PropTypes.string,
+  bannerCode: PropTypes.string,
+  xpTitle: PropTypes.string,
 };
 
 export default MessageHeader;
