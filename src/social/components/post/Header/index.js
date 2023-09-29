@@ -7,7 +7,7 @@ import useCommunity from '~/social/hooks/useCommunity';
 import { useNavigation } from '~/social/providers/NavigationProvider';
 import UIPostHeader from './UIPostHeader';
 
-const PostHeader = ({ postId, hidePostTarget, trophies, xpTitle, teamName, loading }) => {
+const PostHeader = ({ postId, hidePostTarget, loading }) => {
   const { onClickCommunity, onClickUser } = useNavigation();
   const { post, file, user } = usePost(postId);
 
@@ -20,6 +20,10 @@ const PostHeader = ({ postId, hidePostTarget, trophies, xpTitle, teamName, loadi
   const handleClickCommunity = isCommunityPost ? () => onClickCommunity(targetId) : null;
 
   const handleClickUser = () => onClickUser(postedUserId);
+
+  const trophies = user?.metadata?.trophies || 0;
+  const xpTitle = user?.metadata?.xpTitle?.title || '';
+  const teamName = user?.metadata?.teamName || 'No Team';
 
   return (
     <UIPostHeader
@@ -41,9 +45,6 @@ const PostHeader = ({ postId, hidePostTarget, trophies, xpTitle, teamName, loadi
 PostHeader.propTypes = {
   postId: PropTypes.string,
   hidePostTarget: PropTypes.bool,
-  trophies: PropTypes.number,
-  xpTitle: PropTypes.string,
-  teamName: PropTypes.string,
   loading: PropTypes.bool,
 };
 

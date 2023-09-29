@@ -129,7 +129,7 @@ UIPostHeader.defaultProps = {
   hidePostTarget: false,
   trophies: 0,
   xpTitle: '',
-  teamName: 'No Team Name',
+  teamName: 'No Team',
   loading: false,
   isBanned: false,
   onClickCommunity: null,

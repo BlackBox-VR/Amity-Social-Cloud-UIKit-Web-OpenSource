@@ -77,9 +77,9 @@ const Message = ({
   userDisplayName,
   containerRef,
   messageTags,
-  userId,
+  bannerCode,
+  xpTitle,
 }) => {
-  const shouldShowUserName = isIncoming && !isConsequent && userDisplayName;
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
 
   const isAutoPost = messageTags != null && messageTags.indexOf('autopost') > -1;
@@ -114,8 +114,9 @@ const Message = ({
             {isMemberActivityAutoPost && (
               <MessageHeader
                 avatar={getAvatarProps()}
-                userId={userId}
                 userDisplayName={userDisplayName}
+                bannerCode={bannerCode}
+                xpTitle={xpTitle}
               />
             )}
             <MessageContent data={data} type={type} isDeleted={isDeleted} />
@@ -154,7 +155,8 @@ Message.propTypes = {
   avatar: PropTypes.string,
   containerRef: PropTypes.object.isRequired,
   messageTags: PropTypes.array,
-  userId: PropTypes.string,
+  bannerCode: PropTypes.string,
+  xpTitle: PropTypes.string,
 };
 
 Message.defaultProps = {
@@ -164,7 +166,6 @@ Message.defaultProps = {
   isIncoming: false,
   isConsequent: false,
   messageTags: [],
-  userId: '',
 };
 
 export default customizableComponent('Message', Message);

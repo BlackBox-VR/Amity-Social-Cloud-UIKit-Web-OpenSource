@@ -13,7 +13,7 @@ import UnknownPostRenderer from './UnknownPostRenderer';
 const Post = ({ postId, currentUserId, userRoles, className, hidePostTarget, readonly }) => {
   const renderers = usePostRenderer();
 
-  const { isPostReady, post, ...others } = usePost(postId);
+  const { isPostReady, post, user, ...others } = usePost(postId);
   const pollPost = others.childrenPosts.find(
     (childPost) => childPost.dataType === PostDataType.PollPost,
   );
@@ -26,6 +26,7 @@ const Post = ({ postId, currentUserId, userRoles, className, hidePostTarget, rea
   }
 
   const Renderer = renderers[post.dataType] ?? UnknownPostRenderer;
+  const userBannerCode = user?.metadata?.bannerShortcode;
 
   return (
     <PostErrorBoundary>
@@ -39,6 +40,7 @@ const Post = ({ postId, currentUserId, userRoles, className, hidePostTarget, rea
         hidePostTarget={hidePostTarget}
         post={post}
         userRoles={userRoles}
+        userBannerCode={userBannerCode?.length > 0 ? userBannerCode[0].shortCode : ''}
         readonly={readonly}
       />
     </PostErrorBoundary>
