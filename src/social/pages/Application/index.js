@@ -46,7 +46,7 @@ const Community = forwardRef(({ landingPage }, ref) => {
         {page.type === PageTypes.Explore && (
           <ExplorePage
             isLandingPage={
-              landingPage &&
+              !!landingPage &&
               lastPage.type === PageTypes.NewsFeed &&
               landingPage === PageTypes.Explore
             }
@@ -54,7 +54,7 @@ const Community = forwardRef(({ landingPage }, ref) => {
         )}
 
         {page.type === PageTypes.NewsFeed && (
-          <NewsFeedPage isLandingPage={landingPage && landingPage !== PageTypes.NewsFeed} />
+          <NewsFeedPage isLandingPage={!!landingPage && landingPage !== PageTypes.NewsFeed} />
         )}
 
         {page.type === PageTypes.CommunityFeed && (

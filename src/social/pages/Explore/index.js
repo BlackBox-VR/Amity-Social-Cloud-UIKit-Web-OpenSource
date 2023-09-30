@@ -58,7 +58,7 @@ const ExplorePage = forwardRef(
 );
 
 ExplorePage.propTypes = {
-    isLandingPage: PropTypes.string
+    isLandingPage: PropTypes.bool
 };
 
 export default ExplorePage;
