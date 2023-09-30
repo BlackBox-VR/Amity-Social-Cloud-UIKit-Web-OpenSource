@@ -42,7 +42,7 @@ const Community = forwardRef(({ landingPage }, ref) => {
 
   return (
     <ApplicationContainer>
-      <MainLayout>
+      <MainLayout isDarkTheme={page.type === PageTypes.Search}>
         {page.type === PageTypes.Explore && (
           <ExplorePage
             isLandingPage={

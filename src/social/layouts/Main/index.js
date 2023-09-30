@@ -9,11 +9,11 @@ const Container = styled.div`
   grid-template-areas: 'side main' 'none main';
   grid-template-columns: min-content auto;
   grid-template-rows: 100%;
-  grid-gap: 0 10px;
+  grid-gap: ${({ isDarkTheme }) => (isDarkTheme ? 0 : '0 10px')};
   width: 100%;
   height: 100%;
-  padding: 0 10px 0 0;
-  background: linear-gradient(#c2a0b5, #300155);
+  padding: ${({ isDarkTheme }) => (isDarkTheme ? 0 : '0 10px 0 0')};
+  background: ${({ isDarkTheme }) => (isDarkTheme ? '#000' : 'linear-gradient(#c2a0b5, #300155)')};
 `;
 
 const Main = styled.div`
@@ -30,9 +30,9 @@ const Side = styled.div`
   overflow: auto;
 `;
 
-const Layout = ({ aside, children }) => {
+const Layout = ({ aside, isDarkTheme, children }) => {
   return (
-    <Container>
+    <Container isDarkTheme={isDarkTheme}>
       <Main>{children}</Main>
       <Side>{aside}</Side>
     </Container>
