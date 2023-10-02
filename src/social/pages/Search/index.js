@@ -1,12 +1,13 @@
 import React, { forwardRef, useState } from 'react';
-
-import { Wrapper, StyledTabs } from './styles';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
 import UiKitSocialSearch from '~/social/components/SocialSearch';
 import Followers from '~/social/pages/UserFeed/Followers';
 import { FollowersTabs } from '~/social/pages/UserFeed/Followers/constants';
 import { UserFeedTabs } from '~/social/pages/UserFeed/constants';
+
+import { Wrapper, StyledTabs } from './styles';
 
 const SocialSearch = styled(UiKitSocialSearch)`
   padding: 8px 10px;
@@ -29,13 +30,8 @@ const SocialSearch = styled(UiKitSocialSearch)`
 `;
 
 const Search = forwardRef(({ userId }) => {
-  const [allTabs, setAllTabs] = useState(
-    Object.values(FollowersTabs).map((value) => ({
-      value,
-      label: value,
-    })),
-  );
-  const [followActiveTab, setFollowActiveTab] = useState(FollowersTabs.FOLLOWINGS);
+  const [allTabs, setAllTabs] = useState();
+  const [followActiveTab, setFollowActiveTab] = useState(FollowersTabs.FOLLOWERS);
   const [setActiveTab] = useState(UserFeedTabs.FOLLOWERS);
 
   return (

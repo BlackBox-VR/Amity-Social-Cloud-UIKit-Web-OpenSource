@@ -57,10 +57,7 @@ const Followers = ({
   return (
     <div>
       {activeTab === FollowersTabs.FOLLOWINGS && (
-        <FollowingsList
-          currentUserId={currentUserId}
-          profileUserId={userId}
-        />
+        <FollowingsList currentUserId={currentUserId} profileUserId={userId} />
       )}
 
       {activeTab === FollowersTabs.FOLLOWERS && (

@@ -22,9 +22,12 @@ import {
   UserHeaderTitle,
   UserHeaderLevel,
   UserHeaderTrophies,
+  UserFollow,
+  FollowButton,
 } from '~/social/pages/UserFeed/Followers/styles';
 
-const UserItem = ({ userId }) => {
+const UserItem = ({ userId, isShowFollow }) => {
+  const { formatMessage } = useIntl();
   const { user, file } = useUser(userId, [userId]);
   const { heroLevel, trophies } = user?.metadata ?? {};
 
@@ -34,7 +37,7 @@ const UserItem = ({ userId }) => {
 
   return (
     <UserHeaderContainer>
-      <Header>
+      <Header isShowFollow={isShowFollow}>
         <UserHeaderAvatar
           avatar={file.fileUrl}
           backgroundImage={UserImage}
@@ -44,16 +47,21 @@ const UserItem = ({ userId }) => {
           <span onClick={() => goToWebProfile(user.displayName)}>{user.displayName}</span>
           {user.isGlobalBan && <BanIcon />}
         </UserHeaderTitle>
-        <UserHeaderLevel>LVL {parseInt(heroLevel ?? 0)}</UserHeaderLevel>
+        {!isShowFollow && <UserHeaderLevel>LVL {parseInt(heroLevel ?? 0)}</UserHeaderLevel>}
         <UserHeaderTrophies>
           {formatCompactNumber(trophies)} <GoldCup />
         </UserHeaderTrophies>
+        {isShowFollow && (
+          <UserFollow>
+            <FollowButton>{formatMessage({ id: 'follow.button.label' })}</FollowButton>
+          </UserFollow>
+        )}
       </Header>
     </UserHeaderContainer>
   );
 };
 
-const List = ({ profileUserId, currentUserId, hook, emptyMessage }) => {
+const List = ({ profileUserId, isShowFollow, hook, emptyMessage }) => {
   const [followings, hasMore, loadMore, loading, loadingMore] = hook(
     profileUserId,
     FollowRequestStatus.Accepted,
@@ -93,7 +101,7 @@ const List = ({ profileUserId, currentUserId, hook, emptyMessage }) => {
         skeleton ? (
           <Skeleton key={userId} count={3} style={{ fontSize: 8 }} />
         ) : (
-          <UserItem key={userId} userId={userId} />
+          <UserItem key={userId} userId={userId} isShowFollow={isShowFollow} />
         )
       }
     </PaginatedList>
