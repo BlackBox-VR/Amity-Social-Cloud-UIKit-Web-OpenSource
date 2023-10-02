@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { FollowRequestStatus } from '@amityco/js-sdk';
+import { toHumanString } from 'human-readable-numbers';
 
 import * as utils from '~/helpers/utils';
 import withSDK from '~/core/hocs/withSDK';
+import useFollowersList from '~/core/hooks/useFollowersList';
+import useFollowCount from '~/core/hooks/useFollowCount';
 
 import FollowingsList from '~/social/pages/UserFeed/Followers/FollowingsList';
 import FollowersList from '~/social/pages/UserFeed/Followers/FollowersList';
 import PendingList from '~/social/pages/UserFeed/Followers/PendingList';
 import { FollowersTabs, PENDING_TAB } from '~/social/pages/UserFeed/Followers/constants';
-import useFollowersList from '~/core/hooks/useFollowersList';
 
 const Followers = ({
   currentUserId,
@@ -25,34 +27,41 @@ const Followers = ({
 
   const { formatMessage } = useIntl();
 
+  const { followerCount, followingCount } = useFollowCount(userId);
   const [pendingUsers] = useFollowersList(currentUserId, FollowRequestStatus.Pending);
 
   const isMe = currentUserId === userId;
 
   useEffect(() => {
+    const tabs = getTabs();
+
     if (pendingUsers?.length && isMe && isPrivateNetwork) {
       setAllTabs(
-        Object.values(FollowersTabs)
-          .map((value) => ({
-            value,
-            label: value,
-          }))
-          .concat({
-            value: PENDING_TAB,
-            label: formatMessage({ id: 'tabs.pending' }),
-          }),
+        tabs.concat({
+          value: PENDING_TAB,
+          label: formatMessage({ id: 'tabs.pending' }),
+        }),
       );
     } else {
-      setAllTabs(
-        Object.values(FollowersTabs).map((value) => ({
-          value,
-          label: value,
-        })),
-      );
-
+      setAllTabs(tabs);
       setActiveTab(FollowersTabs.FOLLOWINGS);
     }
   }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab]);
+
+  const getTabs = () => {
+    const tabs = [
+      {
+        value: FollowersTabs.FOLLOWINGS,
+        label: `${toHumanString(followingCount)} ${FollowersTabs.FOLLOWINGS}`,
+      },
+      {
+        value: FollowersTabs.FOLLOWERS,
+        label: `${toHumanString(followerCount)} ${FollowersTabs.FOLLOWERS}`,
+      },
+    ];
+
+    return tabs;
+  };
 
   return (
     <div>

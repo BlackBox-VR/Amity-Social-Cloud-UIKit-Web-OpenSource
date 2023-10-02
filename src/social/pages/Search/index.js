@@ -30,7 +30,7 @@ const SocialSearch = styled(UiKitSocialSearch)`
 `;
 
 const Search = forwardRef(({ userId }) => {
-  const [allTabs, setAllTabs] = useState();
+  const [allTabs, setAllTabs] = useState([]);
   const [followActiveTab, setFollowActiveTab] = useState(FollowersTabs.FOLLOWERS);
   const [setActiveTab] = useState(UserFeedTabs.FOLLOWERS);
 
