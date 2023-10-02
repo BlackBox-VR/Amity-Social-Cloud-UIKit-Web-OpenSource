@@ -1,9 +1,9 @@
 import { FollowRequestStatus } from '@amityco/js-sdk';
 import { FormattedMessage, useIntl } from 'react-intl';
 import React, { useMemo } from 'react';
+import { toHumanString } from 'human-readable-numbers';
 
 import useUser from '~/core/hooks/useUser';
-import { formatCompactNumber } from '~/helpers/utils';
 import { WEB_COMMUNITY_URL } from '~/constants';
 
 import PaginatedList from '~/core/components/PaginatedList';
@@ -49,7 +49,7 @@ const UserItem = ({ userId, isShowFollow }) => {
         </UserHeaderTitle>
         {!isShowFollow && <UserHeaderLevel>LVL {parseInt(heroLevel ?? 0)}</UserHeaderLevel>}
         <UserHeaderTrophies>
-          {formatCompactNumber(trophies)} <GoldCup />
+          {toHumanString(trophies)} <GoldCup />
         </UserHeaderTrophies>
         {isShowFollow && (
           <UserFollow>
