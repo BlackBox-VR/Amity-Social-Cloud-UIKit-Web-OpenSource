@@ -1,8 +1,9 @@
 import { FollowRequestStatus } from '@amityco/js-sdk';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import React, { useMemo } from 'react';
 import { toHumanString } from 'human-readable-numbers';
 
+import useFollow from '~/core/hooks/useFollow';
 import useUser from '~/core/hooks/useUser';
 import { WEB_COMMUNITY_URL } from '~/constants';
 
@@ -26,8 +27,10 @@ import {
   FollowButton,
 } from '~/social/pages/UserFeed/Followers/styles';
 
-const UserItem = ({ userId, isShowFollow }) => {
+const UserItem = ({ currentUserId, userId, isShowFollow }) => {
   const { formatMessage } = useIntl();
+  const { follow, isFollowNone } = useFollow(currentUserId, userId);
+
   const { user, file } = useUser(userId, [userId]);
   const { heroLevel, trophies } = user?.metadata ?? {};
 
@@ -53,7 +56,11 @@ const UserItem = ({ userId, isShowFollow }) => {
         </UserHeaderTrophies>
         {isShowFollow && (
           <UserFollow>
-            <FollowButton>{formatMessage({ id: 'follow.button.label' })}</FollowButton>
+            <FollowButton disabled={!isFollowNone} onClick={follow}>
+              {isFollowNone
+                ? formatMessage({ id: 'follow.button.label' })
+                : formatMessage({ id: 'following.button.label' })}
+            </FollowButton>
           </UserFollow>
         )}
       </Header>
@@ -61,7 +68,7 @@ const UserItem = ({ userId, isShowFollow }) => {
   );
 };
 
-const List = ({ profileUserId, isShowFollow, hook, emptyMessage }) => {
+const List = ({ profileUserId, currentUserId, isShowFollow, hook, emptyMessage }) => {
   const [followings, hasMore, loadMore, loading, loadingMore] = hook(
     profileUserId,
     FollowRequestStatus.Accepted,
@@ -101,7 +108,12 @@ const List = ({ profileUserId, isShowFollow, hook, emptyMessage }) => {
         skeleton ? (
           <Skeleton key={userId} count={3} style={{ fontSize: 8 }} />
         ) : (
-          <UserItem key={userId} userId={userId} isShowFollow={isShowFollow} />
+          <UserItem
+            key={userId}
+            currentUserId={currentUserId}
+            userId={userId}
+            isShowFollow={isShowFollow}
+          />
         )
       }
     </PaginatedList>

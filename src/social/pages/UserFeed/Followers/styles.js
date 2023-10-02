@@ -102,15 +102,19 @@ export const UserFollow = styled.div`
 `;
 
 export const FollowButton = styled.button`
-  background: ${blueBackgroundImage};
+  background: ${({ disabled }) => (!disabled ? blueBackgroundImage : greyBackgroundImage)};
   width: 84px;
   height: 30px;
   border: 0;
   color: #ffffff;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   ${({ theme }) => theme.typography.captionBold}
 
   &:hover:not(:disabled) {
     opacity: 0.8;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.6;
   }
 `;
