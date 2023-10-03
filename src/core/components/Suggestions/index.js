@@ -84,10 +84,11 @@ const Suggestions = ({ items, onPick = () => {}, append, children }) => {
   });
 
   return items.length ? (
-    <MenuList ref={list} onMouseLeave={onMouseLeave}>
+    <MenuList className="menu-list" ref={list} onMouseLeave={onMouseLeave}>
       {items.map((item, index) => (
         <MenuItem
           key={`#${index}`}
+          className="menu-item"
           hover={index === active}
           onClick={onClick(index)}
           onMouseEnter={onMouseEnter(index)}

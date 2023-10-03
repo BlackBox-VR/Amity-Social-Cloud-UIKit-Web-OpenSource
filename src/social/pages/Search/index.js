@@ -36,6 +36,10 @@ const SocialSearch = styled(UiKitSocialSearch)`
       color: #fff;
       border-radius: 6px;
     }
+
+    .menu-item:hover {
+      background: #434343;
+    }
   }
 `;
 
