@@ -86,6 +86,7 @@ export const UserHeaderTrophies = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  text-transform: uppercase;
 
   svg {
     width: 12px;
