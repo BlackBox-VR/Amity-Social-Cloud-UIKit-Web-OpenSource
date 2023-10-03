@@ -34,11 +34,6 @@ export const Header = styled.div`
   grid-template-columns: ${({ isShowFollow }) =>
     isShowFollow ? 'min-content auto 80px 100px' : 'min-content auto 70px 80px'};
   grid-gap: 0 0.5em;
-
-  div > div {
-    border-radius: 0;
-    border: 1px solid #313131;
-  }
 `;
 
 export const ListEmptyState = styled(EmptyState)`
