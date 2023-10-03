@@ -12,7 +12,7 @@ import { Wrapper, StyledTabs } from './styles';
 const SocialSearch = styled(UiKitSocialSearch)`
   padding: 8px 10px;
 
-  div > div {
+  .autocomplete-input {
     background: #141516;
     border: 0;
     border-radius: 10px;
@@ -25,6 +25,16 @@ const SocialSearch = styled(UiKitSocialSearch)`
     input {
       color: #fff;
       height: 40px;
+    }
+  }
+
+  .autocomplete-menu {
+    border: 0;
+
+    > div {
+      background: #575757;
+      color: #fff;
+      border-radius: 6px;
     }
   }
 `;
