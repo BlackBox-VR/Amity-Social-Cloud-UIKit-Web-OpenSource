@@ -41,6 +41,7 @@ const Search = forwardRef(({ userId }) => {
       <Followers
         userId={userId}
         activeTab={followActiveTab}
+        allTabs={allTabs}
         setActiveTab={setFollowActiveTab}
         setUserFeedTab={setActiveTab}
         setAllTabs={setAllTabs}

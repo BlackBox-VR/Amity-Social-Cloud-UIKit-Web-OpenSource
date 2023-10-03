@@ -4,7 +4,7 @@ import React from 'react';
 import useFollowersList from '~/core/hooks/useFollowersList';
 import List from '~/social/pages/UserFeed/Followers/List';
 
-const FollowersList = ({ currentUserId, profileUserId }) => {
+const FollowersList = ({ currentUserId, profileUserId, onFollwingMember }) => {
   const { formatMessage } = useIntl();
 
   return (
@@ -14,6 +14,7 @@ const FollowersList = ({ currentUserId, profileUserId }) => {
       emptyMessage={formatMessage({ id: 'follow.placeholder.noFollowers' })}
       hook={useFollowersList}
       isShowFollow
+      onFollwingMember={onFollwingMember}
     />
   );
 };

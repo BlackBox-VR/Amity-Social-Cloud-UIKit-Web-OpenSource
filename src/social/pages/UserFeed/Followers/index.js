@@ -18,6 +18,7 @@ const Followers = ({
   currentUserId,
   userId,
   activeTab,
+  allTabs,
   setActiveTab,
   networkSettings,
   setUserFeedTab,
@@ -27,7 +28,7 @@ const Followers = ({
 
   const { formatMessage } = useIntl();
 
-  const { followerCount, followingCount } = useFollowCount(userId);
+  const { followerCount = 0, followingCount = 0 } = useFollowCount(userId);
   const [pendingUsers] = useFollowersList(currentUserId, FollowRequestStatus.Pending);
 
   const isMe = currentUserId === userId;
@@ -46,7 +47,7 @@ const Followers = ({
       setAllTabs(tabs);
       setActiveTab(FollowersTabs.FOLLOWINGS);
     }
-  }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab]);
+  }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab, getTabs]);
 
   const getTabs = useCallback(() => {
     const tabs = [
@@ -63,6 +64,12 @@ const Followers = ({
     return tabs;
   }, [followingCount, followerCount]);
 
+  const onFollwingMember = () => {
+    const newAllTabs = [...allTabs];
+    newAllTabs[0].label = `${toHumanString(followingCount + 1)} ${FollowersTabs.FOLLOWINGS}`;
+    setAllTabs(newAllTabs);
+  };
+
   return (
     <div>
       {activeTab === FollowersTabs.FOLLOWINGS && (
@@ -74,6 +81,7 @@ const Followers = ({
           currentUserId={currentUserId}
           profileUserId={userId}
           setUserFeedTab={setUserFeedTab}
+          onFollwingMember={onFollwingMember}
         />
       )}
 
@@ -86,6 +94,7 @@ Followers.propTypes = {
   currentUserId: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   activeTab: PropTypes.string.isRequired,
+  allTabs: PropTypes.array.isRequired,
   setActiveTab: PropTypes.func.isRequired,
   networkSettings: PropTypes.object.isRequired,
   setAllTabs: PropTypes.func.isRequired,
