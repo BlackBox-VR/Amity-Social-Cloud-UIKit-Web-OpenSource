@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { FollowRequestStatus } from '@amityco/js-sdk';
@@ -48,7 +48,7 @@ const Followers = ({
     }
   }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab]);
 
-  const getTabs = () => {
+  const getTabs = useCallback(() => {
     const tabs = [
       {
         value: FollowersTabs.FOLLOWINGS,
@@ -61,7 +61,7 @@ const Followers = ({
     ];
 
     return tabs;
-  };
+  }, [followingCount, followerCount]);
 
   return (
     <div>
