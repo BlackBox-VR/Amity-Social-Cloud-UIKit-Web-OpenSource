@@ -28,7 +28,7 @@ const Followers = ({
 
   const { formatMessage } = useIntl();
 
-  const { followerCount = 0, followingCount = 0 } = useFollowCount(userId);
+  const { followerCount, followingCount } = useFollowCount(userId);
   const [pendingUsers] = useFollowersList(currentUserId, FollowRequestStatus.Pending);
 
   const isMe = currentUserId === userId;
@@ -47,7 +47,15 @@ const Followers = ({
       setAllTabs(tabs);
       setActiveTab(FollowersTabs.FOLLOWINGS);
     }
-  }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab, getTabs]);
+  }, [
+    formatMessage,
+    isMe,
+    isPrivateNetwork,
+    pendingUsers,
+    setActiveTab,
+    followingCount,
+    followerCount,
+  ]);
 
   const getTabs = useCallback(() => {
     const tabs = [
