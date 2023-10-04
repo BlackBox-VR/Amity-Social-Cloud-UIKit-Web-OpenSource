@@ -87,7 +87,7 @@ const UIPostHeader = ({
         backgroundImage={UserImage}
         trophies={trophies}
         loading={loading}
-        onClick={onClickUser}
+        {...(!loading && { onClick: onClickUser })}
       />
       <PostInfo data-qa-anchor="post-header-post-info">
         {loading ? (
