@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { FollowRequestStatus } from '@amityco/js-sdk';
@@ -18,9 +18,9 @@ const Followers = ({
   currentUserId,
   userId,
   activeTab,
+  allTabs,
   setActiveTab,
   networkSettings,
-  setUserFeedTab,
   setAllTabs,
 }) => {
   const isPrivateNetwork = utils.isPrivateNetwork(networkSettings);
@@ -46,9 +46,17 @@ const Followers = ({
       setAllTabs(tabs);
       setActiveTab(FollowersTabs.FOLLOWINGS);
     }
-  }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab]);
+  }, [
+    formatMessage,
+    isMe,
+    isPrivateNetwork,
+    pendingUsers,
+    setActiveTab,
+    followingCount,
+    followerCount,
+  ]);
 
-  const getTabs = () => {
+  const getTabs = useCallback(() => {
     const tabs = [
       {
         value: FollowersTabs.FOLLOWINGS,
@@ -61,6 +69,12 @@ const Followers = ({
     ];
 
     return tabs;
+  }, [followingCount, followerCount]);
+
+  const onFollwingMember = () => {
+    const newAllTabs = [...allTabs];
+    newAllTabs[0].label = `${toHumanString(followingCount + 1)} ${FollowersTabs.FOLLOWINGS}`;
+    setAllTabs(newAllTabs);
   };
 
   return (
@@ -73,7 +87,8 @@ const Followers = ({
         <FollowersList
           currentUserId={currentUserId}
           profileUserId={userId}
-          setUserFeedTab={setUserFeedTab}
+          isShowFollow
+          onFollwingMember={onFollwingMember}
         />
       )}
 
@@ -86,6 +101,7 @@ Followers.propTypes = {
   currentUserId: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   activeTab: PropTypes.string.isRequired,
+  allTabs: PropTypes.array.isRequired,
   setActiveTab: PropTypes.func.isRequired,
   networkSettings: PropTypes.object.isRequired,
   setAllTabs: PropTypes.func.isRequired,

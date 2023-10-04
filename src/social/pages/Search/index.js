@@ -5,14 +5,13 @@ import styled from 'styled-components';
 import UiKitSocialSearch from '~/social/components/SocialSearch';
 import Followers from '~/social/pages/UserFeed/Followers';
 import { FollowersTabs } from '~/social/pages/UserFeed/Followers/constants';
-import { UserFeedTabs } from '~/social/pages/UserFeed/constants';
 
 import { Wrapper, StyledTabs } from './styles';
 
 const SocialSearch = styled(UiKitSocialSearch)`
   padding: 8px 10px;
 
-  div > div {
+  .autocomplete-input {
     background: #141516;
     border: 0;
     border-radius: 10px;
@@ -27,12 +26,25 @@ const SocialSearch = styled(UiKitSocialSearch)`
       height: 40px;
     }
   }
+
+  .autocomplete-menu {
+    border: 0;
+
+    > div {
+      background: #575757;
+      color: #fff;
+      border-radius: 6px;
+    }
+
+    .menu-item:hover {
+      background: #434343;
+    }
+  }
 `;
 
 const Search = forwardRef(({ userId }) => {
   const [allTabs, setAllTabs] = useState([]);
   const [followActiveTab, setFollowActiveTab] = useState(FollowersTabs.FOLLOWERS);
-  const [setActiveTab] = useState(UserFeedTabs.FOLLOWERS);
 
   return (
     <Wrapper>
@@ -41,8 +53,8 @@ const Search = forwardRef(({ userId }) => {
       <Followers
         userId={userId}
         activeTab={followActiveTab}
+        allTabs={allTabs}
         setActiveTab={setFollowActiveTab}
-        setUserFeedTab={setActiveTab}
         setAllTabs={setAllTabs}
       />
     </Wrapper>

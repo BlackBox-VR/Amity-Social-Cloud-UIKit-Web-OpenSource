@@ -16,15 +16,17 @@ import { tabs, UserFeedTabs } from './constants';
 import { FollowersTabs } from '~/social/pages/UserFeed/Followers/constants';
 import useFollow from '~/core/hooks/useFollow';
 import { Wrapper } from './styles';
-import {BackButton, Header, Title} from "~/social/pages/CategoryCommunities/styles";
-import ArrowLeft from "~/icons/ArrowLeft";
-import {PageTypes} from "~/social/constants";
-import {useNavigation} from "~/social/providers/NavigationProvider";
+import { StyledTabs } from '~/social/pages/Search/styles';
+import { BackButton, Header, Title } from '~/social/pages/CategoryCommunities/styles';
+import ArrowLeft from '~/icons/ArrowLeft';
+import { PageTypes } from '~/social/constants';
+import { useNavigation } from '~/social/providers/NavigationProvider';
 
 const UserFeed = ({ userId, currentUserId, networkSettings }) => {
   const isPrivateNetwork = utils.isPrivateNetwork(networkSettings);
 
   const [activeTab, setActiveTab] = useState(UserFeedTabs.TIMELINE);
+  const [allTabs, setAllTabs] = useState([]);
   const [followActiveTab, setFollowActiveTab] = useState(FollowersTabs.FOLLOWINGS);
 
   const isMe = userId === currentUserId;
@@ -41,28 +43,19 @@ const UserFeed = ({ userId, currentUserId, networkSettings }) => {
   return (
     // key prop is necessary here, without it this part will never re-render !!!
     <Wrapper>
-        <Header>
-            <BackButton onClick={onBack}>
-                <ArrowLeft height={14} />
-            </BackButton>
+      <Header>
+        <BackButton onClick={onBack}>
+          <ArrowLeft height={14} />
+        </BackButton>
 
-            {lastPage.type === PageTypes.NewsFeed && (
-                <Title>{"Main Feed"}</Title>
-            )}
+        {lastPage.type === PageTypes.NewsFeed && <Title>{'Main Feed'}</Title>}
 
-            {lastPage.type === PageTypes.Search && (
-                <Title>{"Search & Communities"}</Title>
-            )}
+        {lastPage.type === PageTypes.Search && <Title>{'Search & Communities'}</Title>}
 
-            {lastPage.type === PageTypes.Explore && (
-                <Title>{"Explore"}</Title>
-            )}
+        {lastPage.type === PageTypes.Explore && <Title>{'Explore'}</Title>}
 
-            {lastPage.type === PageTypes.CommunityFeed && (
-                <Title>{"Community Feed"}</Title>
-            )}
-            
-        </Header>
+        {lastPage.type === PageTypes.CommunityFeed && <Title>{'Community Feed'}</Title>}
+      </Header>
       <UserInfo
         key={userId}
         userId={userId}
@@ -92,12 +85,16 @@ const UserFeed = ({ userId, currentUserId, networkSettings }) => {
       )}
 
       {activeTab === UserFeedTabs.FOLLOWERS && !isHiddenProfile && (
-        <Followers
-          userId={userId}
-          activeTab={followActiveTab}
-          setActiveTab={setFollowActiveTab}
-          setUserFeedTab={setActiveTab}
-        />
+        <div>
+          <StyledTabs tabs={allTabs} activeTab={followActiveTab} onChange={setFollowActiveTab} />
+          <Followers
+            userId={userId}
+            activeTab={followActiveTab}
+            allTabs={allTabs}
+            setActiveTab={setFollowActiveTab}
+            setAllTabs={setAllTabs}
+          />
+        </div>
       )}
     </Wrapper>
   );

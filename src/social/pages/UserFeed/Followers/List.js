@@ -27,7 +27,7 @@ import {
   FollowButton,
 } from '~/social/pages/UserFeed/Followers/styles';
 
-const UserItem = ({ currentUserId, userId, isShowFollow }) => {
+const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember }) => {
   const { formatMessage } = useIntl();
   const { follow, isFollowNone } = useFollow(currentUserId, userId);
 
@@ -36,6 +36,11 @@ const UserItem = ({ currentUserId, userId, isShowFollow }) => {
 
   const goToWebProfile = (username) => {
     window.open(`${WEB_COMMUNITY_URL}/member/${username}`, '_blank');
+  };
+
+  const onFollow = () => {
+    follow();
+    onFollwingMember();
   };
 
   return (
@@ -56,7 +61,7 @@ const UserItem = ({ currentUserId, userId, isShowFollow }) => {
         </UserHeaderTrophies>
         {isShowFollow && (
           <UserFollow>
-            <FollowButton disabled={!isFollowNone} onClick={follow}>
+            <FollowButton disabled={!isFollowNone} onClick={onFollow}>
               {isFollowNone
                 ? formatMessage({ id: 'follow.button.label' })
                 : formatMessage({ id: 'following.button.label' })}
@@ -68,7 +73,14 @@ const UserItem = ({ currentUserId, userId, isShowFollow }) => {
   );
 };
 
-const List = ({ profileUserId, currentUserId, isShowFollow, hook, emptyMessage }) => {
+const List = ({
+  profileUserId,
+  currentUserId,
+  isShowFollow,
+  hook,
+  emptyMessage,
+  onFollwingMember,
+}) => {
   const [followings, hasMore, loadMore, loading, loadingMore] = hook(
     profileUserId,
     FollowRequestStatus.Accepted,
@@ -113,6 +125,7 @@ const List = ({ profileUserId, currentUserId, isShowFollow, hook, emptyMessage }
             currentUserId={currentUserId}
             userId={userId}
             isShowFollow={isShowFollow}
+            onFollwingMember={onFollwingMember}
           />
         )
       }

@@ -100,6 +100,7 @@ const InputAutocomplete = ({
   return (
     <Container ref={containerRef}>
       <InputText
+        className="autocomplete-input"
         data-qa-anchor={dataQaAnchor}
         value={value}
         invalid={invalid}
@@ -112,7 +113,7 @@ const InputAutocomplete = ({
         onClick={() => setOpen(true)}
       />
       {open && (
-        <SuggestionsMenu>
+        <SuggestionsMenu className="autocomplete-menu">
           {Object.keys(items).length > 1 && (
             <InputAutocompleteTabs
               tabs={Object.keys(items).map((key) => ({
