@@ -21,7 +21,6 @@ const Followers = ({
   allTabs,
   setActiveTab,
   networkSettings,
-  setUserFeedTab,
   setAllTabs,
 }) => {
   const isPrivateNetwork = utils.isPrivateNetwork(networkSettings);
@@ -88,7 +87,7 @@ const Followers = ({
         <FollowersList
           currentUserId={currentUserId}
           profileUserId={userId}
-          setUserFeedTab={setUserFeedTab}
+          isShowFollow
           onFollwingMember={onFollwingMember}
         />
       )}

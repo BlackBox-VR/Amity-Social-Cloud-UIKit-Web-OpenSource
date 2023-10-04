@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import UiKitSocialSearch from '~/social/components/SocialSearch';
 import Followers from '~/social/pages/UserFeed/Followers';
 import { FollowersTabs } from '~/social/pages/UserFeed/Followers/constants';
-import { UserFeedTabs } from '~/social/pages/UserFeed/constants';
 
 import { Wrapper, StyledTabs } from './styles';
 
@@ -46,7 +45,6 @@ const SocialSearch = styled(UiKitSocialSearch)`
 const Search = forwardRef(({ userId }) => {
   const [allTabs, setAllTabs] = useState([]);
   const [followActiveTab, setFollowActiveTab] = useState(FollowersTabs.FOLLOWERS);
-  const [setActiveTab] = useState(UserFeedTabs.FOLLOWERS);
 
   return (
     <Wrapper>
@@ -57,7 +55,6 @@ const Search = forwardRef(({ userId }) => {
         activeTab={followActiveTab}
         allTabs={allTabs}
         setActiveTab={setFollowActiveTab}
-        setUserFeedTab={setActiveTab}
         setAllTabs={setAllTabs}
       />
     </Wrapper>
