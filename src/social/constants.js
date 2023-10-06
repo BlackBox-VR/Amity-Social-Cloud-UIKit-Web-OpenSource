@@ -7,6 +7,7 @@ export const PageTypes = {
   CommunityEdit: 'communityedit',
   UserEdit: 'useredit',
   Search: 'search',
+  Post: 'post',
 };
 
 export const MemberRoles = Object.freeze({
@@ -36,10 +37,10 @@ export const MP4MimeType = 'video/mp4';
 
 export const UnityMessageBaseURLs = {
   QUEST: 'uniwebview://quest?',
-}
+};
 
 export const UnityMessageKeys = {
-    LIKE: 'like',
-    COMMENT: 'comment',
-    TEAM_POST: 'team-post',
-}
+  LIKE: 'like',
+  COMMENT: 'comment',
+  TEAM_POST: 'team-post',
+};
