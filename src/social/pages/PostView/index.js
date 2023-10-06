@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import Post from '~/social/components/post/Post';
 import { Wrapper } from './styles';
