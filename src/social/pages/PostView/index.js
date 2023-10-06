@@ -4,17 +4,7 @@ import { PostTargetType } from '@amityco/js-sdk';
 
 import withSDK from '~/core/hocs/withSDK';
 import * as utils from '~/helpers/utils';
-import MediaGallery from '~/social/components/MediaGallery';
 
-import UserInfo from '~/social/components/UserInfo';
-import FeedHeaderTabs from '~/social/components/FeedHeaderTabs';
-
-import Feed from '~/social/components/Feed';
-import Followers from '~/social/pages/UserFeed/Followers';
-
-import { tabs, UserFeedTabs } from './constants';
-import { FollowersTabs } from '~/social/pages/UserFeed/Followers/constants';
-import useFollow from '~/core/hooks/useFollow';
 import { Wrapper } from './styles';
 import { StyledTabs } from '~/social/pages/Search/styles';
 import { BackButton, Header, Title } from '~/social/pages/CategoryCommunities/styles';
