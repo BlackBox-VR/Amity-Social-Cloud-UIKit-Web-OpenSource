@@ -88,8 +88,6 @@ const Message = ({
   const isAnnouncementsAutoPost = isAutoPost && messageTags.indexOf('announcements') > -1;
   const isArenaRaidAutoPost = isAutoPost && messageTags.indexOf('arenaRaid') > -1;
 
-  if (isDeleted) return null;
-
   const getAvatarProps = () => {
     if (avatar) return { avatar };
     return { backgroundImage: UserImage };

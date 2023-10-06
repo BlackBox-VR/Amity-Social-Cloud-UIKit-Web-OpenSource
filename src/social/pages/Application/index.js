@@ -16,6 +16,7 @@ import { useNavigation } from '~/social/providers/NavigationProvider';
 import UiKitSocialSearch from '~/social/components/SocialSearch';
 import PropTypes from 'prop-types';
 import Search from '~/social/pages/Search';
+import PostView from '~/social/pages/PostView';
 import { useSDK } from '~/core/hooks/useSDK';
 
 const ApplicationContainer = styled.div`
@@ -29,16 +30,24 @@ const SocialSearch = styled(UiKitSocialSearch)`
 `;
 var hasLanded = false;
 
-const Community = forwardRef(({ landingPage, postId = null }, ref) => {
+const Community = forwardRef(({ landingPage, postId = "" }, ref) => {
+
+  console.log("COMMUNITY: landingPage: " + landingPage + ", postId: " + postId);
+
   const { currentUserId } = useSDK();
   const { page, lastPage, onChangePage } = useNavigation(landingPage);
 
-  if (landingPage && !hasLanded && landingPage !== PageTypes.NewsFeed) {
+  if (landingPage && !hasLanded && landingPage !== PageTypes.NewsFeed) 
+  {
     hasLanded = true;
     onChangePage(landingPage);
-  } else {
+  } 
+  else 
+  {
     hasLanded = true;
   }
+
+  console.log("COMMUNITY: it gets past conditions, to render the page");
 
   return (
     <ApplicationContainer>
@@ -76,6 +85,7 @@ const Community = forwardRef(({ landingPage, postId = null }, ref) => {
         {page.type === PageTypes.Search && <Search userId={currentUserId} />}
 
         {page.type === PageTypes.Post && postId != null && <PostView postId={postId} />}
+
       </MainLayout>
     </ApplicationContainer>
   );
@@ -83,6 +93,7 @@ const Community = forwardRef(({ landingPage, postId = null }, ref) => {
 
 Community.propTypes = {
   landingPage: PropTypes.string,
+  postId: PropTypes.string
 };
 
 export default Community;
