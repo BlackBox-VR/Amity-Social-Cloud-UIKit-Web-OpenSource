@@ -14,7 +14,7 @@ import { useNavigation } from '~/social/providers/NavigationProvider';
 
 const PostView = ({ postId }) => {
 
-  const { onBack, lastPage } = useNavigation();
+  console.log("POST VIEW it gets here with postId: " + postId);
 
   return (
     // key prop is necessary here, without it this part will never re-render !!!
