@@ -29,7 +29,7 @@ const SocialSearch = styled(UiKitSocialSearch)`
 `;
 var hasLanded = false;
 
-const Community = forwardRef(({ landingPage }, ref) => {
+const Community = forwardRef(({ landingPage, postId = null }, ref) => {
   const { currentUserId } = useSDK();
   const { page, lastPage, onChangePage } = useNavigation(landingPage);
 
@@ -74,6 +74,8 @@ const Community = forwardRef(({ landingPage }, ref) => {
         {page.type === PageTypes.UserEdit && <ProfileSettings userId={page.userId} />}
 
         {page.type === PageTypes.Search && <Search userId={currentUserId} />}
+
+        {page.type === PageTypes.Post && postId != null && <PostView postId={postId} />}
       </MainLayout>
     </ApplicationContainer>
   );
