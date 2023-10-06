@@ -32,8 +32,6 @@ var hasLanded = false;
 
 const Community = forwardRef(({ landingPage, postId = "" }, ref) => {
 
-  console.log("COMMUNITY: landingPage: " + landingPage + ", postId: " + postId);
-
   const { currentUserId } = useSDK();
   const { page, lastPage, onChangePage } = useNavigation(landingPage);
 
@@ -46,8 +44,6 @@ const Community = forwardRef(({ landingPage, postId = "" }, ref) => {
   {
     hasLanded = true;
   }
-
-  console.log("COMMUNITY: it gets past conditions, to render the page");
 
   return (
     <ApplicationContainer>
