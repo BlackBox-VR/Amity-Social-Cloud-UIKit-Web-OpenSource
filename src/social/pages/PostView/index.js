@@ -14,10 +14,6 @@ const PostView = forwardRef(({ postId }, ref) => {
     <Wrapper>
       <Header>
 
-        <BackButton onClick={onBack}>
-          <ArrowLeft height={14} />
-        </BackButton>
-
         <Title>{'Main Feed'}</Title>
 
       </Header> 
