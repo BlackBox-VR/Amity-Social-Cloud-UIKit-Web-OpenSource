@@ -154,7 +154,7 @@ const ChatApplication = ({
 
   useEffect(() => 
   {  
-    console.log("Hit application's useEffect for channel: " + selectedChannel);
+    console.log("Hit application's useEffect for channel v3: " + selectedChannel);
     
     if (!selectedChannel || selectedChannel === "")
     {
