@@ -58,7 +58,7 @@ export const MessageWrapper = styled.div`
 `;
 
 export const MessageContainer = styled.div`
-  min-width: 200px;
+  min-width: 350px;
 `;
 
 export const AvatarWrapper = styled.div`
