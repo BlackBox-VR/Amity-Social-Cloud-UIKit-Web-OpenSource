@@ -16,6 +16,7 @@ import { useNavigation } from '~/social/providers/NavigationProvider';
 import UiKitSocialSearch from '~/social/components/SocialSearch';
 import PropTypes from 'prop-types';
 import Search from '~/social/pages/Search';
+import PostView from '~/social/pages/PostView';
 import { useSDK } from '~/core/hooks/useSDK';
 
 const ApplicationContainer = styled.div`
