@@ -95,7 +95,7 @@ const ChatApplication = ({
     {
       if (data && data.channelId)
       {
-        console.log("Channel '" + data.displayName + "' exists! Entering...");
+        console.log("Channel '" + data.displayName + "' exists!!! Entering...");
 
         // Team chat channel was found, so enter it if you're a member
         setSelectedChannel(customChannel);
