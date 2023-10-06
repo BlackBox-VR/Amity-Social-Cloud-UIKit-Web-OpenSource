@@ -1,82 +1,94 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import { FollowRequestStatus } from '@amityco/js-sdk';
-import * as utils from '~/helpers/utils';
+import { toHumanString } from 'human-readable-numbers';
 
-import { StyledTabs } from './styles';
+import * as utils from '~/helpers/utils';
 import withSDK from '~/core/hocs/withSDK';
+import useFollowersList from '~/core/hooks/useFollowersList';
+import useFollowCount from '~/core/hooks/useFollowCount';
 
 import FollowingsList from '~/social/pages/UserFeed/Followers/FollowingsList';
 import FollowersList from '~/social/pages/UserFeed/Followers/FollowersList';
 import PendingList from '~/social/pages/UserFeed/Followers/PendingList';
 import { FollowersTabs, PENDING_TAB } from '~/social/pages/UserFeed/Followers/constants';
-import useFollowersList from '~/core/hooks/useFollowersList';
 
 const Followers = ({
   currentUserId,
   userId,
   activeTab,
+  allTabs,
   setActiveTab,
   networkSettings,
-  setUserFeedTab,
+  setAllTabs,
 }) => {
   const isPrivateNetwork = utils.isPrivateNetwork(networkSettings);
 
   const { formatMessage } = useIntl();
-  const [allTabs, setAllTabs] = useState(
-    Object.values(FollowersTabs).map((value) => ({
-      value,
-      label: value,
-    })),
-  );
 
+  const { followerCount, followingCount } = useFollowCount(userId);
   const [pendingUsers] = useFollowersList(currentUserId, FollowRequestStatus.Pending);
 
   const isMe = currentUserId === userId;
 
   useEffect(() => {
+    const tabs = getTabs();
+
     if (pendingUsers?.length && isMe && isPrivateNetwork) {
       setAllTabs(
-        Object.values(FollowersTabs)
-          .map((value) => ({
-            value,
-            label: value,
-          }))
-          .concat({
-            value: PENDING_TAB,
-            label: formatMessage({ id: 'tabs.pending' }),
-          }),
+        tabs.concat({
+          value: PENDING_TAB,
+          label: formatMessage({ id: 'tabs.pending' }),
+        }),
       );
     } else {
-      setAllTabs(
-        Object.values(FollowersTabs).map((value) => ({
-          value,
-          label: value,
-        })),
-      );
-
+      setAllTabs(tabs);
       setActiveTab(FollowersTabs.FOLLOWINGS);
     }
-  }, [formatMessage, isMe, isPrivateNetwork, pendingUsers, setActiveTab]);
+  }, [
+    formatMessage,
+    isMe,
+    isPrivateNetwork,
+    pendingUsers,
+    setActiveTab,
+    followingCount,
+    followerCount,
+  ]);
+
+  const getTabs = useCallback(() => {
+    const tabs = [
+      {
+        value: FollowersTabs.FOLLOWINGS,
+        label: `${toHumanString(followingCount)} ${FollowersTabs.FOLLOWINGS}`,
+      },
+      {
+        value: FollowersTabs.FOLLOWERS,
+        label: `${toHumanString(followerCount)} ${FollowersTabs.FOLLOWERS}`,
+      },
+    ];
+
+    return tabs;
+  }, [followingCount, followerCount]);
+
+  const onFollwingMember = () => {
+    const newAllTabs = [...allTabs];
+    newAllTabs[0].label = `${toHumanString(followingCount + 1)} ${FollowersTabs.FOLLOWINGS}`;
+    setAllTabs(newAllTabs);
+  };
 
   return (
     <div>
-      <StyledTabs tabs={allTabs} activeTab={activeTab} onChange={setActiveTab} />
-
       {activeTab === FollowersTabs.FOLLOWINGS && (
-        <FollowingsList
-          currentUserId={currentUserId}
-          profileUserId={userId}
-          setUserFeedTab={setUserFeedTab}
-        />
+        <FollowingsList currentUserId={currentUserId} profileUserId={userId} />
       )}
 
       {activeTab === FollowersTabs.FOLLOWERS && (
         <FollowersList
           currentUserId={currentUserId}
           profileUserId={userId}
-          setUserFeedTab={setUserFeedTab}
+          isShowFollow
+          onFollwingMember={onFollwingMember}
         />
       )}
 
@@ -89,9 +101,10 @@ Followers.propTypes = {
   currentUserId: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   activeTab: PropTypes.string.isRequired,
+  allTabs: PropTypes.array.isRequired,
   setActiveTab: PropTypes.func.isRequired,
   networkSettings: PropTypes.object.isRequired,
-  setUserFeedTab: PropTypes.func.isRequired,
+  setAllTabs: PropTypes.func.isRequired,
 };
 
 export default withSDK(Followers);

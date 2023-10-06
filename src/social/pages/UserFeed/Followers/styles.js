@@ -1,22 +1,16 @@
 import styled from 'styled-components';
 
-import UITabs from '~/core/components/Tabs';
 import EmptyState from '~/core/components/EmptyState';
-
-export const StyledTabs = styled(UITabs)`
-  background: ${({ theme }) => theme.palette.system.background};
-  border-radius: 4px 4px 0 0;
-  border: 1px solid #edeef2;
-  margin-bottom: 12px;
-`;
+import Avatar from '~/core/components/Avatar';
+import { blueBackgroundImage, greyBackgroundImage } from '~/icons/GlassPanelCircle';
 
 export const UserHeaderContainer = styled.div`
   width: 100%;
-  background: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0 10px;
+  color: #fff;
 
   > * {
     width: 100%;
@@ -26,7 +20,6 @@ export const UserHeaderContainer = styled.div`
 export const ButtonsContainer = styled.div`
   display: flex;
   padding: 15px;
-
   border-top: 1px solid ${({ theme }) => theme.palette.base.shade4};
 
   > *:first-child {
@@ -34,21 +27,90 @@ export const ButtonsContainer = styled.div`
   }
 `;
 
-export const Grid = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  & > * {
-    margin-bottom: 0.5rem;
-    margin-right: 0.5rem;
-  }
-`;
-
 export const Header = styled.div`
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-areas: ${({ isShowFollow }) =>
+    isShowFollow ? `'avatar title trophies button'` : `'avatar title level trophies'`};
+  grid-template-columns: ${({ isShowFollow }) =>
+    isShowFollow ? 'min-content auto 80px 100px' : 'min-content auto 70px 80px'};
+  grid-gap: 0 0.5em;
 `;
 
 export const ListEmptyState = styled(EmptyState)`
   width: 100%;
+`;
+
+export const UserHeaderAvatar = styled(Avatar)`
+  grid-area: avatar;
+`;
+
+export const UserHeaderTitle = styled.div`
+  grid-area: title;
+  ${({ theme }) => theme.typography.body}
+  display: flex;
+  min-width: 0;
+  align-items: center;
+
+  > span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-family: 700;
+    text-transform: capitalize;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+`;
+
+export const UserHeaderLevel = styled.div`
+  grid-area: level;
+  ${({ theme }) => theme.typography.body}
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const UserHeaderTrophies = styled.div`
+  grid-area: trophies;
+  ${({ theme }) => theme.typography.body}
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-transform: uppercase;
+
+  svg {
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+  }
+`;
+
+export const UserFollow = styled.div`
+  grid-area: button;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const FollowButton = styled.button`
+  background: ${({ disabled }) => (!disabled ? blueBackgroundImage : greyBackgroundImage)};
+  width: 84px;
+  height: 30px;
+  border: 0;
+  color: #ffffff;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  ${({ theme }) => theme.typography.captionBold}
+
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.6;
+  }
 `;

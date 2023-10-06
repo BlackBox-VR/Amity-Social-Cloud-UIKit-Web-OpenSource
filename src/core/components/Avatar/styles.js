@@ -85,7 +85,9 @@ export const Trophies = styled.div`
   justify-content: center;
   align-items: center;
 
-  img {
+  svg {
     margin-left: 2px;
+    width: 7px;
+    height: 7px;
   }
 `;

@@ -15,7 +15,7 @@ const defaultTheme = {
   },
   typography: {
     global: {
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, Arial, sans-serif',
+      fontFamily: 'Roboto',
       fontStyle: 'normal',
     },
     headline: {
@@ -39,7 +39,7 @@ const defaultTheme = {
       fontSize: '12px',
     },
     captionBold: {
-      fontWeight: 600,
+      fontWeight: 500,
       fontSize: '12px',
     },
   },

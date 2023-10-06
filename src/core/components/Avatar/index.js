@@ -1,14 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import cx from 'classnames';
+import { toHumanString } from 'human-readable-numbers';
 
 import customizableComponent from '~/core/hocs/customization';
 import withSize from '~/core/hocs/withSize';
 import { backgroundImage as UserImage } from '~/icons/User';
-import { formatCompactNumber } from '~/helpers/utils';
+import GoldCup from '~/icons/GoldCup';
 
 import { AvatarContainer, AvatarImage, Img, AvatarOverlay, Trophies } from './styles';
-
-import CupIcon from '~/assets/img/cup-icon.svg';
 
 const Avatar = ({
   className,
@@ -44,7 +43,7 @@ const Avatar = ({
       </AvatarImage>
       {!loading && !!trophies && (
         <Trophies>
-          {formatCompactNumber(trophies)} <img src={CupIcon} alt="" width={7} height={7} />
+          {toHumanString(trophies)} <GoldCup />
         </Trophies>
       )}
     </AvatarContainer>

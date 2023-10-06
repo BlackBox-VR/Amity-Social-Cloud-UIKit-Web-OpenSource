@@ -1,87 +1,73 @@
 import { FollowRequestStatus } from '@amityco/js-sdk';
-import { FormattedMessage, useIntl } from 'react-intl';
-import React, { useCallback, useMemo } from 'react';
+import { useIntl } from 'react-intl';
+import React, { useMemo } from 'react';
+import { toHumanString } from 'human-readable-numbers';
 
+import useFollow from '~/core/hooks/useFollow';
 import useUser from '~/core/hooks/useUser';
-import useReport from '~/social/hooks/useReport';
-import { notification } from '~/core/components/Notification';
-import {
-  Header,
-  UserHeaderContainer,
-  ListEmptyState,
-} from '~/social/pages/UserFeed/Followers/styles';
-import UserHeader from '~/social/components/UserHeader';
-import OptionMenu from '~/core/components/OptionMenu';
+import { WEB_COMMUNITY_URL } from '~/constants';
+
 import PaginatedList from '~/core/components/PaginatedList';
 import { Grid } from '~/social/components/community/CategoryCommunitiesList/styles';
 import EmptyFeedIcon from '~/icons/EmptyFeed';
 import Skeleton from '~/core/components/Skeleton';
-import { useAsyncCallback } from '~/core/hooks/useAsyncCallback';
-import { confirm } from '~/core/components/Confirm';
-import useFollow from '~/core/hooks/useFollow';
-import { useNavigation } from '~/social/providers/NavigationProvider';
-import { UserFeedTabs } from '../constants';
+import { backgroundImage as UserImage } from '~/icons/User';
+import BanIcon from '~/icons/Ban';
+import GoldCup from '~/icons/GoldCup';
 
-const UserItem = ({ profileUserId, currentUserId, userId, allowRemoveUser, setUserFeedTab }) => {
-  const { user } = useUser(userId);
-  const { onClickUser } = useNavigation();
+import {
+  Header,
+  UserHeaderContainer,
+  ListEmptyState,
+  UserHeaderAvatar,
+  UserHeaderTitle,
+  UserHeaderLevel,
+  UserHeaderTrophies,
+  UserFollow,
+  FollowButton,
+} from '~/social/pages/UserFeed/Followers/styles';
 
+const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember }) => {
   const { formatMessage } = useIntl();
-  const { isFlaggedByMe, handleReport } = useReport(user);
-  const [onReportClick] = useAsyncCallback(async () => {
-    await handleReport();
-    notification.success({
-      content: <FormattedMessage id="report.reportSent" />,
-    });
-  }, [handleReport]);
+  const { follow, isFollowNone } = useFollow(currentUserId, userId);
 
-  const { deleteFollower } = useFollow(currentUserId, userId);
+  const { user, file } = useUser(userId, [userId]);
+  const { heroLevel, trophies } = user?.metadata ?? {};
 
-  const isMyProfile = profileUserId === currentUserId;
-  const isMe = currentUserId === userId;
-
-  const onRemoveClick = () => {
-    confirm({
-      title: (
-        <FormattedMessage
-          id="follower.title.removeUser"
-          values={{ displayName: user.displayName }}
-        />
-      ),
-      content: (
-        <FormattedMessage
-          id="follower.body.removeUser"
-          values={{ displayName: user.displayName }}
-        />
-      ),
-      cancelText: formatMessage({ id: 'buttonText.cancel' }),
-      okText: formatMessage({ id: 'buttonText.remove' }),
-      onOk: deleteFollower,
-    });
+  const goToWebProfile = (username) => {
+    window.open(`${WEB_COMMUNITY_URL}/member/${username}`, '_blank');
   };
 
-  const onClickUserHeader = useCallback(() => {
-    onClickUser(userId);
-    setUserFeedTab(UserFeedTabs.TIMELINE);
-  }, [onClickUser, setUserFeedTab, userId]);
+  const onFollow = () => {
+    follow();
+    onFollwingMember();
+  };
 
   return (
-    <UserHeaderContainer key={userId}>
-      <Header>
-        <UserHeader userId={userId} isBanned={user.isGlobalBan} onClick={onClickUserHeader} />
-        <OptionMenu
-          options={[
-            !isMe && {
-              name: isFlaggedByMe ? 'report.unreportUser' : 'report.reportUser',
-              action: onReportClick,
-            },
-            allowRemoveUser &&
-              isMyProfile && {
-                name: 'follower.menuItem.removeUser',
-                action: onRemoveClick,
-              },
-          ].filter(Boolean)}
+    <UserHeaderContainer>
+      <Header isShowFollow={isShowFollow}>
+        <UserHeaderAvatar
+          avatar={file.fileUrl}
+          backgroundImage={UserImage}
+          onClick={() => goToWebProfile(user.displayName)}
         />
+        <UserHeaderTitle title={userId}>
+          <span onClick={() => goToWebProfile(user.displayName)}>{user.displayName}</span>
+          {user.isGlobalBan && <BanIcon />}
+        </UserHeaderTitle>
+        {!isShowFollow && <UserHeaderLevel>LVL {parseInt(heroLevel ?? 0)}</UserHeaderLevel>}
+        <UserHeaderTrophies>
+          {toHumanString(trophies)} <GoldCup />
+        </UserHeaderTrophies>
+        {isShowFollow && (
+          <UserFollow>
+            <FollowButton disabled={!isFollowNone} onClick={onFollow}>
+              {isFollowNone
+                ? formatMessage({ id: 'follow.button.label' })
+                : formatMessage({ id: 'following.button.label' })}
+            </FollowButton>
+          </UserFollow>
+        )}
       </Header>
     </UserHeaderContainer>
   );
@@ -90,10 +76,10 @@ const UserItem = ({ profileUserId, currentUserId, userId, allowRemoveUser, setUs
 const List = ({
   profileUserId,
   currentUserId,
+  isShowFollow,
   hook,
   emptyMessage,
-  allowRemoveUser,
-  setUserFeedTab,
+  onFollwingMember,
 }) => {
   const [followings, hasMore, loadMore, loading, loadingMore] = hook(
     profileUserId,
@@ -132,15 +118,14 @@ const List = ({
     >
       {({ skeleton, userId }) =>
         skeleton ? (
-          <Skeleton count={3} style={{ fontSize: 8 }} />
+          <Skeleton key={userId} count={3} style={{ fontSize: 8 }} />
         ) : (
           <UserItem
             key={userId}
-            userId={userId}
             currentUserId={currentUserId}
-            profileUserId={profileUserId}
-            allowRemoveUser={allowRemoveUser}
-            setUserFeedTab={setUserFeedTab}
+            userId={userId}
+            isShowFollow={isShowFollow}
+            onFollwingMember={onFollwingMember}
           />
         )
       }

@@ -14,7 +14,7 @@ import ConfigProvider from '~/social/providers/ConfigProvider';
 import NavigationProvider from '~/social/providers/NavigationProvider';
 import PostRendererProvider from '~/social/providers/PostRendererProvider';
 import Localisation from './Localisation';
-import GlobalFonts from '~/fonts/futura/fonts';
+import GlobalFonts from '~/fonts/fonts';
 import buildGlobalTheme from './theme';
 import { UIStyles } from './styles';
 
@@ -102,11 +102,6 @@ const UiKitProvider = forwardRef(
       <>
         <Helmet>
           <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-          <link
-            href="http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900"
-            rel="stylesheet"
-            type="text/css"
-          />
         </Helmet>
         <Localisation locale="en">
           <ThemeProvider theme={buildGlobalTheme(theme)}>

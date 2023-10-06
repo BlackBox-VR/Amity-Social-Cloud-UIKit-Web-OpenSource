@@ -13,7 +13,6 @@ const UserHeaderContainer = styled.div`
   grid-template-columns: min-content auto;
   grid-template-rows: min-content min-content;
   grid-gap: 0 0.5em;
-  padding: 1em;
   ${({ hasNoChildren }) =>
     hasNoChildren &&
     css`

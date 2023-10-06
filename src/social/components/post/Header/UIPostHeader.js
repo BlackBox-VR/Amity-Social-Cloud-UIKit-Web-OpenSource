@@ -87,7 +87,7 @@ const UIPostHeader = ({
         backgroundImage={UserImage}
         trophies={trophies}
         loading={loading}
-        onClick={onClickUser}
+        {...(!loading && { onClick: onClickUser })}
       />
       <PostInfo data-qa-anchor="post-header-post-info">
         {loading ? (
@@ -129,7 +129,7 @@ UIPostHeader.defaultProps = {
   hidePostTarget: false,
   trophies: 0,
   xpTitle: '',
-  teamName: 'No Team Name',
+  teamName: 'No Team',
   loading: false,
   isBanned: false,
   onClickCommunity: null,

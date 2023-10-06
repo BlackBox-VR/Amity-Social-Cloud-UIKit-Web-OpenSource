@@ -11,7 +11,6 @@ export const MenuItem = styled.div`
   padding: 8px 12px;
   cursor: pointer;
 
-  ${({ hover, theme }) => hover && `background: ${theme.palette.base.shade4};`}
   ${({ active, theme }) => active && `color: ${theme.palette.primary.shade1};`}
   
   &:hover {

@@ -16,7 +16,7 @@
   "categoryList": "Categories",
   "recommendedList": "Recommended for you",
   "exploreHeader.searchCommunityTitle": "Explore communities",
-  "exploreHeader.searchCommunityPlaceholder": "Search for users...",
+  "exploreHeader.searchCommunityPlaceholder": "Search for members...",
   "exploreHeader.createCommunityTitle": "or create your own!",
   "exploreHeader.createCommunityButton": "Create community",
   "backTitle": "Back",
@@ -112,7 +112,9 @@
   "upload.fileSizeLimit": "One of the selected file is larger than 1GB. Please select a new file.",
   "user.editProfile": "Edit profile",
   "user.message": "Message",
-  "follow.placeholder.noFollowings": "No followings found",
+  "follow.button.label": "Follow",
+  "following.button.label": "Following",
+  "follow.placeholder.noFollowings": "Not following anyone yet",
   "follow.placeholder.noFollowers": "No followers found",
 
   "ProfileSettings.editProfile": "Edit profile",
@@ -200,7 +202,7 @@
   "CategoryCommunitiesList.emptyTitle": "It's empty here...",
   "CategoryCommunitiesList.emptyDescription": "No community found in this category",
 
-  "CommentComposeBar.addComment": "Add comment",
+  "CommentComposeBar.addComment": "Post",
   "CommentComposeBar.replayTo": "Reply to ",
   "CommentComposeBar.saySomething": "Say something nice",
 

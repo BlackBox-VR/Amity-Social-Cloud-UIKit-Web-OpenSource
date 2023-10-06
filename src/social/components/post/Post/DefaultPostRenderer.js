@@ -17,8 +17,7 @@ import Content from '~/social/components/post/Post/Content';
 import useCommunity from '~/social/hooks/useCommunity';
 import useCommunityOneMember from '~/social/hooks/useCommunityOneMember';
 import AdditionalInfo from '~/social/components/post/Post/AdditionalInfo';
-import { ATHENA_API_URL, BANNER_SPRITES_URL } from '~/constants';
-import { useGETRequest } from '~/hooks/useApiResponse';
+import { BANNER_SPRITES_URL } from '~/constants';
 
 import {
   ContentSkeleton,
@@ -62,6 +61,7 @@ const DefaultPostRenderer = ({
   readonly,
   post,
   userRoles,
+  userBannerCode,
   loading,
 }) => {
   const { formatMessage } = useIntl();
@@ -75,10 +75,6 @@ const DefaultPostRenderer = ({
     targetId,
     currentUserId,
     community.userId,
-  );
-
-  const { data: headerData, isLoading: isGetHeaderData } = useGETRequest(
-    `${ATHENA_API_URL}/gettitleandbannerdetails?userid=${postedUserId}`,
   );
 
   const [onReportClick] = useAsyncCallback(async () => {
@@ -169,31 +165,19 @@ const DefaultPostRenderer = ({
 
   const hasChildrenPosts = childrenContent.length > 0;
   const postMaxLines = hasChildrenPosts ? MAX_TEXT_LINES_WITH_CHILDREN : MAX_TEXT_LINES_DEFAULT;
+  const headerBgImage = !!userBannerCode
+    ? `${BANNER_SPRITES_URL}/${userBannerCode.toLowerCase()}.png`
+    : '';
 
   // live stream post = empty text post + child livestream post
   const livestreamContent = childrenContent.find(
     (child) => child.dataType === PostDataType.LivestreamPost,
   );
 
-  const bannerCode = (headerData?.results?.profile_banner || '').toLowerCase();
-  const trophies = headerData?.results?.trophies || 0;
-  const xpTitle = headerData?.results?.xp_title || '';
-  const teamName = headerData?.results?.team_name || (!isGetHeaderData ? 'No Team Name' : '');
-
   return (
     <PostContainer data-qa-anchor="post" className={className}>
-      <PostHeadContainer
-        isLoading={loading}
-        headerBgImage={bannerCode ? `${BANNER_SPRITES_URL}/${bannerCode}.png` : ''}
-      >
-        <Header
-          hidePostTarget={hidePostTarget}
-          postId={postId}
-          trophies={+trophies}
-          xpTitle={xpTitle}
-          teamName={teamName}
-          loading={loading}
-        />
+      <PostHeadContainer isLoading={loading} headerBgImage={headerBgImage}>
+        <Header hidePostTarget={hidePostTarget} postId={postId} loading={loading} />
         {!loading && <OptionMenu options={allOptions} data-qa-anchor="post-options-button" />}
       </PostHeadContainer>
 
@@ -274,6 +258,7 @@ DefaultPostRenderer.propTypes = {
     metadata: PropTypes.object,
   }),
   userRoles: PropTypes.arrayOf(PropTypes.string),
+  userBannerCode: PropTypes.string,
   loading: PropTypes.bool,
 };
 
@@ -293,6 +278,7 @@ DefaultPostRenderer.defaultProps = {
   readonly: false,
   post: {},
   userRoles: [],
+  userBannerCode: '',
   loading: false,
 };
 
