@@ -25,7 +25,7 @@ const ChatApplication = ({
   onAddNewChannel,
   onEditChatMember,
 }) => {  
-  console.log("Hit the application page.");
+  console.log("Hit the application page. v3");
 
   const { formatMessage } = useIntl();
   const [currentChannelData, setCurrentChannelData] = useState(null);
@@ -95,7 +95,7 @@ const ChatApplication = ({
     {
       if (data && data.channelId)
       {
-        console.log("Channel '" + data.displayName + "' exists! Entering...");
+        console.log("Channel '" + data.displayName + "' exists!!! Entering...");
 
         // Team chat channel was found, so enter it if you're a member
         setSelectedChannel(customChannel);
@@ -154,7 +154,7 @@ const ChatApplication = ({
 
   useEffect(() => 
   {  
-    console.log("Hit application's useEffect for channel: " + selectedChannel);
+    console.log("Hit application's useEffect for channel v3: " + selectedChannel);
     
     if (!selectedChannel || selectedChannel === "")
     {
