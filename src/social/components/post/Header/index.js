@@ -2,13 +2,15 @@ import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { PostTargetType } from '@amityco/js-sdk';
 import { FormattedMessage } from 'react-intl';
+
+import { WEB_COMMUNITY_URL } from '~/constants';
 import usePost from '~/social/hooks/usePost';
 import useCommunity from '~/social/hooks/useCommunity';
 import { useNavigation } from '~/social/providers/NavigationProvider';
 import UIPostHeader from './UIPostHeader';
 
-const PostHeader = ({ postId, hidePostTarget, loading }) => {
-  const { onClickCommunity, onClickUser } = useNavigation();
+const PostHeader = ({ postId, currentUserId, hidePostTarget, loading }) => {
+  const { onClickCommunity } = useNavigation();
   const { post, file, user } = usePost(postId);
 
   const { targetId, targetType, postedUserId } = post;
@@ -19,7 +21,12 @@ const PostHeader = ({ postId, hidePostTarget, loading }) => {
   const postTargetName = isCommunityPost ? community?.displayName : null;
   const handleClickCommunity = isCommunityPost ? () => onClickCommunity(targetId) : null;
 
-  const handleClickUser = () => onClickUser(postedUserId);
+  const handleClickUser = () => {
+    window.open(
+      `${WEB_COMMUNITY_URL}/member/${user.displayName}?version=webview&userId=${currentUserId}`,
+      '_self',
+    );
+  };
 
   const trophies = user?.metadata?.trophies || 0;
   const xpTitle = user?.metadata?.xpTitle?.title || '';
