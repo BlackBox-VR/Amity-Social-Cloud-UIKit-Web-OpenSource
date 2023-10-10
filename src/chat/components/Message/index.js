@@ -95,7 +95,7 @@ const Message = ({
 
   return (
     <MessageReservedRow isIncoming={isIncoming}>
-      <MessageWrapper>
+      <MessageWrapper isAutoPost={isAutoPost}>
         {!isAutoPost && (
           <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
         )}
