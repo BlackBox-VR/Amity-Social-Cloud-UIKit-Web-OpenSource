@@ -54,15 +54,16 @@ export const MessageReservedRow = styled.div`
 
 export const MessageWrapper = styled.div`
   display: flex;
-  max-width: 60%;
+  width: ${({ isAutoPost }) => (isAutoPost ? '80%' : '90%')};
 `;
 
 export const MessageContainer = styled.div`
-  min-width: 200px;
+  flex: 1;
 `;
 
 export const AvatarWrapper = styled.div`
   width: 52px;
+  margin-right: 10px;
   flex-shrink: 0;
 `;
 
@@ -95,7 +96,7 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
       : `
       background: white;
       color: #000;
-      border-radius: 6px 0px 6px 6px; message-body-member-activity
+      border-radius: 6px 0px 6px 6px;
   `}
 `;
 
