@@ -54,11 +54,11 @@ export const MessageReservedRow = styled.div`
 
 export const MessageWrapper = styled.div`
   display: flex;
-  max-width: 60%;
+  max-width: 80%;
 `;
 
 export const MessageContainer = styled.div`
-  min-width: 200px;
+  min-width: 300px;
 `;
 
 export const AvatarWrapper = styled.div`
