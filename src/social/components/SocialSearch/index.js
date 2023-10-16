@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
+import { useSDK } from '~/core/hooks/useSDK';
 import CommunityHeader from '~/social/components/community/Header';
 import UserHeader from '~/social/components/UserHeader';
 import customizableComponent from '~/core/hocs/customization';
@@ -30,6 +31,7 @@ const userRenderer = (users) => (userName) => {
 };
 
 const SocialSearch = ({ className, sticky = false, searchBy }) => {
+  const { currentUserId } = useSDK();
   const { onClickCommunity } = useNavigation();
   const [value, setValue] = useState('');
   const [users = [], hasMoreUsers, loadMoreUsers] = useUserQuery(value);
@@ -52,7 +54,10 @@ const SocialSearch = ({ className, sticky = false, searchBy }) => {
       const { communityId } = communities.find((item) => item.displayName === name) ?? {};
       communityId && onClickCommunity(communityId);
     } else if (activeTab === 'accounts') {
-      window.open(`${WEB_COMMUNITY_URL}/member/${name}`, '_blank');
+      window.open(
+        `${WEB_COMMUNITY_URL}/member/${name}?version=webview&userId=${currentUserId}`,
+        '_self',
+      );
     }
   };
 
