@@ -35,7 +35,7 @@ const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember }) => 
   const { heroLevel, trophies } = user?.metadata ?? {};
 
   const goToWebProfile = (username) => {
-    window.open(`${WEB_COMMUNITY_URL}/member/${username}`, '_blank');
+    window.open(`${WEB_COMMUNITY_URL}/member/${username}?version=webview&userId=${currentUserId}`, '_self');
   };
 
   const onFollow = () => {
