@@ -2,18 +2,21 @@ import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 
+import { useSDK } from '~/core/hooks/useSDK';
 import CommunityHeader from '~/social/components/community/Header';
 import UserHeader from '~/social/components/UserHeader';
 import customizableComponent from '~/core/hocs/customization';
 import useCommunitiesList from '~/social/hooks/useCommunitiesList';
 import { useNavigation } from '~/social/providers/NavigationProvider';
+import useUserQuery from '~/core/hooks/useUserQuery';
+import { WEB_COMMUNITY_URL } from '~/constants';
+
 import {
   SocialSearchContainer,
   SocialSearchInput,
   SearchIcon,
   SearchIconContainer,
 } from './styles';
-import useUserQuery from '~/core/hooks/useUserQuery';
 
 const communityRenderer = (communities) => (communityName) => {
   const { communityId } = communities.find((item) => item.displayName === communityName) ?? {};
@@ -28,7 +31,8 @@ const userRenderer = (users) => (userName) => {
 };
 
 const SocialSearch = ({ className, sticky = false, searchBy }) => {
-  const { onClickCommunity, onClickUser } = useNavigation();
+  const { currentUserId } = useSDK();
+  const { onClickCommunity } = useNavigation();
   const [value, setValue] = useState('');
   const [users = [], hasMoreUsers, loadMoreUsers] = useUserQuery(value);
   const [communities, hasMoreCommunities, loadMoreCommunities] = useCommunitiesList({
@@ -50,8 +54,10 @@ const SocialSearch = ({ className, sticky = false, searchBy }) => {
       const { communityId } = communities.find((item) => item.displayName === name) ?? {};
       communityId && onClickCommunity(communityId);
     } else if (activeTab === 'accounts') {
-      const { userId } = users.find((item) => item.displayName === name) ?? {};
-      userId && onClickUser(userId);
+      window.open(
+        `${WEB_COMMUNITY_URL}/member/${name}?version=webview&userId=${currentUserId}`,
+        '_self',
+      );
     }
   };
 
