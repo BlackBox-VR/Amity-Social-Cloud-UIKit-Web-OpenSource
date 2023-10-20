@@ -25,7 +25,7 @@ const ChatApplication = ({
   onAddNewChannel,
   onEditChatMember,
 }) => {  
-  console.log("Hit the application page. v3");
+  console.log("Hit the application page");
 
   const { formatMessage } = useIntl();
   const [currentChannelData, setCurrentChannelData] = useState(null);
@@ -95,20 +95,19 @@ const ChatApplication = ({
     {
       if (data && data.channelId)
       {
-        console.log("Channel '" + data.displayName + "' exists!!! Entering...");
+        console.log("Channel '" + data.displayName + "' exists. Entering.");
 
-        // Team chat channel was found, so enter it if you're a member
+        // Team chat channel was found, so enter it 
         setSelectedChannel(customChannel);
         setSystemMessage("");
-        // If you're not a member, join the channel, and then enter it
       }
       else
       {
-        console.log("Channel found, but doesn't have name or id?");
+        console.log("Channel found, but doesn't have name or id");
       }
     });   
 
-    // A channel with that channelId does not exist
+    // A channel with that channelId does not exist, so now we want to create if the user is the leader
     searchingChannel.once('dataError', error =>
     {
       console.log("Error receiving channel: " + error);
@@ -154,7 +153,7 @@ const ChatApplication = ({
 
   useEffect(() => 
   {  
-    console.log("Hit application's useEffect for channel v3: " + selectedChannel);
+    console.log("Hit application's useEffect for channel: " + selectedChannel);
     
     if (!selectedChannel || selectedChannel === "")
     {
