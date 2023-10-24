@@ -9,7 +9,7 @@ export const Container = styled.div`
   overflow: hidden;
 
   display: grid;
-  grid-gap: 1rem 3rem;
+  grid-gap: 1rem 0cap.5;
   grid-template-columns: 2rem auto 2rem;
   grid-template-rows: min-content auto;
   grid-template-areas:
@@ -17,14 +17,13 @@ export const Container = styled.div`
     'left image right';
 
   align-items: center;
-
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  padding: 3rem;
+  padding: 3rem 0.5rem;
 
   background: rgba(0, 0, 0, 0.75);
   color: ${({ theme }) => theme.palette.system.background};
@@ -102,9 +101,11 @@ export const CloseButton = styled((props) => (
     <Remove height={20} />
   </InvisibleButton>
 ))`
+  position: relative;
   background: rgba(0, 0, 0, 0.3);
   height: 43px;
   width: 43px;
+  right: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
