@@ -42,6 +42,7 @@ export const ImgPreview = styled.img.attrs({ loading: 'lazy' })`
   display: block;
   width: 100%;
   height: auto;
+  max-height: 200vh;
 `;
 
 export const SkeletonWrapper = styled.div`
