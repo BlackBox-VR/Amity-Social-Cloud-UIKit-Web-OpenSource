@@ -59,6 +59,8 @@ export const Frame = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 `;
 
 export const Counter = styled.div`

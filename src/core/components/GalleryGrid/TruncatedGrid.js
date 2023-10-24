@@ -40,7 +40,7 @@ const Gallery = styled.div`
   width: 100%;
   height: 100%;
   grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 1fr calc((100% / 3) / 0.75);
+  /* grid-template-rows: 1fr calc((100% / 3) / 0.75); */
   grid-gap: 0.5rem;
   border-radius: 4px;
 
@@ -138,22 +138,20 @@ const TruncatedGrid = ({ className, items, onClick, children, itemKeyProp }) => 
     }[length] ?? 'many';
 
   return (
-    <Square ratio={0.75} className={className}>
-      <Gallery className={cx(config)} count={length}>
-        {items.slice(0, 3).map((item, index) => (
-          <Cell key={`#${itemKeyProp ? item[itemKeyProp] : index}`} onClick={handleClick(index)}>
-            {render(item)}
-          </Cell>
-        ))}
+    <Gallery className={cx(config)} count={length}>
+      {items.slice(0, 3).map((item, index) => (
+        <Cell key={`#${itemKeyProp ? item[itemKeyProp] : index}`} onClick={handleClick(index)}>
+          {render(item)}
+        </Cell>
+      ))}
 
-        {length >= 4 && (
-          <Cell key={`#${itemKeyProp ? items[3][itemKeyProp] : 4}`} onClick={handleClick(3)}>
-            {render(items[3])}
-            {length > 4 && <Overlay>+{length - 4}</Overlay>}
-          </Cell>
-        )}
-      </Gallery>
-    </Square>
+      {length >= 4 && (
+        <Cell key={`#${itemKeyProp ? items[3][itemKeyProp] : 4}`} onClick={handleClick(3)}>
+          {render(items[3])}
+          {length > 4 && <Overlay>+{length - 4}</Overlay>}
+        </Cell>
+      )}
+    </Gallery>
   );
 };
 
