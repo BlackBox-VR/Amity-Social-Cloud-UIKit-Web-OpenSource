@@ -97,6 +97,10 @@ const ChatApplication = ({
       {
         console.log("Channel '" + data.displayName + "' exists. Entering.");
 
+        ChannelRepository.joinChannel({
+          channelId: data.channelId
+        });
+
         // Team chat channel was found, so enter it 
         setSelectedChannel(customChannel);
         setSystemMessage("");
