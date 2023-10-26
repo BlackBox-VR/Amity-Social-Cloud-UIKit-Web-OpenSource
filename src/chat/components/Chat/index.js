@@ -54,11 +54,11 @@ const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails, chatSystem
         onChatDetailsClick={onChatDetailsClick}
       /> */}
       <MessageList channelId={channelId} />
-      {chatSystemMessage != '' && (
+      {/*chatSystemMessage != '' && (
         <b>
           <center>{chatSystemMessage}</center>
         </b>
-      )}
+      )*/}
       <MessageComposeBar onSubmit={sendMessage} />
     </ChannelContainer>
   );
