@@ -16,7 +16,6 @@ export const ImageContainer = styled.div`
   min-width: 2em;
   min-height: 2em;
   width: 100%;
-  height: 100%;
   border: ${({ theme, border }) => border && `1px solid ${theme.palette.base.shade4}`};
   border-radius: 4px;
   overflow: hidden;
@@ -29,7 +28,6 @@ export const ImageContainer = styled.div`
 export const Content = styled.div`
   position: relative;
   width: 100%;
-  height: 100%;
 `;
 
 const ImgPreviewContainerStyles = css`
@@ -41,7 +39,10 @@ const ImgPreviewContainerStyles = css`
 `;
 
 export const ImgPreview = styled.img.attrs({ loading: 'lazy' })`
-  ${ImgPreviewContainerStyles}
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 200vh;
 `;
 
 export const SkeletonWrapper = styled.div`
