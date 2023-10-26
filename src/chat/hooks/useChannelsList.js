@@ -1,6 +1,6 @@
 import { ChannelRepository, ChannelFilter } from '@amityco/js-sdk';
 import orderBy from 'lodash/orderBy';
-
+import { useMemo } from "react";
 import useLiveCollection from '~/core/hooks/useLiveCollection';
 
 function useChannelsList() {
@@ -12,7 +12,9 @@ function useChannelsList() {
     [],
   );
 
-  return [orderBy(channels, 'lastActivity', 'desc'), hasMore, loadMore];
+  const orderedChannels = useMemo(() => orderBy(channels, 'lastActivity', 'desc'), [channels])
+
+  return [orderedChannels, hasMore, loadMore];
 }
 
 export default useChannelsList;
