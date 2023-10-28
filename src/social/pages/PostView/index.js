@@ -5,6 +5,7 @@ import { Wrapper } from './styles';
 import { BackButton, Header, Title } from '~/social/pages/CategoryCommunities/styles';
 import { useNavigation } from '~/social/providers/NavigationProvider';
 import ArrowLeft from '~/icons/ArrowLeft';
+import { PageTypes } from '~/social/constants';
 
 const PostView = forwardRef(({ postId }, ref) => {
 
