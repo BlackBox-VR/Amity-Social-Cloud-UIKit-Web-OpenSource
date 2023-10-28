@@ -4,6 +4,7 @@ import Post from '~/social/components/post/Post';
 import { Wrapper } from './styles';
 import { BackButton, Header, Title } from '~/social/pages/CategoryCommunities/styles';
 import { useNavigation } from '~/social/providers/NavigationProvider';
+import ArrowLeft from '~/icons/ArrowLeft';
 
 const PostView = forwardRef(({ postId }, ref) => {
 
