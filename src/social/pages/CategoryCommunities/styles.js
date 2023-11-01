@@ -20,7 +20,7 @@ export const Title = styled.div`
 `;
 
 export const BackButton = styled(Button).attrs({ variant: 'secondary' })`
-  width: 48px;
+  width: 28px;
   padding: 2px;
 
   &:hover {
