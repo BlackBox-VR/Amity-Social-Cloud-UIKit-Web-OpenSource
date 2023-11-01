@@ -14,16 +14,18 @@ const PostView = forwardRef(({ postId }, ref) => {
   return (
     // key prop is necessary here, without it this part will never re-render !!!
     <Wrapper>
-      <Header>
+      <Header>        
         <BackButton onClick={onBack}>
           <ArrowLeft height={14} />
-          {lastPage.type === PageTypes.NewsFeed && <Title>{'Main Feed'}</Title>}
-          {lastPage.type === PageTypes.Search && <Title>{'Search & Communities'}</Title>}
-          {lastPage.type === PageTypes.Explore && <Title>{'Explore'}</Title>}
-          {lastPage.type === PageTypes.CommunityFeed && <Title>{'Community Feed'}</Title>}
         </BackButton>
 
+        {lastPage.type === PageTypes.NewsFeed && <Title onClick={onBack}>{'Main Feed'}</Title>}
+        {lastPage.type === PageTypes.Search && <Title onClick={onBack}>{'Search & Communities'}</Title>}
+        {lastPage.type === PageTypes.Explore && <Title onClick={onBack}>{'Explore'}</Title>}
+        {lastPage.type === PageTypes.CommunityFeed && <Title onClick={onBack}>{'Community Feed'}</Title>}
+
       </Header>
+      
       <Post
         key={postId}
         postId={postId}
