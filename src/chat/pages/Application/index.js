@@ -25,10 +25,7 @@ const ChatApplication = ({
   onChannelSelect,
   onAddNewChannel,
   onEditChatMember,
-}) => {  
-
-  console.log("Hit the application page.");
-
+}) => {
   const { formatMessage } = useIntl();
   const [currentChannelData, setCurrentChannelData] = useState(null);
   const [shouldShowChatDetails, setShouldShowChatDetails] = useState(false);
@@ -39,8 +36,7 @@ const ChatApplication = ({
   const [isChatModalOpened, setChatModalOpened] = useState(false);
   const openChatModal = () => setChatModalOpened(true);
 
-  const handleChannelSelect = (newChannelData) => 
-  {
+  const handleChannelSelect = (newChannelData) => {
     console.log(`(Activating chat channel: '${newChannelData?.channelId}'!)`);
     if (currentChannelData?.channelId === newChannelData?.channelId) return;
     if (currentChannelData?.channelId == newChannelData?.channelId) return;
@@ -65,113 +61,99 @@ const ChatApplication = ({
 
     setCurrentChannelData(null);
   };
-  
+
   const { currentUserId, client } = useSDK();
-  const [userModel, setUserModel] = useState(null);
-  const [selectedChannel, setSelectedChannel] = useState(null);
-  const [systemMessage, setSystemMessage] = useState("");
-  const [channels, hasMore, loadMore] = useChannelsList();
+  const [systemMessage, setSystemMessage] = useState('');
+  const [channels] = useChannelsList();
   var temporaryModel = null;
 
-
-  useEffect(() => 
-  {
-    const initChat = async () => { // Turned into an async function
-      try 
-      {
-        console.log("Hit useEffect.");
-  
-        if (channels != null && channels.length > 0 && selectedChannel == null) 
-        {
-          console.log("channels array existed, and had entries! Entering first one... ", channels[0].channelId);
-          //console.log(`(Activating chat channel: '${channels[0].channelId}'!)`);
-          handleChannelSelect({ channelId: channels[0].channelId, channelType: ChannelType.Standard });
-        } 
-        else 
-        {
+  useEffect(() => {
+    const initChat = async () => {
+      // Turned into an async function
+      try {
+        if (channels != null && channels.length > 0 && !currentChannelData) {
+          console.log(
+            'channels array existed, and had entries! Entering first one... ',
+            channels[0].channelId,
+          );
+          console.log(`(Activating chat channel: '${channels[0].channelId}'!)`);
+          handleChannelSelect({
+            channelId: channels[0].channelId,
+            channelType: ChannelType.Standard,
+          });
+        } else {
           let liveUser = UserRepository.getUser(currentUserId);
-  
-          const userModel = await new Promise(resolve => {
-            liveUser.once('dataUpdated', model => resolve(model));
+
+          const userModel = await new Promise((resolve) => {
+            liveUser.once('dataUpdated', (model) => resolve(model));
           });
 
-          setUserModel(userModel);
-
-          if (userModel && userModel.metadata.teamId) 
-          {            
+          if (userModel && userModel.metadata.teamId) {
             const channelData = await new Promise((resolve, reject) => {
               let searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
-              searchingChannel.once('dataUpdated', data => resolve(data));
-              searchingChannel.once('dataError', error => reject(error));
+              searchingChannel.once('dataUpdated', (data) => resolve(data));
+              searchingChannel.once('dataError', (error) => reject(error));
             });
-  
-            if (channelData && channelData.channelId) 
-            {
+
+            if (channelData && channelData.channelId) {
               console.log("Channel '" + channelData.displayName + "' exists. Entering.");
 
               // ChannelRepository.joinChannel({
               //   channelId: data.channelId
               // });
-
-              // Team chat channel was found, so enter it 
-              setSelectedChannel(channelData.channelId);
-            } 
-            else // channel not found
-            {
-              console.log("Error receiving channel: " + error);
+            } // channel not found
+            else {
+              console.log('Error receiving channel: ' + error);
 
               // Check if you're the leader of the team,
-              if (temporaryModel.userId === temporaryModel.metadata.teamLeaderId)
-              {
+              if (temporaryModel.userId === temporaryModel.metadata.teamLeaderId) {
                 // if you're the leader, create the channel
                 const liveChannel = ChannelRepository.createChannel({
                   channelId: customChannel,
                   type: ChannelType.Live,
-                  displayName : temporaryModel.metadata.teamName,
-                  userIds: [ temporaryModel.userId ],
-                })
-
-                liveChannel.once('dataUpdated', model => 
-                {
-                  console.log(`Channel created successfully! ${model.channelId}`);
-                  setSelectedChannel(customChannel);
-                  setSystemMessage("");
+                  displayName: temporaryModel.metadata.teamName,
+                  userIds: [temporaryModel.userId],
                 });
-                
-                liveChannel.once('dataError', error => 
-                { 
-                  console.log("Channel didn't get created: " + error); 
+
+                liveChannel.once('dataUpdated', (model) => {
+                  console.log(`Channel created successfully! ${model.channelId}`);
+                  setSystemMessage('');
+                });
+
+                liveChannel.once('dataError', (error) => {
+                  console.log("Channel didn't get created: " + error);
                 });
               }
-              
+
               // if you're not the team leader, display message "Please wait for leader to log-in and establish a team chat channel."
-              else 
-              {
-                console.log("The user '"+temporaryModel.displayName+"' ("+temporaryModel.userId+") is not the team leader. Channel creation delayed. Returning.");
+              else {
+                console.log(
+                  "The user '" +
+                    temporaryModel.displayName +
+                    "' (" +
+                    temporaryModel.userId +
+                    ') is not the team leader. Channel creation delayed. Returning.',
+                );
 
                 // Display message that leader needs to log-in first to create chat channel
-                setSystemMessage("The Team Leader is required to log-in to generate this team's chat channel!");
+                setSystemMessage(
+                  "The Team Leader is required to log-in to generate this team's chat channel!",
+                );
                 return;
               }
             }
-          } 
-          else 
-          {
-            console.log("Retrieved user, but without proper team metadata. Returning.");
+          } else {
+            console.log('Retrieved user, but without proper team metadata. Returning.');
           }
         }
-      } 
-      catch (error) 
-      {
-        console.error("An error occurred: ", error);
+      } catch (error) {
+        console.error('An error occurred: ', error);
       }
     };
-  
-    initChat();
-  }, 
-  [channels, selectedChannel]);
 
-  
+    initChat();
+  }, [channels]);
+
   return (
     <ApplicationContainer>
       {currentChannelData && (
@@ -179,7 +161,7 @@ const ChatApplication = ({
           channelId={currentChannelData.channelId}
           shouldShowChatDetails={shouldShowChatDetails}
           onChatDetailsClick={showChatDetails}
-          chatSystemMessage = {systemMessage}
+          chatSystemMessage={systemMessage}
         />
       )}
       {shouldShowChatDetails && currentChannelData && (
