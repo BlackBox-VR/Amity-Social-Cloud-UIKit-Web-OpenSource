@@ -93,10 +93,39 @@ const Message = ({
     return { backgroundImage: UserImage };
   };
 
+  function timeDifference(timestamp, locale) {
+    const msPerMinute = 60 * 1000;
+    const msPerHour = msPerMinute * 60;
+    const msPerDay = msPerHour * 24;
+    const msPerMonth = msPerDay * 30;
+    const msPerYear = msPerDay * 365;
+  
+    const current = Date.now();
+    const elapsed = current - timestamp;
+  
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  
+    if (elapsed < 5000){
+      return "just now";
+    }
+
+    if (elapsed < msPerMinute) {
+      return rtf.format(-Math.floor(elapsed / 1000), "seconds");
+    } else if (elapsed < msPerHour) {
+      return rtf.format(-Math.floor(elapsed / msPerMinute), "minutes");
+    } else if (elapsed < msPerDay) {
+      return rtf.format(-Math.floor(elapsed / msPerHour), "hours");
+    } else {
+      const formattedDate = new Date(timestamp);
+      const options = { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" };
+      return formattedDate.toLocaleDateString(locale, options);
+    }
+} 
+
   return (
     <MessageReservedRow isIncoming={isIncoming}>
       <MessageWrapper isAutoPost={isAutoPost}>
-        {!isAutoPost && (
+        {!isAutoPost && isIncoming && (
           <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
         )}
         <MessageContainer data-qa-anchor="message">
@@ -124,13 +153,7 @@ const Message = ({
             {!isDeleted && (
               <BottomLine>
                 <MessageDate>
-                  <FormattedTime 
-                  value={createdAt}
-                  day="numeric"
-                  month="short"
-                  hour="numeric"
-                  minute="2-digit" 
-                  />
+                  {timeDifference(createdAt, "en")}
                 </MessageDate>
                 {!isAutoPost && (
                   <Options
@@ -145,6 +168,9 @@ const Message = ({
             )}
           </MessageBody>
         </MessageContainer>
+        {!isAutoPost && !isIncoming && (
+          <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
+        )}
       </MessageWrapper>
     </MessageReservedRow>
   );

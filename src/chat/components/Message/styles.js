@@ -63,7 +63,8 @@ export const MessageContainer = styled.div`
 
 export const AvatarWrapper = styled.div`
   width: 52px;
-  margin-right: 10px;
+  margin-right: 12px;
+  margin-left: 12px;
   flex-shrink: 0;
 `;
 
@@ -91,12 +92,12 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
     isIncoming
       ? `
       background: white; 
-      border-radius: 0px 6px 6px 6px;
+      border-radius: 10px;
     `
       : `
       background: white;
       color: #000;
-      border-radius: 6px 0px 6px 6px;
+      border-radius: 10px;
   `}
 `;
 
