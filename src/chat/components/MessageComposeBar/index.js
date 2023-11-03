@@ -40,7 +40,7 @@ const MessageComposeBar = ({ onSubmit }) => {
         data-qa-anchor="message-compose-bar-input"
         type="text"
         value={message}
-        placeholder={formatMessage({ id: 'MessageComposeBar.placeholder' })}
+        placeholder="Say something!"
         onChange={(e) => setMessage(e.target.value)}
         onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
       />
