@@ -21,7 +21,7 @@ export const FileMessageIcon = styled(FileAttachment).attrs({ width: 18, height:
 `;
 
 export const MessageComposeBarContainer = styled.div`
-  padding: 16px 16px 16px 16px;
+  padding: 13px;
   background: #2c2f31;
   border-top: 1px solid #2c2f31;
   display: flex;
@@ -29,10 +29,10 @@ export const MessageComposeBarContainer = styled.div`
 `;
 
 export const MessageComposeBarInput = styled.input`
-  height: 38px;
-  padding: 8px;
+  height: 36px;
+  padding: 8px 10px 8px 10px;
   outline: none;
   border: 1px solid #2c2f31;
-  border-radius: 12px;
+  border-radius: 16px;
   flex-grow: 1;
 `;

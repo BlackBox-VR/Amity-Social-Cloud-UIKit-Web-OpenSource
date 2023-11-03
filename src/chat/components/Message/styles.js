@@ -54,7 +54,7 @@ export const MessageReservedRow = styled.div`
 
 export const MessageWrapper = styled.div`
   display: flex;
-  width: ${({ isAutoPost }) => (isAutoPost ? '80%' : '90%')};
+  width: ${({ isAutoPost }) => (isAutoPost ? '80%' : '85%')};
 `;
 
 export const MessageContainer = styled.div`
@@ -70,16 +70,16 @@ export const AvatarWrapper = styled.div`
 
 export const UserName = styled.div`
   color: black;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 14.2px;
+  font-weight: 500;
   margin-bottom: 4px;
 `;
 
 const CommonMessageBody = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
-  padding: 10px;
+  margin-bottom: 12px;
+  padding: 9px;
   word-break: break-word;
 
   & pre {
