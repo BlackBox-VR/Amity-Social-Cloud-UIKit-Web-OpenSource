@@ -100,7 +100,7 @@ const Message = ({
           <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
         )}
         <MessageContainer data-qa-anchor="message">
-          {!isAutoPost && <UserName>{userDisplayName}</UserName>}
+          {/*!isAutoPost && <UserName>{userDisplayName}</UserName>*/}
           <MessageBody
             type={type}
             isIncoming={isIncoming}
@@ -111,6 +111,7 @@ const Message = ({
             isAnnouncementsAutoPost={isAnnouncementsAutoPost}
             isArenaRaidAutoPost={isArenaRaidAutoPost}
           >
+            {!isAutoPost && <UserName>{userDisplayName}</UserName>}
             {isMemberActivityAutoPost && (
               <MessageHeader
                 avatar={getAvatarProps()}
@@ -123,7 +124,13 @@ const Message = ({
             {!isDeleted && (
               <BottomLine>
                 <MessageDate>
-                  <FormattedTime value={createdAt} />
+                  <FormattedTime 
+                  value={createdAt}
+                  day="numeric"
+                  month="short"
+                  hour="numeric"
+                  minute="2-digit" 
+                  />
                 </MessageDate>
                 {!isAutoPost && (
                   <Options

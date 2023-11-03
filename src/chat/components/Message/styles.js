@@ -68,7 +68,7 @@ export const AvatarWrapper = styled.div`
 `;
 
 export const UserName = styled.div`
-  color: white;
+  color: black;
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 4px;
@@ -138,11 +138,11 @@ export const UnsupportedMessageBody = styled(CommonMessageBody)`
 export const MessageDate = styled.div`
   font-size: 13px;
   opacity: 0.65;
-  margin-left: auto;
 `;
 
 export const BottomLine = styled.div`
   margin-top: 3px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
 `;
