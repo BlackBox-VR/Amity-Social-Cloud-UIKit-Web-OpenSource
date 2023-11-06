@@ -54,6 +54,7 @@ export const MessageReservedRow = styled.div`
 
 export const MessageWrapper = styled.div`
   display: flex;
+  gap: 15px;
   width: ${({ isAutoPost }) => (isAutoPost ? '80%' : '85%')};
 `;
 
@@ -63,8 +64,6 @@ export const MessageContainer = styled.div`
 
 export const AvatarWrapper = styled.div`
   width: 52px;
-  margin-right: 12px;
-  margin-left: 12px;
   flex-shrink: 0;
 `;
 
