@@ -54,7 +54,7 @@ export const MessageReservedRow = styled.div`
 
 export const MessageWrapper = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 12px;
   width: ${({ isAutoPost }) => (isAutoPost ? '80%' : '85%')};
 `;
 
