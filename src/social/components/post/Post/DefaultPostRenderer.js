@@ -183,7 +183,7 @@ const DefaultPostRenderer = ({
           postId={postId}
           loading={loading}
         />
-        {!loading && <OptionMenu options={allOptions} data-qa-anchor="post-options-button" />}
+        {!loading && metadata.type == null && <OptionMenu options={allOptions} data-qa-anchor="post-options-button" />}
       </PostHeadContainer>
 
       <PostMainContainer>
