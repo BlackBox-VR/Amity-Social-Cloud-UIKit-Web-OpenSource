@@ -9,7 +9,7 @@ export const Container = styled.div`
   overflow: hidden;
 
   display: grid;
-  grid-gap: 1rem 0cap.5;
+  grid-gap: 1rem 0.5rem;
   grid-template-columns: 2rem auto 2rem;
   grid-template-rows: min-content auto;
   grid-template-areas:
