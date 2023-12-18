@@ -29,10 +29,10 @@ export const MessageComposeBarContainer = styled.div`
 `;
 
 export const MessageComposeBarInput = styled.input`
-  height: 36px;
-  padding: 8px 10px 8px 10px;
+  height: 40px;
+  padding: 8px 8px 8px 8px;
   outline: none;
   border: 1px solid #2c2f31;
-  border-radius: 16px;
+  border-radius: 12px;
   flex-grow: 1;
 `;
