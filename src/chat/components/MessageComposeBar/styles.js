@@ -32,7 +32,8 @@ export const MessageComposeBarInput = styled.input`
   height: 40px;
   padding: 8px 8px 8px 8px;
   outline: none;
+  font-size: 16px !important;
   border: 1px solid #2c2f31;
-  border-radius: 12px;
+  border-radius: 8px;
   flex-grow: 1;
 `;
