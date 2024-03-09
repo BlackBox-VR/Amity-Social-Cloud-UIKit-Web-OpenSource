@@ -9,6 +9,7 @@ import { backgroundImage as UserImage } from '~/icons/User';
 import Options from './Options';
 import MessageContent from './MessageContent';
 import MessageHeader from './MessageHeader';
+import MessageClaim from './MessageClaim';
 
 import {
   Avatar,
@@ -79,6 +80,8 @@ const Message = ({
   messageTags,
   bannerCode,
   xpTitle,
+  metadata,
+  client,
 }) => {
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
 
@@ -166,6 +169,12 @@ const Message = ({
                 )}
               </BottomLine>
             )}
+            {isMemberActivityAutoPost && metadata?.carePointsReward > 0 &&
+              <MessageClaim
+                metadata={metadata}
+                client={client}
+              />
+            }
           </MessageBody>
         </MessageContainer>
         {!isAutoPost && !isIncoming && (
@@ -190,6 +199,8 @@ Message.propTypes = {
   messageTags: PropTypes.array,
   bannerCode: PropTypes.string,
   xpTitle: PropTypes.string,
+  metadata: PropTypes.object,
+  client: PropTypes.object,
 };
 
 Message.defaultProps = {
@@ -199,6 +210,8 @@ Message.defaultProps = {
   isIncoming: false,
   isConsequent: false,
   messageTags: [],
+  metadata: {},
+  client: {},
 };
 
 export default customizableComponent('Message', Message);

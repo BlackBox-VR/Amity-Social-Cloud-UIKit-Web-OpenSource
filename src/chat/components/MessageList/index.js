@@ -67,6 +67,8 @@ const MessageList = ({ client, channelId }) => {
                 isIncoming={isIncoming}
                 containerRef={containerRef}
                 messageTags={message.tags}
+                metadata={message.metadata}
+                client={client}
                 bannerCode={
                   bannerShortcode.length > 0 ? bannerShortcode[0].shortCode.toLowerCase() : ''
                 }

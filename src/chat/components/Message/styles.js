@@ -105,6 +105,7 @@ export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
   color: white;
   border-radius: 10px;
   box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
+  padding: 12px;
 `;
 
 export const SharedQuestsAutoPostBody = styled(CommonMessageBody)`
