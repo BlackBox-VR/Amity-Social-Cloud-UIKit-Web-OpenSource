@@ -5,13 +5,15 @@ import { BANNER_SPRITES_URL } from '~/constants';
 
 export const MessageHeaderWrapper = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 8px;
 `;
 
 export const MessageHeaderAvatar = styled(UiKitAvatar)`
   margin-right: 5px;
   border: 2px solid #fff;
+  width: 92px;
+  height: 92px;
 `;
 
 export const MessageHeaderContent = styled.div`
@@ -23,6 +25,7 @@ export const MessageHeaderContent = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   border-radius: 10px;
+  height: 92px;
 `;
 export const MessageHeaderUserName = styled.div`
   background: linear-gradient(180deg, #f87ae6 0%, #df077b 36.98%, #be3ac8 58.39%, #762188 100%);

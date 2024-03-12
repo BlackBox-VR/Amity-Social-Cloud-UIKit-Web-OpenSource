@@ -44,6 +44,8 @@ export const MessageOptionsIcon = styled(EllipsisV).attrs({ width: 11, height: 1
 
 export const Avatar = styled(UiKitAvatar)`
   margin-right: auto;
+  width: 92px;
+  height: 92px;
 `;
 
 export const MessageReservedRow = styled.div`
@@ -63,7 +65,7 @@ export const MessageContainer = styled.div`
 `;
 
 export const AvatarWrapper = styled.div`
-  width: 52px;
+  width: 92px;
   flex-shrink: 0;
 `;
 
@@ -137,7 +139,7 @@ export const UnsupportedMessageBody = styled(CommonMessageBody)`
 `;
 
 export const MessageDate = styled.div`
-  font-size: 13px;
+  font-size: 7px;
   opacity: 0.65;
 `;
 
