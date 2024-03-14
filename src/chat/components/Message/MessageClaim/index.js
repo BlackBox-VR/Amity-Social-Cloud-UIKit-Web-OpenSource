@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import ClaimIcon from '../claim-icon.svg';
@@ -33,9 +33,18 @@ const MessageClaim = ({
   client,
 }) => {
   const isClamed = (metadata?.claimedUserIds || []).indexOf(client?.currentUserId) > -1;
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ loaded, setLoaded ] = useState(false);
 
   const handleClaim = () => {
-    // put code here
+    if (!isLoading) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        setLoaded(true);
+      }, 3000);
+      // put code here
+    }
   };
 
   return (
@@ -47,11 +56,11 @@ const MessageClaim = ({
       </div>
       <div style={{ textAlign: "center" }}>
         <MessageClaimContent>1000 x 5 =</MessageClaimContent>
-        {!isClamed && <MessageClaimButton onClick={handleClaim}>
+        {!isClamed && !loaded && <MessageClaimButton onClick={handleClaim} loading={isLoading}>
           <div>{formatCompactNumber(metadata?.carePointsReward)}</div>
           <MessageClaimButtonImg src={ClaimIcon} />
         </MessageClaimButton>}
-        {!!isClamed && <MessageClaimButtonDisabled>CLAIMED</MessageClaimButtonDisabled>}
+        {(!!isClamed || loaded) && <MessageClaimButtonDisabled>CLAIMED</MessageClaimButtonDisabled>}
       </div>
     </MessageClaimWrapper>
   );
