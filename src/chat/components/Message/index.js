@@ -171,6 +171,7 @@ const Message = ({
             )}
             {isMemberActivityAutoPost && metadata?.carePointsReward > 0 &&
               <MessageClaim
+                messageId={messageId}
                 metadata={metadata}
                 client={client}
               />

@@ -31,6 +31,7 @@ const formatCompactNumber = (number, decimal = 1) => {
 const MessageClaim = ({
   metadata,
   client,
+  messageId,
 }) => {
   const isClamed = (metadata?.claimedUserIds || []).indexOf(client?.currentUserId) > -1;
   const [ isLoading, setIsLoading ] = useState(false);
@@ -69,11 +70,13 @@ const MessageClaim = ({
 MessageClaim.defaultProps = {
   metadata: {},
   client: {},
+  messageId: "",
 };
 
 MessageClaim.propTypes = {
   metadata: PropTypes.object,
   client: PropTypes.object,
+  messageId: PropTypes.string,
 };
 
 export default MessageClaim;
