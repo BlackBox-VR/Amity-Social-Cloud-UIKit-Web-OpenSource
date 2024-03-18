@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import ClaimIcon from '../claim-icon.svg';
+import {UnityMessageBaseURLs, UnityMessageKeys} from "~/social/constants";
 
 import {
   MessageClaimWrapper,
@@ -38,13 +39,15 @@ const MessageClaim = ({
   const [ loaded, setLoaded ] = useState(false);
 
   const handleClaim = () => {
-    if (!isLoading) {
+    if (!isLoading) 
+    {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
         setLoaded(true);
       }, 3000);
-      // put code here
+      
+      location.href = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
     }
   };
 
