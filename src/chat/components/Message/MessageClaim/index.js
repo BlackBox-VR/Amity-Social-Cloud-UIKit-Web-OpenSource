@@ -29,6 +29,16 @@ const formatCompactNumber = (number, decimal = 1) => {
   }
 };
 
+const getNumberSuffix = (number) =>
+{
+  if (typeof number !== 'number' || isNaN(number)) return "";
+  
+  if (number == 1) return "st";
+  else if (number == 2) return "nd";
+  else if (number == 3) return "rd";
+  else return "th";
+};
+
 const MessageClaim = ({
   metadata,
   client,
@@ -45,9 +55,11 @@ const MessageClaim = ({
       setTimeout(() => {
         setIsLoading(false);
         setLoaded(true);
-      }, 3000);
+      }, 1500);
       
-      location.href = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
+      var fullURL = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
+
+      location.href = fullURL;
     }
   };
 
@@ -55,11 +67,11 @@ const MessageClaim = ({
     <MessageClaimWrapper>
       <div>
         <MessageClaimTitle>Team Reward</MessageClaimTitle>
-        <MessageClaimContent>3rd To Complete Bonus: 5x</MessageClaimContent>
-        <MessageClaimContent>Next Person Bonus: 10x</MessageClaimContent>
+        <MessageClaimContent>{metadata?.completionOrderRank}{getNumberSuffix(metadata?.completionOrderRank)} To Complete Bonus: {metadata?.currentBonusMultiplier}x</MessageClaimContent>
+        <MessageClaimContent>Next Person Bonus: {metadata?.nextBonusMultiplier}x</MessageClaimContent>
       </div>
       <div style={{ textAlign: "center" }}>
-        <MessageClaimContent>1000 x 5 =</MessageClaimContent>
+        <MessageClaimContent>{metadata?.baseValue} x {metadata?.currentBonusMultiplier} =</MessageClaimContent>
         {!isClamed && !loaded && <MessageClaimButton onClick={handleClaim} loading={isLoading}>
           <div>{formatCompactNumber(metadata?.carePointsReward)}</div>
           <MessageClaimButtonImg src={ClaimIcon} />
