@@ -12,6 +12,7 @@ export const MessageHeaderWrapper = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
+  border-radius: 10px;
 `;
 
 export const MessageHeaderAvatar = styled(UiKitAvatar)`
