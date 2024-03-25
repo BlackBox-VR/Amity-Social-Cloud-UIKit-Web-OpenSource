@@ -15,9 +15,9 @@ const MessageHeader = ({ avatar, userDisplayName, bannerCode, xpTitle }) => {
   const headerBgImage = !!bannerCode ? `${BANNER_SPRITES_URL}/${bannerCode}.png` : '';
 
   return (
-    <MessageHeaderWrapper>
+    <MessageHeaderWrapper background={headerBgImage}>
       <MessageHeaderAvatar {...avatar} />
-      <MessageHeaderContent background={headerBgImage}>
+      <MessageHeaderContent>
         <MessageHeaderUserName>{userDisplayName}</MessageHeaderUserName>
         <XpTitle>
           <span>XP Title: </span>

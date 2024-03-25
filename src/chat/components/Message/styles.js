@@ -57,7 +57,7 @@ export const MessageReservedRow = styled.div`
 export const MessageWrapper = styled.div`
   display: flex;
   gap: 12px;
-  width: ${({ isAutoPost }) => (isAutoPost ? '80%' : '85%')};
+  width: ${({ isAutoPost }) => (isAutoPost ? '90%' : '85%')};
 `;
 
 export const MessageContainer = styled.div`
@@ -139,7 +139,7 @@ export const UnsupportedMessageBody = styled(CommonMessageBody)`
 `;
 
 export const MessageDate = styled.div`
-  font-size: 7px;
+  font-size: 11px;
   opacity: 0.65;
 `;
 

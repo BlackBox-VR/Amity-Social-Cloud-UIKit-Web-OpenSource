@@ -7,6 +7,11 @@ export const MessageHeaderWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   margin-bottom: 8px;
+  background-image: url(${({ background }) => background});
+  background-color: black;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 `;
 
 export const MessageHeaderAvatar = styled(UiKitAvatar)`
@@ -19,11 +24,6 @@ export const MessageHeaderAvatar = styled(UiKitAvatar)`
 export const MessageHeaderContent = styled.div`
   flex: 1;
   padding: 4px 10px;
-  background-image: url(${({ background }) => background});
-  background-color: black;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
   border-radius: 10px;
   height: 92px;
 `;
