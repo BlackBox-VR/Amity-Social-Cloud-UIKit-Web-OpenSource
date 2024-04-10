@@ -19,6 +19,8 @@ import useChannelsList from '~/chat/hooks/useChannelsList';
 const channelRepo = new ChannelRepository();
 
 const ChatApplication = ({
+  type,
+  secondUserId,
   membershipFilter,
   defaultChannelId,
   onMemberSelect,
@@ -66,8 +68,12 @@ const ChatApplication = ({
   const [systemMessage, setSystemMessage] = useState('');
   const [channels] = useChannelsList();
   var temporaryModel = null;
+  console.log("currentUserId -- " + currentUserId);
+  console.log("type -- " + type);
 
   useEffect(() => {
+    console.log("--channels---");
+    console.log(channels);
     const initChat = async () => {
       // Turned into an async function
       try {
@@ -151,7 +157,52 @@ const ChatApplication = ({
       }
     };
 
-    initChat();
+
+    const initMemberChat = async () => {
+      // Turned into an async function
+      const existingChannel = (channels || []).find(chnnl => {
+        return chnnl.channelId === `${currentUserId}-${secondUserId}` || chnnl.channelId === `${secondUserId}-${currentUserId}`;
+      });
+      console.log(existingChannel);
+      try {
+        if (channels != null && channels.length > 0 && !currentChannelData && !!existingChannel) {
+          console.log(
+            'channels array existed, and had entries! Entering ... ',
+            existingChannel.channelId,
+          );
+          console.log(`(Activating chat channel: '${existingChannel.channelId}'!)`);
+          handleChannelSelect({
+            channelId: existingChannel.channelId,
+            channelType: ChannelType.Standard,
+          });
+        } else if (!existingChannel) {
+          console.log("creating new DM channel");
+          const liveChannel = ChannelRepository.createChannel({
+            channelId: currentUserId + "-" + secondUserId,
+            type: ChannelType.Live,
+            displayName: "DM",
+            userIds: [currentUserId, secondUserId],
+          });
+
+          liveChannel.once('dataUpdated', (model) => {
+            console.log(`Channel created successfully! ${model.channelId}`);
+            setSystemMessage('');
+          });
+
+          liveChannel.once('dataError', (error) => {
+            console.log("Channel didn't get created: " + error);
+          });
+        }
+      } catch (error) {
+        console.error('An error occurred: ', error);
+      }
+    };
+
+    if (type === "team") {
+      initChat();
+    } else if (type === "member") {
+      initMemberChat();
+    }
   }, [channels]);
 
   return (
@@ -179,6 +230,8 @@ const ChatApplication = ({
 };
 
 ChatApplication.propTypes = {
+  type: PropTypes.string,
+  secondUserId: PropTypes.string,
   membershipFilter: PropTypes.oneOf(Object.values(ChannelMembership)),
   defaultChannelId: PropTypes.string,
   onMemberSelect: PropTypes.func,
@@ -188,6 +241,8 @@ ChatApplication.propTypes = {
 };
 
 ChatApplication.defaultProps = {
+  type: "team",
+  secondUserId: "",
   membershipFilter: ChannelMembership.None,
   defaultChannelId: null,
   onMemberSelect: () => {},
