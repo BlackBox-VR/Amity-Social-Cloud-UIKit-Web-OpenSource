@@ -77,23 +77,22 @@ const ChatApplication = ({
     const initChat = async () => {
       // Turned into an async function
       try {
-        if (channels != null && channels.length > 0 && !currentChannelData) {
+        let liveUser = UserRepository.getUser(currentUserId);
+        const userModel = await new Promise((resolve) => {
+          liveUser.once('dataUpdated', (model) => resolve(model));
+        });
+        const existingChannel = (channels || []).find(chnnl => chnnl.channelId === userModel?.metadata?.teamId);
+        if (!!existingChannel && !currentChannelData) {
           console.log(
             'channels array existed, and had entries! Entering first one... ',
-            channels[0].channelId,
+            existingChannel.channelId,
           );
-          console.log(`(Activating chat channel: '${channels[0].channelId}'!)`);
+          console.log(`(Activating chat channel: '${existingChannel.channelId}'!)`);
           handleChannelSelect({
-            channelId: channels[0].channelId,
+            channelId: existingChannel.channelId,
             channelType: ChannelType.Standard,
           });
         } else {
-          let liveUser = UserRepository.getUser(currentUserId);
-
-          const userModel = await new Promise((resolve) => {
-            liveUser.once('dataUpdated', (model) => resolve(model));
-          });
-
           if (userModel && userModel.metadata.teamId) {
             const channelData = await new Promise((resolve, reject) => {
               let searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
@@ -156,7 +155,6 @@ const ChatApplication = ({
         console.error('An error occurred: ', error);
       }
     };
-
 
     const initMemberChat = async () => {
       // Turned into an async function
