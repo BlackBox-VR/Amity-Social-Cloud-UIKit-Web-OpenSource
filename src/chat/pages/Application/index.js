@@ -178,9 +178,9 @@ const ChatApplication = ({
         } else if (!existingChannel) {
           console.log("creating new DM channel");
           const liveChannel = ChannelRepository.createChannel({
-            channelId: currentUserId + "-" + secondUserId,
-            type: ChannelType.Live,
-            displayName: "DM",
+            channelId: [currentUserId, secondUserId].sort().join("-"),
+            type: ChannelType.Community,
+            displayName: [currentUserId, secondUserId].sort().join("_"),
             userIds: [currentUserId, secondUserId],
           });
 
