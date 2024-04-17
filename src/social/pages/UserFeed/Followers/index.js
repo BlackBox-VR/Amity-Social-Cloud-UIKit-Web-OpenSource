@@ -78,7 +78,7 @@ const Followers = ({
   };
 
   return (
-    <div>
+    <div style={{ paddingBottom: "50px" }}>
       {activeTab === FollowersTabs.FOLLOWINGS && (
         <FollowingsList currentUserId={currentUserId} profileUserId={userId} />
       )}
