@@ -24,10 +24,11 @@ import {
   UserHeaderLevel,
   UserHeaderTrophies,
   UserFollow,
+  UserMessage,
   FollowButton,
 } from '~/social/pages/UserFeed/Followers/styles';
 
-const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember }) => {
+const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember, allowChat }) => {
   const { formatMessage } = useIntl();
   const { follow, isFollowNone } = useFollow(currentUserId, userId);
 
@@ -43,9 +44,13 @@ const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember }) => 
     onFollwingMember();
   };
 
+  const onStartChat = () => {
+    window.location.href = `/?type=chat&userId=${currentUserId}&secondUserId=${userId}`;
+  };
+
   return (
     <UserHeaderContainer>
-      <Header isShowFollow={isShowFollow}>
+      <Header isShowFollow={isShowFollow} allowChat={allowChat}>
         <UserHeaderAvatar
           avatar={file.fileUrl}
           backgroundImage={UserImage}
@@ -68,6 +73,13 @@ const UserItem = ({ currentUserId, userId, isShowFollow, onFollwingMember }) => 
             </FollowButton>
           </UserFollow>
         )}
+        {allowChat && (
+          <UserMessage>
+            <FollowButton onClick={onStartChat}>
+              {formatMessage({ id: 'user.message' })}
+            </FollowButton>
+          </UserMessage>
+        )}
       </Header>
     </UserHeaderContainer>
   );
@@ -80,6 +92,7 @@ const List = ({
   hook,
   emptyMessage,
   onFollwingMember,
+  allowChat,
 }) => {
   const [followings, hasMore, loadMore, loading, loadingMore] = hook(
     profileUserId,
@@ -126,6 +139,7 @@ const List = ({
             userId={userId}
             isShowFollow={isShowFollow}
             onFollwingMember={onFollwingMember}
+            allowChat={!!allowChat}
           />
         )
       }

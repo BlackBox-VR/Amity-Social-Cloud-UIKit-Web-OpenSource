@@ -30,7 +30,7 @@ const userRenderer = (users) => (userName) => {
   return !!userId && <UserHeader userId={userId} isBanned={isGlobalBan} />;
 };
 
-const SocialSearch = ({ className, sticky = false, searchBy }) => {
+const SocialSearch = ({ className, sticky = false, searchBy, allowChat }) => {
   const { currentUserId } = useSDK();
   const { onClickCommunity } = useNavigation();
   const [value, setValue] = useState('');
@@ -58,6 +58,13 @@ const SocialSearch = ({ className, sticky = false, searchBy }) => {
         `${WEB_COMMUNITY_URL}/member/${name}?version=webview&userId=${currentUserId}`,
         '_self',
       );
+    }
+  };
+
+  const handleStartChat = (name) => {
+    const { userId } = users.find((item) => item.displayName === name) ?? {};
+    if (!!userId) {
+      window.location.href = `/?type=chat&userId=${currentUserId}&secondUserId=${userId}`;
     }
   };
 
@@ -107,6 +114,8 @@ const SocialSearch = ({ className, sticky = false, searchBy }) => {
             }
             onChange={handleChange}
             onPick={handlePick}
+            onStartChat={handleStartChat}
+            allowChat={!!allowChat}
           >
             {(displayName, inputValue, activeTab) => rendererMap[activeTab](displayName)}
           </SocialSearchInput>
@@ -119,11 +128,13 @@ const SocialSearch = ({ className, sticky = false, searchBy }) => {
 SocialSearch.propTypes = {
   className: PropTypes.string,
   sticky: PropTypes.bool,
+  allowChat: PropTypes.bool,
   searchBy: PropTypes.arrayOf(PropTypes.string),
 };
 
 SocialSearch.defaultProps = {
   sticky: false,
+  allowChat: false,
   searchBy: ['communities', 'accounts'],
 };
 

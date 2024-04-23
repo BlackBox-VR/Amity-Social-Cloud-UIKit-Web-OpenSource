@@ -10,6 +10,7 @@ export const MenuItem = styled.div`
   align-items: center;
   padding: 8px 12px;
   cursor: pointer;
+  justify-content: space-between;
 
   ${({ active, theme }) => active && `color: ${theme.palette.primary.shade1};`}
   

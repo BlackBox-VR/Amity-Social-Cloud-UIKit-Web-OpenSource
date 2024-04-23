@@ -7,6 +7,7 @@ export const PageTypes = {
   CommunityEdit: 'communityedit',
   UserEdit: 'useredit',
   Search: 'search',
+  ChatSearch: 'chatsearch',
   Post: 'post',
 };
 

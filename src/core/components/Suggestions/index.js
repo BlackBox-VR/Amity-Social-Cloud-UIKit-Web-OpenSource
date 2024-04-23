@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import useKeyboard from '~/core/hooks/useKeyboard';
 import { MenuItem } from '~/core/components/Menu';
+import { UserMessage, FollowButton } from '~/social/pages/UserFeed/Followers/styles';
 
 const MenuList = styled.div`
   flex: 1 1 auto;
@@ -34,7 +35,7 @@ const Placeholder = styled.div`
 
 const DefaultRenderer = (item) => <span>{item}</span>;
 
-const Suggestions = ({ items, onPick = () => {}, append, children }) => {
+const Suggestions = ({ items, onPick = () => {}, append, allowChat, onStartChat, children }) => {
   const list = useRef(null);
 
   const [active, setActive] = useState(-1);
@@ -76,6 +77,12 @@ const Suggestions = ({ items, onPick = () => {}, append, children }) => {
     setActive(value);
   };
 
+  const handleStartChat = (event, item) => {
+    event.stopPropagation();
+    event.preventDefault();
+    onStartChat && onStartChat(item);
+  };
+
   useKeyboard({
     ArrowUp: prev,
     ArrowDown: next,
@@ -94,6 +101,11 @@ const Suggestions = ({ items, onPick = () => {}, append, children }) => {
           onMouseEnter={onMouseEnter(index)}
         >
           {render(item)}
+          {!!allowChat && <UserMessage>
+            <FollowButton onClick={(event) => handleStartChat(event, item)}>
+              <FormattedMessage id="user.message" />
+            </FollowButton>
+          </UserMessage>}
         </MenuItem>
       ))}
       {append && <MenuItem>{append}</MenuItem>}
@@ -110,10 +122,13 @@ Suggestions.propTypes = {
   append: PropTypes.node,
   children: PropTypes.func,
   onPick: PropTypes.func,
+  allowChat: PropTypes.bool,
+  onStartChat: PropTypes.func,
 };
 
 Suggestions.defaultProps = {
   onPick: () => {},
+  allowChat: false,
 };
 
 export default Suggestions;

@@ -22,6 +22,7 @@ const Followers = ({
   setActiveTab,
   networkSettings,
   setAllTabs,
+  allowChat,
 }) => {
   const isPrivateNetwork = utils.isPrivateNetwork(networkSettings);
 
@@ -80,7 +81,11 @@ const Followers = ({
   return (
     <div style={{ paddingBottom: "50px" }}>
       {activeTab === FollowersTabs.FOLLOWINGS && (
-        <FollowingsList currentUserId={currentUserId} profileUserId={userId} />
+        <FollowingsList
+          allowChat={!!allowChat}
+          currentUserId={currentUserId}
+          profileUserId={userId}
+        />
       )}
 
       {activeTab === FollowersTabs.FOLLOWERS && (
@@ -89,6 +94,7 @@ const Followers = ({
           profileUserId={userId}
           isShowFollow
           onFollwingMember={onFollwingMember}
+          allowChat={!!allowChat}
         />
       )}
 
@@ -105,6 +111,7 @@ Followers.propTypes = {
   setActiveTab: PropTypes.func.isRequired,
   networkSettings: PropTypes.object.isRequired,
   setAllTabs: PropTypes.func.isRequired,
+  allowChat: PropTypes.bool,
 };
 
 export default withSDK(Followers);

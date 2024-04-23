@@ -211,6 +211,8 @@ const ChatApplication = ({
           shouldShowChatDetails={shouldShowChatDetails}
           onChatDetailsClick={showChatDetails}
           chatSystemMessage={systemMessage}
+          type={type}
+          secondUserId={secondUserId}
         />
       )}
       {shouldShowChatDetails && currentChannelData && (

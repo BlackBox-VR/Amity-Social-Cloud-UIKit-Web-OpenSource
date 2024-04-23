@@ -16,6 +16,7 @@ import { useNavigation } from '~/social/providers/NavigationProvider';
 import UiKitSocialSearch from '~/social/components/SocialSearch';
 import PropTypes from 'prop-types';
 import Search from '~/social/pages/Search';
+import ChatSearch from '~/social/pages/ChatSearch';
 import PostView from '~/social/pages/PostView';
 import { useSDK } from '~/core/hooks/useSDK';
 
@@ -51,7 +52,7 @@ const Community = forwardRef(({ landingPage, postId = "" }, ref) => {
 
   return (
     <ApplicationContainer>
-      <MainLayout isDarkTheme={page.type === PageTypes.Search}>
+      <MainLayout isDarkTheme={page.type === PageTypes.Search || page.type === PageTypes.ChatSearch}>
         {page.type === PageTypes.Explore && (
           <ExplorePage
             isLandingPage={
@@ -83,6 +84,8 @@ const Community = forwardRef(({ landingPage, postId = "" }, ref) => {
         {page.type === PageTypes.UserEdit && <ProfileSettings userId={page.userId} />}
 
         {page.type === PageTypes.Search && <Search userId={currentUserId} />}
+
+        {page.type === PageTypes.ChatSearch && <ChatSearch userId={currentUserId} />}
 
         {page.type === PageTypes.Post && postId != null && <PostView postId={postId} />}
 

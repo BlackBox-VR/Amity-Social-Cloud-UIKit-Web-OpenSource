@@ -30,9 +30,9 @@ export const ButtonsContainer = styled.div`
 export const Header = styled.div`
   display: grid;
   grid-template-areas: ${({ isShowFollow }) =>
-    isShowFollow ? `'avatar title trophies button'` : `'avatar title level trophies'`};
-  grid-template-columns: ${({ isShowFollow }) =>
-    isShowFollow ? 'min-content auto 80px 100px' : 'min-content auto 70px 80px'};
+    isShowFollow ? `'avatar title trophies button message'` : `'avatar title level trophies message'`};
+  grid-template-columns: ${({ isShowFollow, allowChat }) =>
+    allowChat ? (isShowFollow ? 'min-content auto 80px 100px 90px' : 'min-content auto 70px 80px 90px') : (isShowFollow ? 'min-content auto 80px 100px 0px' : 'min-content auto 70px 80px 0px')};
   grid-gap: 0 0.5em;
 `;
 
@@ -92,6 +92,13 @@ export const UserHeaderTrophies = styled.div`
 
 export const UserFollow = styled.div`
   grid-area: button;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const UserMessage = styled.div`
+  grid-area: message;
   display: flex;
   flex-direction: row;
   align-items: center;

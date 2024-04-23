@@ -44,6 +44,8 @@ const InputAutocomplete = ({
   onClear,
   onChange,
   onPick,
+  allowChat,
+  onStartChat,
 }) => {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(Object.keys(items)[0]);
@@ -125,7 +127,7 @@ const InputAutocomplete = ({
             />
           )}
 
-          <Suggestions items={filtered} append={LoadMoreButton} onPick={onPickSuggestion}>
+          <Suggestions items={filtered} append={LoadMoreButton} allowChat={allowChat} onStartChat={onStartChat} onPick={onPickSuggestion}>
             {(item) => render(item, value, activeTab)}
           </Suggestions>
         </SuggestionsMenu>
@@ -159,6 +161,8 @@ InputAutocomplete.propTypes = {
   onClear: PropTypes.func,
   onChange: PropTypes.func.isRequired,
   onPick: PropTypes.func,
+  allowChat: PropTypes.bool,
+  onStartChat: PropTypes.func,
 };
 
 export default InputAutocomplete;

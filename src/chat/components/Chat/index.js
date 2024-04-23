@@ -11,7 +11,7 @@ import { ChannelContainer } from './styles';
 
 const channelRepo = new ChannelRepository();
 
-const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails, chatSystemMessage }) => {
+const Chat = ({ channelId, onChatDetailsClick, type, secondUserId, shouldShowChatDetails, chatSystemMessage }) => {
   useEffect(() => {
     console.log(`[Chat] Hit a chat channel! ${channelId}`);
 
@@ -48,11 +48,12 @@ const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails, chatSystem
 
   return (
     <ChannelContainer>
-      {/* <ChatHeader // this is the channel header, not needed rn
+      {type === "member" && <ChatHeader
         channelId={channelId}
         shouldShowChatDetails={shouldShowChatDetails}
         onChatDetailsClick={onChatDetailsClick}
-      /> */}
+        secondUserId={secondUserId}
+      />}
       <MessageList channelId={channelId} />
       {/*chatSystemMessage != '' && (
         <b>
