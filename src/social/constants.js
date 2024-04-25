@@ -38,12 +38,13 @@ export const MP4MimeType = 'video/mp4';
 
 export const UnityMessageBaseURLs = {
   QUEST: 'uniwebview://quest?',
-  CLAIM_REWARDS: 'uniwebview://claim?'
+  CLAIM_REWARDS: 'uniwebview://claim?',
 };
 
 export const UnityMessageKeys = {
   LIKE: 'like',
   COMMENT: 'comment',
+  FOLLOW: 'follow',
   TEAM_POST: 'team-post',
-  CLAIM_CAREPOINTS: 'claim-carepoints'
+  CLAIM_CAREPOINTS: 'claim-carepoints',
 };
