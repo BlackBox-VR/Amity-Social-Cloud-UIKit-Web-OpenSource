@@ -52,14 +52,18 @@ const MessageClaim = ({
     if (!isLoading) 
     {
       setIsLoading(true);
-      setTimeout(() => {
+
+      setTimeout(() => 
+      {
         setIsLoading(false);
         setLoaded(true);
       }, 1500);
       
-      var fullURL = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
+      //var fullURL = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
+      var fullURL = `${UnityMessageBaseURLs.CLAIM_REWARDS}${UnityMessageKeys.CLAIM_CAREPOINTS}=${messageId}`;
 
-      location.href = fullURL;
+      //location.href = fullURL;
+      history.pushState(null, '', fullURL);
     }
   };
 
