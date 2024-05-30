@@ -53,9 +53,12 @@ const CommentList = ({
       appendIcon={null}
       isExpanded={isExpanded}
     >
-      {commentIds.map((commentId) => (
-        <Comment key={commentId} commentId={commentId} readonly={readonly} />
-      ))}
+      {commentIds
+        .slice()
+        .reverse()
+        .map((commentId) => (
+          <Comment key={commentId} commentId={commentId} readonly={readonly} />
+        ))}
     </LoadMore>
   );
 };
