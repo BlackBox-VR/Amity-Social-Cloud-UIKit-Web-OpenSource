@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
 import ClaimIcon from '../claim-icon.svg';
-import {UnityMessageBaseURLs, UnityMessageKeys} from "~/social/constants";
-
+import { UnityMessageBaseURLs, UnityMessageKeys } from '~/social/constants';
 import {
   MessageClaimWrapper,
   MessageClaimTitle,
@@ -29,43 +27,41 @@ const formatCompactNumber = (number, decimal = 1) => {
   }
 };
 
-const getNumberSuffix = (number) =>
-{
+const getNumberSuffix = (number) => {
   if (typeof number !== 'number' || isNaN(number)) return "";
-  
+
   if (number == 1) return "st";
   else if (number == 2) return "nd";
   else if (number == 3) return "rd";
   else return "th";
 };
 
-const MessageClaim = ({
-  metadata,
-  client,
-  messageId,
-}) => {
+const MessageClaim = ({ metadata, client, messageId }) => {
   const isClamed = (metadata?.claimedUserIds || []).indexOf(client?.currentUserId) > -1;
-  const [ isLoading, setIsLoading ] = useState(false);
-  const [ loaded, setLoaded ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const handleClaim = () => {
-    if (!isLoading) 
-    {
+    if (!isLoading) {
       setIsLoading(true);
 
-      setTimeout(() => 
-      {
+      setTimeout(() => {
         setIsLoading(false);
         setLoaded(true);
+        setShouldRedirect(true);
       }, 1500);
-      
-      //var fullURL = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
-      var fullURL = `${UnityMessageBaseURLs.CLAIM_REWARDS}${UnityMessageKeys.CLAIM_CAREPOINTS}=${messageId}`;
-
-      //location.href = fullURL;
-      history.pushState(null, '', fullURL);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (shouldRedirect) {
+        var fullURL = `${UnityMessageBaseURLs.CLAIM_REWARDS}${UnityMessageKeys.CLAIM_CAREPOINTS}=${messageId}`;
+        location.href = fullURL;
+      }
+    };
+  }, [shouldRedirect, messageId]);
 
   return (
     <MessageClaimWrapper>
