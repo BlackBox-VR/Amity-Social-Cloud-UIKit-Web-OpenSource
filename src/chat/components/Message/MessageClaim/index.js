@@ -43,25 +43,19 @@ const MessageClaim = ({ metadata, client, messageId }) => {
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const handleClaim = () => {
-    if (!isLoading) {
+    if (!isLoading) 
+    {
       setIsLoading(true);
-
       setTimeout(() => {
         setIsLoading(false);
         setLoaded(true);
-        setShouldRedirect(true);
       }, 1500);
+      
+      var fullURL = UnityMessageBaseURLs.CLAIM_REWARDS + UnityMessageKeys.CLAIM_CAREPOINTS + "=" + messageId;
+
+      location.href = fullURL;
     }
   };
-
-  useEffect(() => {
-    return () => {
-      if (shouldRedirect) {
-        var fullURL = `${UnityMessageBaseURLs.CLAIM_REWARDS}${UnityMessageKeys.CLAIM_CAREPOINTS}=${messageId}`;
-        location.href = fullURL;
-      }
-    };
-  }, [shouldRedirect, messageId]);
 
   return (
     <MessageClaimWrapper>

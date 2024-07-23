@@ -82,6 +82,10 @@ const ChatApplication = ({
           liveUser.once('dataUpdated', (model) => resolve(model));
         });
         const existingChannel = (channels || []).find(chnnl => chnnl.channelId === userModel?.metadata?.teamId);
+        if (existingChannel)
+        {
+          console.log("A channel exists matching the user's teamId metadata: ", existingChannel);
+        }
         if (!!existingChannel && !currentChannelData) {
           console.log(
             'channels array existed, and had entries! Entering first one... ',
@@ -93,6 +97,7 @@ const ChatApplication = ({
             channelType: ChannelType.Standard,
           });
         } else {
+          console.log("No team existed for this user that was matching the user's teamId metadata (or user didn't have metadata).");
           if (userModel && userModel.metadata.teamId) {
             const channelData = await new Promise((resolve, reject) => {
               let searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
