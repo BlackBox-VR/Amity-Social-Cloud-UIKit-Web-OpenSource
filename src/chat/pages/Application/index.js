@@ -99,11 +99,21 @@ const ChatApplication = ({
           console.log("Checking user and their metadata...");
           if (userModel && userModel.metadata.teamId) 
           {
+            console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
+
             const channelData = await new Promise((resolve, reject) => 
             {
-              let searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
-              searchingChannel.once('dataUpdated', (data) => resolve(data));
-              searchingChannel.once('dataError', (error) => reject(error));
+              const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
+              searchingChannel.once('dataUpdated', (data) => 
+              {
+                console.log("Searching channel was successful: " + JSON.stringify(data));
+                resolve(data);
+              });
+              searchingChannel.once('dataError', (error) => 
+              {
+                console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
+                reject(error);
+              });
             });
 
             if (channelData && channelData.channelId) 
