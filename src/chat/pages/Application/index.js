@@ -147,7 +147,7 @@ const ChatApplication = ({
                 console.log("This user is the leader; creating the team...");
                 
                 const liveChannel = ChannelRepository.createChannel({
-                  channelId: customChannel,
+                  channelId: userModel.metadata.teamId,
                   type: ChannelType.Live,
                   displayName: userModel.metadata.teamName,
                   userIds: [userModel.userId],
