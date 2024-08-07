@@ -89,12 +89,21 @@ const ChatApplication = ({
 
           console.log("liveUser: " + JSON.stringify(liveUser));
 
-          const userModel = await new Promise((resolve) => 
+          const liveObject = UserRepository.getUser(currentUserId);
+          liveObject.on('dataUpdated', user => 
           {
-            liveUser.once('dataUpdated', (model) => resolve(model));
-            //console.log("User '" + userModel.displayName + "'loaded.");
-            console.log(JSON.stringify(userModel));
+            console.log("user: " + JSON.stringify(user));
           });
+
+
+          // const userModel = await new Promise((resolve) => 
+          // {
+          //   liveUser.once('dataUpdated', (model) => resolve(model));
+          //   //console.log("User '" + userModel.displayName + "'loaded.");
+          //   console.log("userModel: " + JSON.stringify(userModel));
+          // });
+
+          
 
           console.log("Checking user and their metadata...");
           if (userModel && userModel.metadata.teamId) 
