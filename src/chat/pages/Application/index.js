@@ -85,25 +85,14 @@ const ChatApplication = ({
         else 
         {
           console.log(`Channels array didn't exist, now loading user '` + currentUserId + `' and their team data...`);
-          let liveUser = UserRepository.getUser(currentUserId);
 
-          console.log("liveUser: " + JSON.stringify(liveUser));
-
+          let userModel = null;
           const liveObject = UserRepository.getUser(currentUserId);
           liveObject.on('dataUpdated', user => 
           {
-            console.log("user: " + JSON.stringify(user));
-          });
-
-
-          // const userModel = await new Promise((resolve) => 
-          // {
-          //   liveUser.once('dataUpdated', (model) => resolve(model));
-          //   //console.log("User '" + userModel.displayName + "'loaded.");
-          //   console.log("userModel: " + JSON.stringify(userModel));
-          // });
-
-          
+            userModel = user;
+            console.log("Loaded user: " + JSON.stringify(user));
+          });          
 
           console.log("Checking user and their metadata...");
           if (userModel && userModel.metadata.teamId) 
