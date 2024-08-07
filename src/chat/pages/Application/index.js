@@ -94,9 +94,13 @@ const ChatApplication = ({
               console.log("Loaded user: " + JSON.stringify(user));
               resolve(user);
             });
+            liveObject.once('dataError', error => 
+            {
+              reject(error);
+            });
           }).catch( (error) => 
           {
-            userModel = null;
+            return null;
           });
 
           console.log("Checking user and their metadata...");
@@ -110,12 +114,16 @@ const ChatApplication = ({
               searchingChannel.once('dataUpdated', (data) => 
               {
                 console.log("Searching channel was successful: " + JSON.stringify(data));
-                resolve(data);
+                resolve(data);                
+              });
+              searchingChannel.once('dataError', (error) => 
+              {
+                reject(error);  // This is needed to successfully reach the catch without causing exception
               });
             }).catch( (error) => 
             {
               console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
-              channelData = null;
+              return null;
             });
 
             console.log("channelData: " + JSON.stringify(channelData));
