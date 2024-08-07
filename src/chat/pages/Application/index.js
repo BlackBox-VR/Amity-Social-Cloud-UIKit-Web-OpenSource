@@ -84,8 +84,10 @@ const ChatApplication = ({
         } 
         else 
         {
-          console.log(`Channels array didn't exist, now loading user and their team data...`);
+          console.log(`Channels array didn't exist, now loading user '` + currentUserId + `' and their team data...`);
           let liveUser = UserRepository.getUser(currentUserId);
+
+          console.log("liveUser: " + JSON.stringify(liveUser));
 
           const userModel = await new Promise((resolve) => 
           {
