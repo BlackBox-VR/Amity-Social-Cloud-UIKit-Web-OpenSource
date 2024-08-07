@@ -90,7 +90,7 @@ const ChatApplication = ({
           const userModel = await new Promise((resolve) => 
           {
             liveUser.once('dataUpdated', (model) => resolve(model));
-            console.log("User '" + userModel.displayName + "'loaded.");
+            //console.log("User '" + userModel.displayName + "'loaded.");
             console.log(JSON.stringify(userModel));
           });
 
