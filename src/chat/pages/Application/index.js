@@ -86,8 +86,7 @@ const ChatApplication = ({
         {
           console.log(`Channels array didn't exist, now loading user '` + currentUserId + `' and their team data...`);
   
-          let userModel = null;
-          userModel = await new Promise((resolve) => 
+          const userModel = await new Promise((resolve) => 
           {
             const liveObject = UserRepository.getUser(currentUserId);
             liveObject.once('dataUpdated', user => 
@@ -95,15 +94,17 @@ const ChatApplication = ({
               console.log("Loaded user: " + JSON.stringify(user));
               resolve(user);
             });
-          }).catch( error => {});
+          }).catch( (error) => 
+          {
+            userModel = null;
+          });
 
           console.log("Checking user and their metadata...");
           if (userModel && userModel.metadata.teamId) 
           {
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
-            let channelData = null;
-            channelData = await new Promise((resolve, reject) => 
+            const channelData = await new Promise((resolve, reject) => 
             {
               const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
               searchingChannel.once('dataUpdated', (data) => 
@@ -111,12 +112,11 @@ const ChatApplication = ({
                 console.log("Searching channel was successful: " + JSON.stringify(data));
                 resolve(data);
               });
-              searchingChannel.once('dataError', (error) => 
-              {
-                console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
-                reject(error);
-              });
-            }).catch( error => {});
+            }).catch( (error) => 
+            {
+              console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
+              channelData = null;
+            });
 
             console.log("channelData: " + JSON.stringify(channelData));
 
