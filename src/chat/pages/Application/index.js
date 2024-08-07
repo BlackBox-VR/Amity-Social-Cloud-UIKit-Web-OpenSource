@@ -128,10 +128,7 @@ const ChatApplication = ({
 
             console.log("channelData: " + JSON.stringify(channelData));
 
-            if (channelData == null){
-              console.log("it's literally null");
-            }
-            if (channelData != null && channelData.channelId) 
+            if (channelData && channelData.channelId) 
             {
               console.log("Channel '" + channelData.displayName + "' exists. Entering.");
 
@@ -141,7 +138,7 @@ const ChatApplication = ({
             } // channel not found
             else 
             {
-              console.log('User loaded, and metadata loaded, but no channel exists with that teamId: ' + error);
+              console.log('User loaded, and metadata loaded, but no channel exists with that teamId');
 
               // Check if you're the leader of the team,
               if (temporaryModel.userId === temporaryModel.metadata.teamLeaderId) 
