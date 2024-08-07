@@ -95,7 +95,7 @@ const ChatApplication = ({
               console.log("Loaded user: " + JSON.stringify(user));
               resolve(user);
             });
-          });
+          }).catch( error => {});
 
           console.log("Checking user and their metadata...");
           if (userModel && userModel.metadata.teamId) 
@@ -114,8 +114,9 @@ const ChatApplication = ({
               searchingChannel.once('dataError', (error) => 
               {
                 console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
+                reject(error);
               });
-            });
+            }).catch( error => {});
 
             console.log("channelData: " + JSON.stringify(channelData));
 
