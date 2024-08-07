@@ -86,7 +86,8 @@ const ChatApplication = ({
         {
           console.log(`Channels array didn't exist, now loading user '` + currentUserId + `' and their team data...`);
   
-          const userModel = await new Promise((resolve) => 
+          let userModel = null;
+          userModel = await new Promise((resolve) => 
           {
             const liveObject = UserRepository.getUser(currentUserId);
             liveObject.once('dataUpdated', user => 
@@ -101,7 +102,8 @@ const ChatApplication = ({
           {
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
-            const channelData = await new Promise((resolve, reject) => 
+            let channelData = null;
+            channelData = await new Promise((resolve, reject) => 
             {
               const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
               searchingChannel.once('dataUpdated', (data) => 
@@ -112,9 +114,10 @@ const ChatApplication = ({
               searchingChannel.once('dataError', (error) => 
               {
                 console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
-                reject(error);
               });
             });
+
+            console.log("channelData: " + JSON.stringify(channelData));
 
             if (channelData && channelData.channelId) 
             {
@@ -132,6 +135,8 @@ const ChatApplication = ({
               if (temporaryModel.userId === temporaryModel.metadata.teamLeaderId) 
               {
                 // if you're the leader, create the channel
+                console.log("This user is the leader; creating the team...");
+                
                 const liveChannel = ChannelRepository.createChannel({
                   channelId: customChannel,
                   type: ChannelType.Live,
