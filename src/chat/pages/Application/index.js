@@ -128,7 +128,10 @@ const ChatApplication = ({
 
             console.log("channelData: " + JSON.stringify(channelData));
 
-            if (channelData && channelData.channelId) 
+            if (channelData == null){
+              console.log("it's literally null");
+            }
+            if (channelData != null && channelData.channelId) 
             {
               console.log("Channel '" + channelData.displayName + "' exists. Entering.");
 
