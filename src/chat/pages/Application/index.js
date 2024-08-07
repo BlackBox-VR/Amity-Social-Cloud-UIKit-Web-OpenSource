@@ -66,7 +66,7 @@ const ChatApplication = ({
   const { currentUserId, client } = useSDK();
   const [systemMessage, setSystemMessage] = useState('');
   const [channels] = useChannelsList();
-  var temporaryModel = null;
+  const [channelCreated, setChannelCreated] = useState(false);
 
   useEffect(() => 
   {
@@ -141,7 +141,7 @@ const ChatApplication = ({
               console.log('User loaded, and metadata loaded, but no channel exists with that teamId');
 
               // Check if you're the leader of the team,
-              if (temporaryModel.userId === temporaryModel.metadata.teamLeaderId) 
+              if (userModel.userId === userModel.metadata.teamLeaderId) 
               {
                 // if you're the leader, create the channel
                 console.log("This user is the leader; creating the team...");
@@ -149,25 +149,26 @@ const ChatApplication = ({
                 const liveChannel = ChannelRepository.createChannel({
                   channelId: customChannel,
                   type: ChannelType.Live,
-                  displayName: temporaryModel.metadata.teamName,
-                  userIds: [temporaryModel.userId],
+                  displayName: userModel.metadata.teamName,
+                  userIds: [userModel.userId],
                 });
 
-                liveChannel.once('dataUpdated', (model) => {
+                liveChannel.once('dataUpdated', (model) => 
+                {
                   console.log(`Channel created successfully! ${model.channelId}`);
                   setSystemMessage('');
+                  setChannelCreated(prev => !prev);
                 });
 
-                liveChannel.once('dataError', (error) => {
+                liveChannel.once('dataError', (error) => 
+                {
                   console.log("Channel didn't get created: " + error);
                 });
               }
-
               // if you're not the team leader, display message "Please wait for leader to log-in and establish a team chat channel."
               else 
               {
-                console.log("The user '" + temporaryModel.displayName + "' (" + temporaryModel.userId +
-                    ') is not the team leader. Channel creation delayed. Returning.');
+                console.log("The user '" + userModel.displayName + "' (" + userModel.userId + ') is not the team leader. Channel creation delayed. Returning.');
 
                 // Display message that leader needs to log-in first to create chat channel
                 setSystemMessage("The Team Leader is required to log-in to generate this team's chat channel!");
@@ -188,7 +189,7 @@ const ChatApplication = ({
     };
 
     initChat();
-  }, [channels]);
+  }, [channels, channelCreated]);
 
   return (
     <ApplicationContainer>
