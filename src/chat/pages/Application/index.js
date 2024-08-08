@@ -77,7 +77,7 @@ const ChatApplication = ({
         console.log("--- Channels List ---");
         console.log(channels);
 
-        if (channels != null && channels.length > 0 && !currentChannelData) 
+        if (channels != null && channels.length > 0) 
         {
           console.log('Channels array existed, and had entries! Entering first one... ', channels[0].channelId);
           handleChannelSelect({channelId: channels[0].channelId,channelType: ChannelType.Standard});
@@ -125,8 +125,6 @@ const ChatApplication = ({
               console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
               return null;
             });
-
-            console.log("channelData: " + JSON.stringify(channelData));
 
             if (channelData && channelData.channelId) 
             {
