@@ -113,7 +113,7 @@ const ChatApplication = ({
               const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
               searchingChannel.once('dataUpdated', (data) => 
               {
-                console.log("Searching channel was successful: " + JSON.stringify(data));
+                console.log("Searching channel was successful!");
                 resolve(data);                
               });
               searchingChannel.once('dataError', (error) => 
@@ -122,7 +122,7 @@ const ChatApplication = ({
               });
             }).catch( (error) => 
             {
-              console.log("Searching channel was unsuccessful! " + JSON.stringify(error));
+              console.log("Searching channel was unsuccessful... " + JSON.stringify(error));
               return null;
             });
 
