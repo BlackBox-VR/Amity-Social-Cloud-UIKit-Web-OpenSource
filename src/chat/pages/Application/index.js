@@ -98,29 +98,35 @@ const ChatApplication = ({
             {
               reject(error);
             });
-          }).catch( (error) => 
+          }).catch((error) => 
           {
             return null;
           });
 
           console.log("Checking user and their metadata...");
+
           if (userModel && userModel.metadata.teamId) 
           {
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
-            const channelData = await new Promise((resolve, reject) => 
-            {
-              const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
-              searchingChannel.once('dataUpdated', (data) => 
-              {
-                console.log("Searching channel was successful!");
-                resolve(data);                
-              });
-              searchingChannel.once('dataError', (error) => 
-              {
-                reject(error);  // This is needed to successfully reach the catch without causing exception
-              });
-            }).catch( (error) => 
+            const channelData = await Promise.race([
+              new Promise((resolve, reject) => {
+                const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
+                searchingChannel.once('dataUpdated', (data) => 
+                {
+                  console.log("Searching channel was successful!");
+                  resolve(data);                
+                });
+                searchingChannel.once('dataError', (error) => 
+                {
+                  console.log("Searching channel failed... " + JSON.stringify(error));
+                  reject(error);
+                });
+              }),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Timeout: Channel search took too long')), 5000)
+              ),
+            ]).catch((error) => 
             {
               console.log("Searching channel was unsuccessful... " + JSON.stringify(error));
               return null;
