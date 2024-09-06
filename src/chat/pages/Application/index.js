@@ -126,8 +126,7 @@ const ChatApplication = ({
             {
               console.log("Searching channel was unsuccessful... " + JSON.stringify(error));
               return null;
-            });
-          }
+            });          
 
             if (channelData && channelData.channelId) 
             {
