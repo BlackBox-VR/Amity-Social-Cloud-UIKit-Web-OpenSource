@@ -109,6 +109,8 @@ const ChatApplication = ({
           {
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
+            const joinChannel = await ChannelRepository.joinChannel({channelId: userModel.metadata.teamId});
+
             const channelData = await new Promise ((resolve) =>
             {
               const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
