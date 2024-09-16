@@ -149,3 +149,23 @@ export const BottomLine = styled.div`
   align-items: center;
   justify-content: space-between;
 `;
+
+export const ReactionDisplay = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;  
+  margin-top: 5px;
+  width: 100%; 
+`;
+
+export const ReactionBubble = styled.div`
+  background-color: #1f1f1f;
+  border: 2px solid #d0d0d0;  
+  border-radius: 12px;  
+  padding: 2px 5px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+`;

@@ -1,8 +1,8 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedTime } from 'react-intl';
 import { MessageType } from '@amityco/js-sdk';
-
+import { MessageRepository } from '@amityco/js-sdk';
 import customizableComponent from '~/core/hocs/customization';
 import { backgroundImage as UserImage } from '~/icons/User';
 
@@ -28,6 +28,8 @@ import {
   UserName,
   BottomLine,
   MessageDate,
+  ReactionDisplay,
+  ReactionBubble,
 } from './styles';
 
 const MessageBody = ({
@@ -98,6 +100,7 @@ const Message = ({
   const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
   const longPressTimer = useRef(null);
   const messageRef = useRef(null);
+  const [reactions, setReactions] = useState({});
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -128,10 +131,40 @@ const Message = ({
   }, []);
 
   const handleReact = useCallback((reaction) => {
-    // We'll implement this in a later step when we add the API call
-    console.log(`React with ${reaction} to message ${messageId}`);
-    setShowReactions(false);
+    MessageRepository.addReaction({
+      messageId: messageId,
+      reactionName: reaction
+    })
+      .then(() => {
+        console.log(`Reaction '${reaction}' added to message ${messageId}`);
+        setShowReactions(false);
+        setReactions(prev => ({
+          ...prev,
+          [reaction]: (prev[reaction] || 0) + 1
+        }));
+      })
+      .catch((error) => {
+        console.error('Error adding reaction:', error);
+      });
   }, [messageId]);
+
+  useEffect(() => {
+    const fetchReactions = async () => {
+      try {
+        const reactionCollection = await MessageRepository.getReactions({ messageId });
+        const reactionCounts = reactionCollection.reduce((acc, reaction) => {
+          acc[reaction.reactionName] = (acc[reaction.reactionName] || 0) + 1;
+          return acc;
+        }, {});
+        setReactions(reactionCounts);
+      } catch (error) {
+        console.error('Error fetching reactions:', error);
+      }
+    };
+  
+    fetchReactions();
+  }, [messageId]);
+
 
   function timeDifference(timestamp, locale) {
     const msPerMinute = 60 * 1000;
@@ -217,6 +250,13 @@ const Message = ({
                 client={client}
               />
             }
+            <ReactionDisplay>
+              {Object.entries(reactions).map(([reaction, count]) => (
+                <ReactionBubble key={reaction}>
+                  {reaction} {count}
+                </ReactionBubble>
+              ))}
+            </ReactionDisplay>
           </MessageBody>
           {showReactions && (
             <ReactionsTray
