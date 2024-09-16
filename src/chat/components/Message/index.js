@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { FormattedTime } from 'react-intl';
 import { MessageType } from '@amityco/js-sdk';
@@ -10,6 +10,7 @@ import Options from './Options';
 import MessageContent from './MessageContent';
 import MessageHeader from './MessageHeader';
 import MessageClaim from './MessageClaim';
+import ReactionsTray from './ReactionsTray';
 
 import {
   Avatar,
@@ -85,16 +86,52 @@ const Message = ({
 }) => {
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
 
+  // Auto-post based state variables
   const isAutoPost = messageTags != null && messageTags.indexOf('autopost') > -1;
   const isMemberActivityAutoPost = isAutoPost && messageTags.indexOf('memberActivity') > -1;
   const isSharedQuestAutoPost = isAutoPost && messageTags.indexOf('sharedQuests') > -1;
   const isAnnouncementsAutoPost = isAutoPost && messageTags.indexOf('announcements') > -1;
   const isArenaRaidAutoPost = isAutoPost && messageTags.indexOf('arenaRaid') > -1;
 
+  // Reaction tray state variables
+  const [showReactions, setShowReactions] = useState(false);
+  const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
+  const longPressTimer = useRef(null);
+  const messageRef = useRef(null);
+
   const getAvatarProps = () => {
     if (avatar) return { avatar };
     return { backgroundImage: UserImage };
   };
+
+  const handleLongPress = useCallback((event) => {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
+    const rect = messageRef.current.getBoundingClientRect();
+    setReactionTrayPosition({
+      x: event ? event.clientX - rect.left : rect.width / 2,
+      y: event ? event.clientY - rect.top : 0,
+    });
+    setShowReactions(true);
+    console.log("AB - setShowReactions called.");
+  }, []);
+  
+  const handleTouchStart = useCallback((event) => {
+    longPressTimer.current = setTimeout(() => handleLongPress(event), 500);
+  }, [handleLongPress]);
+  
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
+  }, []);
+
+  const handleReact = useCallback((reaction) => {
+    // We'll implement this in a later step when we add the API call
+    console.log(`React with ${reaction} to message ${messageId}`);
+    setShowReactions(false);
+  }, [messageId]);
 
   function timeDifference(timestamp, locale) {
     const msPerMinute = 60 * 1000;
@@ -131,7 +168,7 @@ const Message = ({
         {!isAutoPost && isIncoming && (
           <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
         )}
-        <MessageContainer data-qa-anchor="message">
+        <MessageContainer data-qa-anchor="message" ref={messageRef}>
           {/*!isAutoPost && <UserName>{userDisplayName}</UserName>*/}
           <MessageBody
             type={type}
@@ -142,6 +179,10 @@ const Message = ({
             isSharedQuestAutoPost={isSharedQuestAutoPost}
             isAnnouncementsAutoPost={isAnnouncementsAutoPost}
             isArenaRaidAutoPost={isArenaRaidAutoPost}
+            onMouseDown={(e) => handleTouchStart(e)}
+            onMouseUp={handleTouchEnd}
+            onTouchStart={(e) => handleTouchStart(e)}
+            onTouchEnd={handleTouchEnd}
           >
             {!isAutoPost && <UserName>{userDisplayName}</UserName>}
             {isMemberActivityAutoPost && (
@@ -177,6 +218,16 @@ const Message = ({
               />
             }
           </MessageBody>
+          {showReactions && (
+            <ReactionsTray
+              onReact={handleReact}
+              style={{
+                position: 'absolute',
+                left: `${reactionTrayPosition.x}px`,
+                top: `${reactionTrayPosition.y}px`,
+              }}
+            />
+          )}
         </MessageContainer>
         {!isAutoPost && !isIncoming && (
           <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
