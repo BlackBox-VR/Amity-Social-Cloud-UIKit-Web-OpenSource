@@ -5,7 +5,7 @@ const TrayContainer = styled.div`
   position: absolute;
   background-color: white;
   border-radius: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   padding: 5px;
 `;
