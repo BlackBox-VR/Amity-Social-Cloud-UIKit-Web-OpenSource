@@ -23,16 +23,16 @@ const TrayContainer = styled.div`
   border-radius: 24px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
-  padding: 3px 10px;
+  padding: 2px 10px;
   z-index: 2; // Ensure it appears above the reactions and message
-  animation: ${growAndJiggle} 0.35s ease-out;
+  animation: ${growAndJiggle} 0.45s ease-out;
 `;
 
 const ReactionButton = styled.button`
   background: none;
   border: none;
-  font-size: 22px;
-  padding: 5px;
+  font-size: 26px;
+  padding: 4px;
   cursor: pointer;
   transition: transform 0.1s;
 

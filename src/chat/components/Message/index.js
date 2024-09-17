@@ -120,7 +120,7 @@ const Message = ({
       
       setReactionTrayPosition({
         x: rect.left + (rect.width / 2),
-        y: rect.bottom - 20, // 20px above the bottom of the message
+        y: rect.bottom - 55, // 55px above the bottom of the message
       });
       
       setShowReactions(true);
