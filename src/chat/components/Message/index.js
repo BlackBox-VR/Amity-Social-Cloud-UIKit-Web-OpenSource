@@ -85,6 +85,7 @@ const Message = ({
   xpTitle,
   metadata,
   client,
+  reactions: initialReactions
 }) => {
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
 
@@ -100,7 +101,7 @@ const Message = ({
   const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
   const longPressTimer = useRef(null);
   const messageRef = useRef(null);
-  const [reactions, setReactions] = useState({});
+  const [reactions, setReactions] = useState(initialReactions || {});
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -202,7 +203,6 @@ const Message = ({
           <AvatarWrapper>{!isConsequent && <Avatar {...getAvatarProps()} />}</AvatarWrapper>
         )}
         <MessageContainer data-qa-anchor="message" ref={messageRef}>
-          {/*!isAutoPost && <UserName>{userDisplayName}</UserName>*/}
           <MessageBody
             type={type}
             isIncoming={isIncoming}
@@ -250,6 +250,8 @@ const Message = ({
                 client={client}
               />
             }
+          </MessageBody>
+          {Object.keys(reactions).length > 0 && (
             <ReactionDisplay>
               {Object.entries(reactions).map(([reaction, count]) => (
                 <ReactionBubble key={reaction}>
@@ -257,7 +259,7 @@ const Message = ({
                 </ReactionBubble>
               ))}
             </ReactionDisplay>
-          </MessageBody>
+          )}
           {showReactions && (
             <ReactionsTray
               onReact={handleReact}

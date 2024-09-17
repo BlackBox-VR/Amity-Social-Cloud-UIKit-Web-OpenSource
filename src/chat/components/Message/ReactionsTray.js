@@ -7,19 +7,20 @@ const TrayContainer = styled.div`
   border-radius: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
-  padding: 5px;
+  padding: 4px;
+  z-index: 2;  // Ensure it appears above the reactions and message
 `;
 
 const ReactionButton = styled.button`
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 22px;
   padding: 5px;
   cursor: pointer;
   transition: transform 0.1s;
 
   &:hover {
-    transform: scale(1.2);
+    transform: scale(1.3);
   }
 `;
 

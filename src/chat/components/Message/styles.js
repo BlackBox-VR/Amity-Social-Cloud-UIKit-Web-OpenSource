@@ -62,6 +62,7 @@ export const MessageWrapper = styled.div`
 
 export const MessageContainer = styled.div`
   flex: 1;
+  position: relative;  // Add this line
 `;
 
 export const AvatarWrapper = styled.div`
@@ -89,6 +90,7 @@ const CommonMessageBody = styled.div`
 `;
 
 export const GeneralMessageBody = styled(CommonMessageBody)`
+  position: relative;  // Add this line
   ${({ theme, isIncoming }) =>
     isIncoming
       ? `
@@ -100,6 +102,7 @@ export const GeneralMessageBody = styled(CommonMessageBody)`
       color: #000;
       border-radius: 10px;
   `}
+  padding-bottom: 15px;  // Add some extra padding at the bottom
 `;
 
 export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
@@ -151,21 +154,24 @@ export const BottomLine = styled.div`
 `;
 
 export const ReactionDisplay = styled.div`
+  position: absolute;
+  bottom: -2px;  // Adjusted from -10px to -5px to move it up
+  right: 10px;  
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;  
-  margin-top: 5px;
-  width: 100%; 
+  flex-direction: row-reverse;  
+  z-index: 1;  // Ensure it appears above the message content
 `;
 
 export const ReactionBubble = styled.div`
   background-color: #1f1f1f;
-  border: 2px solid #d0d0d0;  
-  border-radius: 12px;  
-  padding: 2px 5px;
+  border: 1.5px solid #9f9f9f;
+  border-radius: 20px;  
+  padding: 1.5px 7px;
   margin-left: 5px;
   margin-bottom: 5px;
-  font-size: 12px;
+  font-size: 17px;
+  color: white;
   display: flex;
   align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);  // Subtle shadow for depth
 `;
