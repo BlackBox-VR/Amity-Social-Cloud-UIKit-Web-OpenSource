@@ -4,11 +4,11 @@ import styled from 'styled-components';
 const TrayContainer = styled.div`
   position: absolute;
   background-color: white;
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
-  padding: 4px;
-  z-index: 2;  // Ensure it appears above the reactions and message
+  padding: 3px;
+  z-index: 2; // Ensure it appears above the reactions and message
 `;
 
 const ReactionButton = styled.button`
