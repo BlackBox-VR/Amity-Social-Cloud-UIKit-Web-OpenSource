@@ -103,6 +103,7 @@ const Message = ({
   const longPressTimer = useRef(null);
   const messageRef = useRef(null);
   const [reactions, setReactions] = useState(initialReactions || {});
+  const reactionTrayRef = useRef(null);
 
   const getAvatarProps = () => {
     if (avatar) return { avatar };
@@ -167,6 +168,21 @@ const Message = ({
     fetchReactions();
   }, [messageId]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (reactionTrayRef.current && !reactionTrayRef.current.contains(event.target)) {
+        setShowReactions(false);
+      }
+    };
+  
+    if (showReactions) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showReactions]);
 
   function timeDifference(timestamp, locale) {
     const msPerMinute = 60 * 1000;
@@ -263,6 +279,7 @@ const Message = ({
           )}
           {showReactions && (
             <ReactionsTray
+              ref={reactionTrayRef}
               onReact={handleReact}
               style={{
                 position: 'absolute',

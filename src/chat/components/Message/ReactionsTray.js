@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import styled from 'styled-components';
 
 const TrayContainer = styled.div`
@@ -26,9 +26,9 @@ const ReactionButton = styled.button`
 
 const reactions = ['❤️', '💪', '🎉', '😂', '☹️'];
 
-const ReactionsTray = ({ onReact, style }) => {
+const ReactionsTray = forwardRef(({ onReact, style }, ref) => {
   return (
-    <TrayContainer style={style}>
+    <TrayContainer ref={ref} style={style}>
       {reactions.map((reaction) => (
         <ReactionButton key={reaction} onClick={() => onReact(reaction)}>
           {reaction}
@@ -36,6 +36,6 @@ const ReactionsTray = ({ onReact, style }) => {
       ))}
     </TrayContainer>
   );
-};
+});
 
 export default ReactionsTray;

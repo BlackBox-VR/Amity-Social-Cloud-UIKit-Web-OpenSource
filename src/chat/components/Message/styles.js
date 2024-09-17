@@ -169,6 +169,7 @@ export const ReactionBubble = styled.div`
   padding: 1.5px 7px;
   margin-left: 5px;
   margin-bottom: 5px;
+  word-spacing: -1.5em;
   font-size: 17px;
   color: white;
   display: flex;
