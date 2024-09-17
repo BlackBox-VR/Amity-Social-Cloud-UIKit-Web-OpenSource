@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import { MessageRepository } from '@amityco/js-sdk';
-import { ReactionRepository } from '@amityco/js-sdk';
+import { MessageRepository, ReactionRepository } from '@amityco/js-sdk';
 import orderBy from 'lodash/orderBy';
-
 import useLiveCollection from '~/core/hooks/useLiveCollection';
 
 function useMessagesList(channelId) {
@@ -10,26 +8,24 @@ function useMessagesList(channelId) {
     () => MessageRepository.queryMessages({ channelId }),
     [channelId],
   );
-
-  const [messagesWithReactions, setMessagesWithReactions] = useState([]);
+  const [messagesWithReactions, setMessagesWithReactions] = useState(() => orderBy(messages, 'createdAt', 'desc'));
 
   useEffect(() => {
     const fetchReactions = async () => {
-      const updatedMessages = await Promise.all(
-        messages.map(async (message) => {
-          try {
-            const reactions = await ReactionRepository.queryReactions({ referenceId: message.messageId, referenceType: 'message'});
+      try {
+        const updatedMessages = await Promise.all(
+          messages.map(async (message) => {
+            const reactions = await ReactionRepository.queryReactions({ referenceId: message.messageId, referenceType: 'message' });
             return { ...message, reactions };
-          } catch (error) {
-            console.error(`Failed to fetch reactions for message ${message.messageId}:`, error);
-            return { ...message, reactions: [] };
-          }
-        })
-      );
-      setMessagesWithReactions(orderBy(updatedMessages, 'createdAt', 'desc'));
+          })
+        );
+        setMessagesWithReactions(orderBy(updatedMessages, 'createdAt', 'desc'));
+      } catch (error) {
+        console.error('Failed to fetch reactions:', error);
+      }
     };
 
-    fetchReactions();
+    if (messages.length) fetchReactions();
   }, [messages]);
 
   return [messagesWithReactions, hasMore, loadMore];

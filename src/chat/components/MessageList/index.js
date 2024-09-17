@@ -3,7 +3,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { FileRepository, ImageSize } from '@amityco/js-sdk';
 
 import MessageComponent from '~/chat/components/Message';
-
 import customizableComponent from '~/core/hocs/customization';
 import withSDK from '~/core/hocs/withSDK';
 import useMessagesList from '~/chat/hooks/useMessagesList';
@@ -17,22 +16,20 @@ const MessageList = ({ client, channelId }) => {
   const getAvatar = ({ user: { avatarCustomUrl, avatarFile, avatarFileId } }) => {
     if (avatarCustomUrl) return avatarCustomUrl;
     if (avatarFile) return avatarFile;
-    if (avatarFileId) {
+    if (avatarFileId && typeof avatarFileId === 'string') {
       return FileRepository.getFileUrlById({
         fileId: avatarFileId,
         imageSize: ImageSize.Small,
       });
     }
-
-    return null;
+    
+    return null;  // Return null if no valid avatar is found
   };
+  
 
   useEffect(() => {
-    const element = containerRef.current;
-    if (element) {
-      element.scrollIntoView(false);
-    }
-  }, [messages, containerRef]);
+    containerRef.current?.scrollIntoView(false);
+  }, [messages]);
 
   return (
     <InfiniteScrollContainer>
@@ -46,7 +43,7 @@ const MessageList = ({ client, channelId }) => {
       >
         <MessageListContainer ref={containerRef} data-qa-anchor="message-list">
           {messages.map((message, i) => {
-            const isAutoPost = message.tags != null && message.tags.indexOf('autopost') > -1;
+            const isAutoPost = message.tags?.includes('autopost');
             const nextMessage = messages[i + 1];
             const isConsequent = nextMessage && nextMessage.userId === message.userId && isAutoPost;
             const isIncoming = message.userId !== client.currentUserId;
@@ -69,9 +66,7 @@ const MessageList = ({ client, channelId }) => {
                 messageTags={message.tags}
                 metadata={message.metadata}
                 client={client}
-                bannerCode={
-                  bannerShortcode.length > 0 ? bannerShortcode[0].shortCode.toLowerCase() : ''
-                }
+                bannerCode={bannerShortcode[0]?.shortCode?.toLowerCase() || ''}
                 xpTitle={xpTitle.title || ''}
               />
             );
