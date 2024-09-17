@@ -163,13 +163,13 @@ export const ReactionDisplay = styled.div`
 `;
 
 export const ReactionBubble = styled.div`
-  background-color: #1f1f1f;
-  border: 1.5px solid #9f9f9f;
+  background-color: #212121;
+  border: 1.6px solid #8f8f8f;
   border-radius: 20px;  
   padding: 1.5px 7px;
   margin-left: 5px;
   margin-bottom: 5px;
-  word-spacing: -1.5em;
+  word-spacing: -1em;
   font-size: 17px;
   color: white;
   display: flex;

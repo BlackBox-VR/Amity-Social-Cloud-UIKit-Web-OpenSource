@@ -152,20 +152,28 @@ const Message = ({
   }, [messageId]);
 
   useEffect(() => {
-    const fetchReactions = async () => {
-      try {
-        const reactionCollection = await ReactionRepository.queryReactions({ referenceId: messageId, referenceType: 'message'});
-        const reactionCounts = reactionCollection.reduce((acc, reaction) => {
-          acc[reaction.reactionName] = (acc[reaction.reactionName] || 0) + 1;
-          return acc;
-        }, {});
-        setReactions(reactionCounts);
-      } catch (error) {
-        console.error('Error fetching reactions:', error);
-      }
+    const liveCollection = ReactionRepository.queryReactions({ 
+      referenceId: messageId, 
+      referenceType: 'message'
+    });
+  
+    const handleReactionsUpdated = (updatedReactions) => 
+    {
+      console.log("AB - we got reactions, which are: " + JSON.stringify(updatedReactions));
+      
+      const reactionCounts = updatedReactions.reduce((acc, reaction) => 
+      {
+        acc[reaction.reactionName] = (acc[reaction.reactionName] || 0) + 1;
+        return acc;
+      }, {});
+      setReactions(reactionCounts);
     };
   
-    fetchReactions();
+    liveCollection.on('dataUpdated', handleReactionsUpdated);
+  
+    return () => {
+      liveCollection.dispose();
+    };
   }, [messageId]);
 
   useEffect(() => {

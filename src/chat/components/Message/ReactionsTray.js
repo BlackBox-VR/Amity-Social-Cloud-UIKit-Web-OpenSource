@@ -7,7 +7,7 @@ const TrayContainer = styled.div`
   border-radius: 24px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
-  padding: 3px;
+  padding: 3px 10px;
   z-index: 2; // Ensure it appears above the reactions and message
 `;
 
@@ -37,5 +37,7 @@ const ReactionsTray = forwardRef(({ onReact, style }, ref) => {
     </TrayContainer>
   );
 });
+
+ReactionsTray.displayName = 'ReactionsTray';
 
 export default ReactionsTray;
