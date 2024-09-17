@@ -1,5 +1,21 @@
 import React, { forwardRef } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
+
+const growAndJiggle = keyframes`
+  0% { transform: scale(0.4); }
+  40% { transform: scale(1.2); }
+  75% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+`;
+
+const TrayWrapper = styled.div`
+  position: fixed;
+  left: ${props => props.left}px;
+  top: ${props => props.top}px;
+  transform: translate(-50%, -100%); // Center horizontally and move up by its full height
+  display: flex;
+  justify-content: center;
+`;
 
 const TrayContainer = styled.div`
   position: absolute;
@@ -9,6 +25,7 @@ const TrayContainer = styled.div`
   display: flex;
   padding: 3px 10px;
   z-index: 2; // Ensure it appears above the reactions and message
+  animation: ${growAndJiggle} 0.35s ease-out;
 `;
 
 const ReactionButton = styled.button`
@@ -28,13 +45,15 @@ const reactions = ['❤️', '💪', '🎉', '😂', '☹️'];
 
 const ReactionsTray = forwardRef(({ onReact, style }, ref) => {
   return (
-    <TrayContainer ref={ref} style={style}>
-      {reactions.map((reaction) => (
-        <ReactionButton key={reaction} onClick={() => onReact(reaction)}>
-          {reaction}
-        </ReactionButton>
-      ))}
-    </TrayContainer>
+    <TrayWrapper left={style.left} top={style.top}>
+      <TrayContainer ref={ref}>
+        {reactions.map((reaction) => (
+          <ReactionButton key={reaction} onClick={() => onReact(reaction)}>
+            {reaction}
+          </ReactionButton>
+        ))}
+      </TrayContainer>
+    </TrayWrapper>
   );
 });
 

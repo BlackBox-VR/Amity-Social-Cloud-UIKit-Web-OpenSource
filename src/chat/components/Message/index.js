@@ -114,17 +114,22 @@ const Message = ({
     if (event && event.preventDefault) {
       event.preventDefault();
     }
-    const rect = messageRef.current.getBoundingClientRect();
-    setReactionTrayPosition({
-      x: event ? event.clientX - rect.left : rect.width / 2,
-      y: event ? event.clientY - rect.top : 0,
-    });
-    setShowReactions(true);
-    console.log("AB - setShowReactions called.");
+    
+    if (messageRef.current) {
+      const rect = messageRef.current.getBoundingClientRect();
+      
+      setReactionTrayPosition({
+        x: rect.left + (rect.width / 2),
+        y: rect.bottom - 20, // 20px above the bottom of the message
+      });
+      
+      setShowReactions(true);
+      console.log("AB - setShowReactions called.");
+    }
   }, []);
   
   const handleTouchStart = useCallback((event) => {
-    longPressTimer.current = setTimeout(() => handleLongPress(event), 500);
+    longPressTimer.current = setTimeout(() => handleLongPress(event), 250);
   }, [handleLongPress]);
   
   const handleTouchEnd = useCallback(() => {
@@ -287,12 +292,12 @@ const Message = ({
           )}
           {showReactions && (
             <ReactionsTray
+              key={showReactions ? 'visible' : 'hidden'}
               ref={reactionTrayRef}
               onReact={handleReact}
               style={{
-                position: 'absolute',
-                left: `${reactionTrayPosition.x}px`,
-                top: `${reactionTrayPosition.y}px`,
+                left: reactionTrayPosition.x,
+                top: reactionTrayPosition.y,
               }}
             />
           )}

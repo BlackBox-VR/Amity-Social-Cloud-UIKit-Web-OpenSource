@@ -155,7 +155,7 @@ export const BottomLine = styled.div`
 
 export const ReactionDisplay = styled.div`
   position: absolute;
-  bottom: -2px;  // Adjusted from -10px to -5px to move it up
+  bottom: -4px;  // Adjusted from -10px to -5px to move it up
   right: 10px;  
   display: flex;
   flex-direction: row-reverse;  
@@ -174,5 +174,5 @@ export const ReactionBubble = styled.div`
   color: white;
   display: flex;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);  // Subtle shadow for depth
+  box-shadow: 0 1px 10px rgba(0,0,0,0.25);  // Subtle shadow for depth
 `;
