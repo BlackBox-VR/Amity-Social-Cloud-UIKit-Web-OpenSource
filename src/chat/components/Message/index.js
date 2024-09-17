@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedTime } from 'react-intl';
 import { MessageType } from '@amityco/js-sdk';
 import { MessageRepository } from '@amityco/js-sdk';
+import { ReactionRepository } from '@amityco/js-sdk';
 import customizableComponent from '~/core/hocs/customization';
 import { backgroundImage as UserImage } from '~/icons/User';
 
@@ -152,7 +153,7 @@ const Message = ({
   useEffect(() => {
     const fetchReactions = async () => {
       try {
-        const reactionCollection = await MessageRepository.getReactions({ messageId });
+        const reactionCollection = await ReactionRepository.queryReactions({ referenceId: messageId, referenceType: 'message'});
         const reactionCounts = reactionCollection.reduce((acc, reaction) => {
           acc[reaction.reactionName] = (acc[reaction.reactionName] || 0) + 1;
           return acc;
