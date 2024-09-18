@@ -95,9 +95,12 @@ const Message = ({
       const rect = messageRef.current.getBoundingClientRect();
       setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
       setShowReactions(true);
+  
+      // Log existing reactions
+      console.log(`Reaction tray opened for id ${messageId}! Existing reactions:`, reactions);
     }
   }, 
-  []);
+  [messageId, reactions]);
 
   const handleTouchStart = useCallback((event) => 
   {
@@ -126,17 +129,33 @@ const Message = ({
   
       console.log("Queried DATA: " + JSON.stringify(userReactions));
   
-      if (existingReaction) {
+      if (existingReaction) 
+      {
         console.log(`Existing reaction found! ${JSON.stringify(existingReaction)}`);
   
-        if (existingReaction.reactionName === newReaction) {
+        if (existingReaction.reactionName === newReaction) 
+        {
           // Remove existing reaction if it's the same as the new one
-          await MessageRepository.removeReaction({
+          const isRemoved = await MessageRepository.removeReaction({
             messageId: messageId,
             reactionName: existingReaction.reactionName,
           });
-          console.log('Duplicate - reaction removed.');
-  
+
+          if (isRemoved)
+          { 
+            console.log('Duplicate - reaction removed.');
+        
+            // Add a delay before querying reactions again
+            setTimeout(async () => {
+              const { models: updatedReactions } = await ReactionRepository.queryReactions({
+                referenceId: messageId,
+                referenceType: 'message',
+              });
+              console.log('Reactions after deleting????? (with delay):', JSON.stringify(updatedReactions));
+            }, 2000); // 1 second delay
+          }
+          else console.log("Attempted to remove duplicate, but isRemoved is false?");
+
           // Update local state to reflect removal
           setReactions(prev => {
             const updated = { ...prev };
@@ -145,7 +164,9 @@ const Message = ({
             return updated;
           });
   
-        } else {
+        } 
+        else 
+        {
           // Remove the old reaction and add the new one
           await MessageRepository.removeReaction({
             messageId: messageId,
@@ -153,6 +174,14 @@ const Message = ({
           });
           console.log('Old reaction removed...');
   
+          // Update local state to reflect removal
+          setReactions(prev => {
+            const updated = { ...prev };
+            updated[existingReaction.reactionName] = Math.max((updated[existingReaction.reactionName] || 1) - 1, 0);
+            if (updated[existingReaction.reactionName] === 0) delete updated[existingReaction.reactionName];
+            return updated;
+          });
+
           await MessageRepository.addReaction({
             messageId: messageId,
             reactionName: newReaction,
@@ -160,13 +189,15 @@ const Message = ({
           console.log('...another reaction replaced it.');
   
           // Update local state to reflect the new reaction
-          setReactions(prev => ({
-            ...prev,
-            [existingReaction.reactionName]: Math.max((prev[existingReaction.reactionName] || 1) - 1, 0),
-            [newReaction]: (prev[newReaction] || 0) + 1,
-          }));
+          // setReactions(prev => ({
+          //   ...prev,
+          //   [existingReaction.reactionName]: Math.max((prev[existingReaction.reactionName] || 1) - 1, 0),
+          //   [newReaction]: (prev[newReaction] || 0) + 1,
+          // }));
         }
-      } else {
+      } 
+      else 
+      {
         // No existing reaction, this is a new reaction
         console.log(`No existing reaction.`);
   
@@ -175,13 +206,13 @@ const Message = ({
           messageId: messageId,
           reactionName: newReaction,
         });
-        console.log('New reaction added.');
+        console.log('New reaction added!');
   
         // Update local state to reflect the new reaction
-        setReactions(prev => ({
-          ...prev,
-          [newReaction]: (prev[newReaction] || 0) + 1,
-        }));
+        // setReactions(prev => ({
+        //   ...prev,
+        //   [newReaction]: (prev[newReaction] || 0) + 1,
+        // }));
       }
   
       setShowReactions(false);
