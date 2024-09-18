@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { MessageType } from '@amityco/js-sdk';
-import { MessageRepository, ReactionRepository } from '@amityco/js-sdk';
+import { MessageType, MessageRepository, ReactionRepository } from '@amityco/js-sdk';
 import customizableComponent from '~/core/hocs/customization';
 import { backgroundImage as UserImage } from '~/icons/User';
 
@@ -69,7 +68,6 @@ const Message = ({
   reactions: initialReactions
 }) => 
 {
-  // Auto-post related state vars
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
   const isAutoPost = messageTags?.includes('autopost');
   const isMemberActivityAutoPost = messageTags?.includes('memberActivity');
@@ -77,7 +75,6 @@ const Message = ({
   const isAnnouncementsAutoPost = messageTags?.includes('announcements');
   const isArenaRaidAutoPost = messageTags?.includes('arenaRaid');
 
-  // Reactions state vars
   const [showReactions, setShowReactions] = useState(false);
   const reactionTrayRef = useRef(null);
   const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
@@ -95,153 +92,113 @@ const Message = ({
       const rect = messageRef.current.getBoundingClientRect();
       setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
       setShowReactions(true);
-  
-      // Log existing reactions
-      console.log(`Reaction tray opened for id ${messageId}! Existing reactions:`, reactions);
     }
-  }, 
-  [messageId, reactions]);
+  }, []);
 
   const handleTouchStart = useCallback((event) => 
   {
     longPressTimer.current = setTimeout(() => handleLongPress(event), 250);
-  }, 
-  [handleLongPress]);
+  }, [handleLongPress]);
 
   const handleTouchEnd = useCallback(() => 
   {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
-  }, 
-  []);
+  }, []);
 
-  const handleReact = useCallback(async (newReaction) => {
-    console.log(`handleReact: called for id ${messageId}. newReaction: ${newReaction}!\nDATA: ${JSON.stringify(reactions)}`);
+  const handleReact = useCallback(async (newReaction) => 
+  {
+    console.log(`handleReact() called for id ${messageId}. Tapped Reaction: ${newReaction}!`);
   
     try {
-      // Query existing reactions
-      const { models: userReactions = [] } = await ReactionRepository.queryReactions({
-        referenceId: messageId,
-        referenceType: 'message',
-      });
-  
-      // Find the user's existing reaction, if any
-      const existingReaction = userReactions.find(reaction => reaction.userId === client.currentUserId);
-  
-      console.log("Queried DATA: " + JSON.stringify(userReactions));
-  
-      if (existingReaction) 
+      // Check if the user has already reacted with this reaction
+      const userReactions = reactions.filter(reaction => reaction.userId === client.currentUserId);
+
+      console.log("Total Reactions On Message: " + JSON.stringify(reactions));
+      console.log("My Reactions: " + JSON.stringify(userReactions));
+
+      const hasReacted = userReactions.includes(newReaction);
+      
+      if (hasReacted) 
       {
-        console.log(`Existing reaction found! ${JSON.stringify(existingReaction)}`);
-  
-        if (existingReaction.reactionName === newReaction) 
-        {
-          // Remove existing reaction if it's the same as the new one
-          const isRemoved = await MessageRepository.removeReaction({
-            messageId: messageId,
-            reactionName: existingReaction.reactionName,
-          });
-
-          if (isRemoved)
-          { 
-            console.log('Duplicate - reaction removed.');
+        // Remove the existing reaction
+        const isRemoved = await MessageRepository.removeReaction(
+          {
+          messageId: messageId,
+          reactionName: newReaction,
+        });
         
-            // Add a delay before querying reactions again
-            setTimeout(async () => {
-              const { models: updatedReactions } = await ReactionRepository.queryReactions({
-                referenceId: messageId,
-                referenceType: 'message',
-              });
-              console.log('Reactions after deleting????? (with delay):', JSON.stringify(updatedReactions));
-            }, 2000); // 1 second delay
-          }
-          else console.log("Attempted to remove duplicate, but isRemoved is false?");
-
-          // Update local state to reflect removal
-          setReactions(prev => {
-            const updated = { ...prev };
-            updated[existingReaction.reactionName] = Math.max((updated[existingReaction.reactionName] || 1) - 1, 0);
-            if (updated[existingReaction.reactionName] === 0) delete updated[existingReaction.reactionName];
-            return updated;
-          });
-  
-        } 
-        else 
+        if (isRemoved) 
         {
-          // Remove the old reaction and add the new one
-          await MessageRepository.removeReaction({
-            messageId: messageId,
-            reactionName: existingReaction.reactionName,
-          });
-          console.log('Old reaction removed...');
-  
-          // Update local state to reflect removal
-          setReactions(prev => {
-            const updated = { ...prev };
-            updated[existingReaction.reactionName] = Math.max((updated[existingReaction.reactionName] || 1) - 1, 0);
-            if (updated[existingReaction.reactionName] === 0) delete updated[existingReaction.reactionName];
-            return updated;
-          });
+          console.log(`Existing reaction ${newReaction} removed.`);
 
-          await MessageRepository.addReaction({
-            messageId: messageId,
-            reactionName: newReaction,
+          setReactions(prev => {
+            const updatedReactions = {
+              ...prev,
+              [newReaction]: Math.max((prev[newReaction] || 1) - 1, 0)
+            };
+            return Object.fromEntries(
+              Object.entries(updatedReactions).filter(([_, count]) => count > 0)
+            );
           });
-          console.log('...another reaction replaced it.');
-  
-          // Update local state to reflect the new reaction
-          // setReactions(prev => ({
-          //   ...prev,
-          //   [existingReaction.reactionName]: Math.max((prev[existingReaction.reactionName] || 1) - 1, 0),
-          //   [newReaction]: (prev[newReaction] || 0) + 1,
-          // }));
         }
       } 
       else 
       {
-        // No existing reaction, this is a new reaction
-        console.log(`No existing reaction.`);
-  
-        // Add new reaction
-        await MessageRepository.addReaction({
+        // Remove any existing reaction by the user
+        for (const reaction of userReactions) 
+        {
+          const isRemoved = await MessageRepository.removeReaction(
+            {
+            messageId: messageId,
+            reactionName: reaction,
+          });
+
+          if (isRemoved)
+          {
+            console.log(`Removed a reaction ${reaction}, to be replaced.`);
+
+            setReactions(prev => {
+              const updatedReactions = {
+                ...prev,
+                [reaction]: Math.max((prev[reaction] || 1) - 1, 0)
+              };              
+              return Object.fromEntries(
+                Object.entries(updatedReactions).filter(([_, count]) => count > 0)
+              );
+            });
+          }
+        }
+        
+        // Add the new reaction
+        const isAdded = await MessageRepository.addReaction(
+          {
           messageId: messageId,
           reactionName: newReaction,
-        });
-        console.log('New reaction added!');
-  
-        // Update local state to reflect the new reaction
-        // setReactions(prev => ({
-        //   ...prev,
-        //   [newReaction]: (prev[newReaction] || 0) + 1,
-        // }));
+        });        
+        if (isAdded) console.log(`New reaction added ${newReaction}.`);        
       }
   
       setShowReactions(false);
-    } catch (error) {
-      console.error('Error handling reaction:', error);
-    }
-  }, [messageId, client.currentUserId, reactions]);
+    } 
+    catch (error) { console.error('Error handling reaction:', error); }
+  }, 
+  [messageId, reactions]);
   
-
+  // useEffect for querying reactions and getting an updated object
   useEffect(() => 
   {
-    console.log(`Second useEffect: got called for ${messageId}.`);
-
     const liveCollection = ReactionRepository.queryReactions({ referenceId: messageId, referenceType: 'message' });
 
     liveCollection.on('dataUpdated', updatedReactions => 
     {
-      console.log(`Second useEffect: liveCollection onDataUpdated got called for id ${messageId}. ${JSON.stringify(updatedReactions)}`);
-      const reactionCounts = updatedReactions.reduce((acc, reaction) => 
-      {
-        acc[reaction.reactionName] = (acc[reaction.reactionName] || 0) + 1;
-        return acc;
-      }, {});
-      setReactions(reactionCounts);
+      console.log(`useEffect: Reactions updated for id ${messageId}. ${JSON.stringify(updatedReactions)}`);
+      setReactions(updatedReactions);
     });
 
     return () => liveCollection.dispose();
   }, 
   [messageId]);
+
 
   useEffect(() => 
   {
@@ -307,7 +264,10 @@ const Message = ({
           </MessageBody>
           {Object.keys(reactions).length > 0 && (
             <ReactionDisplay>
-              {Object.entries(reactions).map(([reaction, count]) => (
+              {Object.entries(reactions.reduce((acc, reaction) => {
+                acc[reaction.reactionName] = (acc[reaction.reactionName] || 0) + 1;
+                return acc;
+              }, {})).map(([reaction, count]) => (
                 <ReactionBubble key={reaction}>
                   {reaction} {count}
                 </ReactionBubble>
