@@ -88,7 +88,7 @@ const Message = ({
   const handleLongPress = useCallback((event) => 
   {
     event?.preventDefault();
-    if (messageRef.current) 
+    if (messageRef.current && isIncoming) 
     {
       const rect = messageRef.current.getBoundingClientRect();
       setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
@@ -112,7 +112,7 @@ const Message = ({
   const handleReact = useCallback(async (newReaction) => 
   {
     console.log(`handleReact() called for id ${messageId}. Tapped Reaction: ${newReaction}!`);
-  
+
     try {
       // Check if the user has already reacted with this reaction
       const userReactions = message?.myReactions || [];

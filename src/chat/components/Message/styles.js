@@ -163,7 +163,7 @@ export const ReactionDisplay = styled.div`
 `;
 
 export const ReactionBubble = styled.div`
-  background-color: ${props => props.isFromMe ? '#294963' : '#212121'};
+  background-color: ${props => props.isFromMe ? '#193c59' : '#212121'};
   font-weight: ${props => props.isFromMe ? 'bold' : 'normal'};
   border: 1.6px solid #8f8f8f;
   border-radius: 20px;  

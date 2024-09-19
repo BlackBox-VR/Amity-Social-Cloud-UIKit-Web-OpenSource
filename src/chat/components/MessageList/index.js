@@ -12,6 +12,7 @@ import { InfiniteScrollContainer, MessageListContainer } from './styles';
 const MessageList = ({ client, channelId }) => {
   const containerRef = useRef();
   const [messages, hasMore, loadMore] = useMessagesList(channelId);
+  const prevMessagesLengthRef = useRef(messages.length);
 
   const getAvatar = ({ user: { avatarCustomUrl, avatarFile, avatarFileId } }) => {
     if (avatarCustomUrl) return avatarCustomUrl;
@@ -27,9 +28,15 @@ const MessageList = ({ client, channelId }) => {
   };
   
 
-  useEffect(() => {
-    containerRef.current?.scrollIntoView(false);
-  }, [messages]);
+  useEffect(() => 
+  {
+    if (messages.length > prevMessagesLengthRef.current) 
+    {
+      containerRef.current?.scrollIntoView(false);
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, 
+  [messages]);
 
   return (
     <InfiniteScrollContainer>
