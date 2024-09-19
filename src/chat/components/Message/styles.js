@@ -167,10 +167,10 @@ export const ReactionBubble = styled.div`
   font-weight: ${props => props.isFromMe ? 'bold' : 'normal'};
   border: 1.6px solid #8f8f8f;
   border-radius: 20px;  
-  padding: 1.5px 7px;
+  padding: 1.5px 10px;
   margin-left: 5px;
   margin-bottom: 5px;
-  word-spacing: -1em;
+  word-spacing: 0.3em;
   font-size: 17px;
   color: white;
   display: flex;
