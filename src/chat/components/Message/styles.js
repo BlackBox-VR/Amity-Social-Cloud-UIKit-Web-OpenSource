@@ -177,3 +177,32 @@ export const ReactionBubble = styled.div`
   align-items: center;
   box-shadow: 0 1px 10px rgba(0,0,0,0.25);  // Subtle shadow for depth
 `;
+
+export const EmptyReactionBubble = styled.div`
+  background-color: #383838;
+  font-weight: bold;
+  border: 1.6px solid #8f8f8f;
+  border-radius: 20px;
+  padding: 1.5px 7px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  font-size: 17px;
+  color: white;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+  opacity: 0.7;
+
+  &:hover {
+    background-color: #2e2e2e;
+    opacity: 1;
+  }
+
+  &::before {
+    content: '+🙂';
+    opacity: 0.5;
+    filter: grayscale(100%) brightness(200%);
+  }
+`;

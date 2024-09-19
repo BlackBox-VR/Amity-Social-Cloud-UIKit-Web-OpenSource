@@ -28,6 +28,7 @@ import {
   MessageDate,
   ReactionDisplay,
   ReactionBubble,
+  EmptyReactionBubble,
 } from './styles';
 
 const MessageBody = ({
@@ -94,8 +95,7 @@ const Message = ({
       setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
       setShowReactions(true);
     }
-  }, 
-  []);
+  }, []);
 
   const handleTouchStart = useCallback((event) => 
   {
@@ -106,8 +106,16 @@ const Message = ({
   const handleTouchEnd = useCallback(() => 
   {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
-  }, 
-  []);
+  }, []);
+
+  const handleEmptyReactionClick = useCallback((event) => {
+    event.preventDefault();
+    if (messageRef.current && isIncoming) {
+      const rect = messageRef.current.getBoundingClientRect();
+      setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
+      setShowReactions(true);
+    }
+  }, [isIncoming]);
 
   const handleReact = useCallback(async (newReaction) => 
   {
@@ -278,17 +286,23 @@ const Message = ({
             )}
             {isMemberActivityAutoPost && metadata?.carePointsReward > 0 && <MessageClaim messageId={messageId} metadata={metadata} client={client} />}
           </MessageBody>
-          {Object.keys(reactions).length > 0 && (
+            {Object.keys(reactions).length > 0 ? (
             <ReactionDisplay>
               {Object.entries(reactions).map(([reactionName, count]) => (
                 <ReactionBubble 
-                key={reactionName}
-                isFromMe={message?.myReactions?.includes(reactionName)}
+                  key={reactionName}
+                  isFromMe={message?.myReactions?.includes(reactionName)}
                 >
                   {reactionName} {count}
                 </ReactionBubble>
               ))}
             </ReactionDisplay>
+          ) : (
+            isIncoming && (
+              <ReactionDisplay>
+                <EmptyReactionBubble onClick={handleEmptyReactionClick} />
+              </ReactionDisplay>
+            )
           )}
           {showReactions && (
             <ReactionsTray
