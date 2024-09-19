@@ -281,7 +281,10 @@ const Message = ({
           {Object.keys(reactions).length > 0 && (
             <ReactionDisplay>
               {Object.entries(reactions).map(([reactionName, count]) => (
-                <ReactionBubble key={reactionName}>
+                <ReactionBubble 
+                key={reactionName}
+                isFromMe={message?.myReactions?.includes(reactionName)}
+                >
                   {reactionName} {count}
                 </ReactionBubble>
               ))}
