@@ -180,7 +180,7 @@ export const ReactionBubble = styled.div`
 `;
 
 export const EmptyReactionBubble = styled.div`
-  background-color: #383838;
+  background-color: #2b2b2b;
   font-weight: bold;
   border: 1.6px solid #8f8f8f;
   border-radius: 20px;
@@ -194,7 +194,7 @@ export const EmptyReactionBubble = styled.div`
   box-shadow: 0 1px 10px rgba(0,0,0,0.25);
   cursor: pointer;
   transition: background-color 0.2s, opacity 0.2s;
-  opacity: 0.6;
+  opacity: 0.55;
   user-select: none;
 
   &:hover {
