@@ -163,11 +163,11 @@ export const ReactionDisplay = styled.div`
 `;
 
 export const ReactionBubble = styled.div`
-  background-color: ${props => props.isFromMe ? '#193c59' : '#212121'};
+  background-color: ${props => props.isFromMe ? '#1f3c69' : '#212121'};
   font-weight: ${props => props.isFromMe ? 'bold' : 'normal'};
   border: 1.6px solid #8f8f8f;
   border-radius: 20px;  
-  padding: 1.5px 10px;
+  padding: 1.25px 9px;
   margin-left: 5px;
   margin-bottom: 5px;
   font-size: 17px;
@@ -175,6 +175,8 @@ export const ReactionBubble = styled.div`
   display: flex;
   align-items: center;
   box-shadow: 0 1px 10px rgba(0,0,0,0.25);  // Subtle shadow for depth
+  user-select: none;
+  cursor: default; 
 `;
 
 export const EmptyReactionBubble = styled.div`
@@ -182,7 +184,7 @@ export const EmptyReactionBubble = styled.div`
   font-weight: bold;
   border: 1.6px solid #8f8f8f;
   border-radius: 20px;
-  padding: 1.5px 7px;
+  padding: 1.25px 7px;
   margin-left: 5px;
   margin-bottom: 5px;
   font-size: 17px;
@@ -192,7 +194,8 @@ export const EmptyReactionBubble = styled.div`
   box-shadow: 0 1px 10px rgba(0,0,0,0.25);
   cursor: pointer;
   transition: background-color 0.2s, opacity 0.2s;
-  opacity: 0.7;
+  opacity: 0.6;
+  user-select: none;
 
   &:hover {
     background-color: #2e2e2e;

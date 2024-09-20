@@ -286,24 +286,19 @@ const Message = ({
             )}
             {isMemberActivityAutoPost && metadata?.carePointsReward > 0 && <MessageClaim messageId={messageId} metadata={metadata} client={client} />}
           </MessageBody>
-            {Object.keys(reactions).length > 0 ? (
             <ReactionDisplay>
-              {Object.entries(reactions).map(([reactionName, count]) => (
-                <ReactionBubble 
-                  key={reactionName}
-                  isFromMe={message?.myReactions?.includes(reactionName)}
-                >
-                  {reactionName} {count}
-                </ReactionBubble>
-              ))}
-            </ReactionDisplay>
-          ) : (
-            isIncoming && (
-              <ReactionDisplay>
-                <EmptyReactionBubble onClick={handleEmptyReactionClick} />
-              </ReactionDisplay>
-            )
-          )}
+            {Object.entries(reactions).map(([reactionName, count]) => (
+              <ReactionBubble 
+                key={reactionName}
+                isFromMe={message?.myReactions?.includes(reactionName)}
+              >
+              {reactionName} {count}
+            </ReactionBubble>
+            ))}
+            {isIncoming && (
+              <EmptyReactionBubble onClick={handleEmptyReactionClick} />
+            )}
+          </ReactionDisplay>
           {showReactions && (
             <ReactionsTray
               key={showReactions ? 'visible' : 'hidden'}
