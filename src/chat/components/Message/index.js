@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { MessageType, MessageRepository, ReactionRepository } from '@amityco/js-sdk';
 import customizableComponent from '~/core/hocs/customization';
 import { backgroundImage as UserImage } from '~/icons/User';
+import styled from 'styled-components';
 
 import Options from './Options';
 import MessageContent from './MessageContent';
 import MessageHeader from './MessageHeader';
 import MessageClaim from './MessageClaim';
 import ReactionsTray from './ReactionsTray';
+import ReactionUsersList from './ReactionUsersList';
 
 import {
   Avatar,
@@ -30,6 +32,19 @@ import {
   ReactionBubble,
   EmptyReactionBubble,
 } from './styles';
+
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
 
 const MessageBody = ({
   isDeleted,
@@ -69,6 +84,7 @@ const Message = ({
   reactions: initialReactions
 }) => 
 {
+  // Auto-post related state vars
   const isSupportedMessageType = [MessageType.Text, MessageType.Custom].includes(type);
   const isAutoPost = messageTags?.includes('autopost');
   const isMemberActivityAutoPost = messageTags?.includes('memberActivity');
@@ -76,6 +92,7 @@ const Message = ({
   const isAnnouncementsAutoPost = messageTags?.includes('announcements');
   const isArenaRaidAutoPost = messageTags?.includes('arenaRaid');
 
+  // Reactions based state vars
   const [showReactions, setShowReactions] = useState(false);
   const reactionTrayRef = useRef(null);
   const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
@@ -83,6 +100,11 @@ const Message = ({
   const messageRef = useRef(null);
   const [reactions, setReactions] = useState(initialReactions || {});
   const [message, setMessage] = useState(null);
+
+  // Reactions user list state vars
+  const [showReactionUsers, setShowReactionUsers] = useState(false);
+  const [selectedReaction, setSelectedReaction] = useState(null);
+  const [reactionUsers, setReactionUsers] = useState([]);
 
   const getAvatarProps = () => avatar ? { avatar } : { backgroundImage: UserImage };
 
@@ -108,14 +130,72 @@ const Message = ({
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
   }, []);
 
-  const handleEmptyReactionClick = useCallback((event) => {
+  const handleEmptyReactionClick = useCallback((event) => 
+  {
     event.preventDefault();
-    if (messageRef.current && isIncoming) {
+    if (messageRef.current && isIncoming) 
+    {
       const rect = messageRef.current.getBoundingClientRect();
       setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
       setShowReactions(true);
     }
   }, [isIncoming]);
+
+  useEffect(() => {
+    console.log("showReactionUsers:", showReactionUsers);
+    console.log("reactionUsers:", reactionUsers);
+  }, [showReactionUsers, reactionUsers]);
+
+  const handleReactionClick = useCallback(async (reaction, event) => {
+    if (!event) {
+      console.error('Event object is undefined in handleReactionClick');
+      return;
+    }
+
+    setSelectedReaction(reaction);
+
+    try {
+      const reactionsCollection = await ReactionRepository.queryReactions({
+        referenceId: messageId,
+        referenceType: 'message'
+      });
+
+      console.log("Reactions Collection:", reactionsCollection);
+      console.log("Reactions FULL:", JSON.stringify(reactionsCollection, null, 2));
+      console.log("reactionsCollection type:", typeof reactionsCollection);
+      console.log("reactionsCollection properties:", Object.keys(reactionsCollection));
+
+      if (reactionsCollection && typeof reactionsCollection.on === 'function') {
+        reactionsCollection.on('dataUpdated', (data) => {
+          processReactions(data);
+        });
+        // Trigger initial data processing
+        processReactions(reactionsCollection.models);
+      } else {
+        console.error("Unexpected reactions data structure:", reactionsCollection);
+      }
+
+    } catch (error) {
+      console.error('Error fetching reaction users:', error);
+    }
+
+    function processReactions(reactions) {
+      if (Array.isArray(reactions)) {
+        const filteredReactions = reactions.filter(r => r.reactionName === reaction);
+        const users = filteredReactions.map(r => ({
+          id: r.userId,
+          displayName: r.userId,
+          avatarUrl: null,
+          avatarCustomUrl: null,
+          avatarFileId: null
+        }));
+        setReactionUsers(users);
+        setShowReactionUsers(true);
+      } else {
+        console.error("Reactions is not an array:", reactions);
+      }
+    }
+  }, [messageId]);
 
   const handleReact = useCallback(async (newReaction) => 
   {
@@ -256,6 +336,7 @@ const Message = ({
     return formattedDate.toLocaleDateString(locale, options);
   };
 
+
   return (
     <MessageReservedRow isIncoming={isIncoming}>
       <MessageWrapper isAutoPost={isAutoPost}>
@@ -291,6 +372,7 @@ const Message = ({
               <ReactionBubble 
                 key={reactionName}
                 isFromMe={message?.myReactions?.includes(reactionName)}
+                onClick={(event) => handleReactionClick(reactionName, event)}
               >
               {reactionName} {count}
             </ReactionBubble>
@@ -299,6 +381,15 @@ const Message = ({
               <EmptyReactionBubble onClick={handleEmptyReactionClick} />
             )}
           </ReactionDisplay>
+          {showReactionUsers && (
+            <Backdrop onClick={() => setShowReactionUsers(false)}>
+              <ReactionUsersList
+                users={reactionUsers}
+                reaction={selectedReaction}
+                onClose={() => setShowReactionUsers(false)}
+              />
+            </Backdrop>
+          )}
           {showReactions && (
             <ReactionsTray
               key={showReactions ? 'visible' : 'hidden'}

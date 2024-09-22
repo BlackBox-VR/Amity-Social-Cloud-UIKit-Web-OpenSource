@@ -176,7 +176,7 @@ export const ReactionBubble = styled.div`
   align-items: center;
   box-shadow: 0 1px 10px rgba(0,0,0,0.25);  // Subtle shadow for depth
   user-select: none;
-  cursor: default; 
+  cursor: pointer; 
 `;
 
 export const EmptyReactionBubble = styled.div`
