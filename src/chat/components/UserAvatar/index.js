@@ -2,6 +2,7 @@ import React from 'react';
 import { ImageSize, FileRepository } from '@amityco/js-sdk';
 import UiKitAvatar from '~/core/components/Avatar';
 import { SIZE_ALIAS } from '~/core/hocs/withSize';
+import { backgroundImage as DefaultUserImage } from '~/icons/User';
 
 const UserAvatar = ({
   size = SIZE_ALIAS.REGULAR,
@@ -23,10 +24,8 @@ const UserAvatar = ({
         }),
       };
     }
-
     if (defaultImage) return { backgroundImage: defaultImage };
-
-    return {};
+    return { backgroundImage: DefaultUserImage };
   };
 
   return <UiKitAvatar size={size} {...getAvatarProps()} />;

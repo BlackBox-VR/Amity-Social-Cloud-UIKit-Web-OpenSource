@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { MessageType, MessageRepository, ReactionRepository } from '@amityco/js-sdk';
+import { MessageType, MessageRepository, ReactionRepository, UserRepository } from '@amityco/js-sdk';
 import customizableComponent from '~/core/hocs/customization';
 import { backgroundImage as UserImage } from '~/icons/User';
 import styled from 'styled-components';
@@ -182,15 +182,35 @@ const Message = ({
     function processReactions(reactions) {
       if (Array.isArray(reactions)) {
         const filteredReactions = reactions.filter(r => r.reactionName === reaction);
-        const users = filteredReactions.map(r => ({
-          id: r.userId,
-          displayName: r.userId,
-          avatarUrl: null,
-          avatarCustomUrl: null,
-          avatarFileId: null
-        }));
-        setReactionUsers(users);
-        setShowReactionUsers(true);
+        Promise.all(filteredReactions.map(r => {
+          return new Promise((resolve) => {
+            const liveUser = UserRepository.getUser(r.userId);
+            liveUser.on("dataUpdated", user => {
+              console.log("User data:", JSON.stringify(user));
+              resolve({
+                id: user.userId,
+                displayName: user.displayName || user.userId,
+                avatarUrl: user.avatarUrl,
+                avatarCustomUrl: user.avatarCustomUrl,
+                avatarFileId: user.avatarFileId
+              });
+            });
+            // Add a timeout in case the user data doesn't load
+            setTimeout(() => {
+              resolve({
+                id: r.userId,
+                displayName: r.userId,
+                avatarUrl: null,
+                avatarCustomUrl: null,
+                avatarFileId: null
+              });
+            }, 5000); // 5 second timeout
+          });
+        })).then(users => {
+          console.log("Processed users:", JSON.stringify(users));
+          setReactionUsers(users);
+          setShowReactionUsers(true);
+        });
       } else {
         console.error("Reactions is not an array:", reactions);
       }
