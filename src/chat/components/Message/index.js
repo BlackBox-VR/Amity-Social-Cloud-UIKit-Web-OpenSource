@@ -96,7 +96,6 @@ const Message = ({
   const [showReactions, setShowReactions] = useState(false);
   const reactionTrayRef = useRef(null);
   const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
-  const longPressTimer = useRef(null);
   const messageRef = useRef(null);
   const [reactions, setReactions] = useState(initialReactions || {});
   const [message, setMessage] = useState(null);
@@ -107,28 +106,6 @@ const Message = ({
   const [reactionUsers, setReactionUsers] = useState([]);
 
   const getAvatarProps = () => avatar ? { avatar } : { backgroundImage: UserImage };
-
-  const handleLongPress = useCallback((event) => 
-  {
-    event?.preventDefault();
-    if (messageRef.current && isIncoming) 
-    {
-      const rect = messageRef.current.getBoundingClientRect();
-      setReactionTrayPosition({ x: rect.left + (rect.width / 2), y: rect.bottom - 55 });
-      setShowReactions(true);
-    }
-  }, []);
-
-  const handleTouchStart = useCallback((event) => 
-  {
-    longPressTimer.current = setTimeout(() => handleLongPress(event), 250);
-  }, 
-  [handleLongPress]);
-
-  const handleTouchEnd = useCallback(() => 
-  {
-    if (longPressTimer.current) clearTimeout(longPressTimer.current);
-  }, []);
 
   const handleEmptyReactionClick = useCallback((event) => 
   {
@@ -371,10 +348,6 @@ const Message = ({
             isSharedQuestAutoPost={isSharedQuestAutoPost}
             isAnnouncementsAutoPost={isAnnouncementsAutoPost}
             isArenaRaidAutoPost={isArenaRaidAutoPost}
-            onMouseDown={handleTouchStart}
-            onMouseUp={handleTouchEnd}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
           >
             {!isAutoPost && <UserName>{userDisplayName}</UserName>}
             {isMemberActivityAutoPost && <MessageHeader avatar={getAvatarProps()} userDisplayName={userDisplayName} bannerCode={bannerCode} xpTitle={xpTitle} />}
