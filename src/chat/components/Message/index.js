@@ -355,7 +355,7 @@ const Message = ({
             {!isDeleted && (
               <BottomLine>
                 <MessageDate>{timeDifference(createdAt, "en")}</MessageDate>
-                {!isAutoPost && <Options messageId={messageId} data={data} isIncoming={isIncoming} isSupportedMessageType={isSupportedMessageType} popupContainerRef={containerRef} />}
+                {/* {!isAutoPost && <Options messageId={messageId} data={data} isIncoming={isIncoming} isSupportedMessageType={isSupportedMessageType} popupContainerRef={containerRef} />} */}
               </BottomLine>
             )}
             {isMemberActivityAutoPost && metadata?.carePointsReward > 0 && <MessageClaim messageId={messageId} metadata={metadata} client={client} />}
