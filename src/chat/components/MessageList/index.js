@@ -13,6 +13,7 @@ const MessageList = ({ client, channelId }) => {
   const [messages, hasMore, loadMore] = useMessagesList(channelId);
   const prevMessagesLengthRef = useRef(messages.length);
   const [isLoading, setIsLoading] = useState(false);
+  const scrollPositionRef = useRef(0);
 
   const getAvatar = ({ user: { avatarCustomUrl, avatarFile, avatarFileId } }) => {
     if (avatarCustomUrl) return avatarCustomUrl;
@@ -27,8 +28,10 @@ const MessageList = ({ client, channelId }) => {
   };
 
   useEffect(() => {
-    if (messages.length > prevMessagesLengthRef.current) {
-      containerRef.current?.scrollTo(0, containerRef.current.scrollHeight);
+    const container = containerRef.current;
+    if (container && messages.length > prevMessagesLengthRef.current) {
+      // Maintain the previous scroll position
+      container.scrollTop = scrollPositionRef.current;
     }
     prevMessagesLengthRef.current = messages.length;
     setIsLoading(false);
@@ -40,14 +43,15 @@ const MessageList = ({ client, channelId }) => {
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
     const maxScrollTop = scrollHeight - clientHeight;
 
-    console.log('Current scrollTop:', scrollTop);
-    console.log('Max scrollTop:', maxScrollTop);
-    console.log('Has more:', hasMore);
+    // console.log('Current scrollTop:', scrollTop);
+    // console.log('Max scrollTop:', maxScrollTop);
+    // console.log('Has more:', hasMore);
 
-    // Check if we've scrolled to within 50 pixels of the top
+    // Check if we've scrolled to within 10 pixels of the top
     if (Math.abs(scrollTop) >= maxScrollTop - 10 && hasMore) {
       console.log('Loading more messages...');
       setIsLoading(true);
+      scrollPositionRef.current = scrollTop;
       loadMore();
     }
   }, [hasMore, loadMore, isLoading]);
