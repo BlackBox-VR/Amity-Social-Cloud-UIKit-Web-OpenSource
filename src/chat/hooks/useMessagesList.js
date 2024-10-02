@@ -1,20 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MessageRepository, ReactionRepository } from '@amityco/js-sdk';
 import orderBy from 'lodash/orderBy';
-import useLiveCollection from '~/core/hooks/useLiveCollection';
 
-function useMessagesList(channelId) {
-  const [messages, hasMore, loadMore] = useLiveCollection(
-    () => MessageRepository.queryMessages({ channelId }),
-    [channelId],
-  );
-  const [messagesWithReactions, setMessagesWithReactions] = useState(() => orderBy(messages, 'createdAt', 'desc'));
+function useMessagesList(channelId) 
+{
+  const [messages, setMessages] = useState([]);
+  const [messagesWithReactions, setMessagesWithReactions] = useState([]);
+  const initialLoadDone = useRef(false);
+  const messageCollectionRef = useRef(null);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
+    const messageCollection = MessageRepository.queryMessages({ channelId });
+    messageCollectionRef.current = messageCollection;
+
+    const handleDataUpdated = () => 
+    {
+      setMessages(orderBy(messageCollection.models, 'createdAt', 'desc'));
+
+      // Load next 20 messages if it's the initial load and there are more pages
+      if (initialLoadDone.current == false && messageCollection.prevPage && messageCollection.prevPage() != undefined) 
+      {
+        initialLoadDone.current = true;
+        messageCollection.prevPage();
+      }
+    };
+
+    messageCollection.on('dataUpdated', handleDataUpdated);
+
+    return () => 
+    {
+      messageCollection.removeAllListeners('dataUpdated');
+    };
+
+  }, 
+  [channelId]);
+
+  useEffect(() => 
+  {
     const fetchReactions = async () => {
       try {
         const updatedMessages = await Promise.all(
-          messages.map(async (message) => {
+          messages.map(async (message) => 
+          {
             const reactions = await ReactionRepository.queryReactions({ referenceId: message.messageId, referenceType: 'message' });
             return { ...message, reactions };
           })
@@ -25,8 +53,21 @@ function useMessagesList(channelId) {
       }
     };
 
-    if (messages.length) fetchReactions();
+    if (messages.length)
+    { 
+        fetchReactions();
+    }
   }, [messages]);
+
+  const hasMore = messageCollectionRef.current ? messageCollectionRef.current.prevPage : false;
+
+  const loadMore = () => 
+  {
+    if (messageCollectionRef.current && messageCollectionRef.current.prevPage && messageCollectionRef.current.prevPage() != undefined) 
+    {
+      messageCollectionRef.current.prevPage();
+    }
+  };
 
   return [messagesWithReactions, hasMore, loadMore];
 }
