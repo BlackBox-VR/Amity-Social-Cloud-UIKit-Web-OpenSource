@@ -9,7 +9,8 @@ export const InfiniteScrollContainer = styled.div`
 `;
 
 export const MessageListContainer = styled.div`
+  height: 100%;
+  overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
-  padding: 0 15px;
 `;
