@@ -193,7 +193,7 @@ const Message = ({
                 avatarCustomUrl: null,
                 avatarFileId: null
               });
-            }, 5000); // 5 second timeout
+            }, 9000); // 5 second timeout
           });
         })).then(users => 
           {
