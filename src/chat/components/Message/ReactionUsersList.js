@@ -24,7 +24,7 @@ const CloseButton = styled.button`
   right: 5px;
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 38px;
   cursor: pointer;
 `;
 
@@ -62,7 +62,7 @@ const ReactionUsersList = ({ users, reaction, onClose }) => {
             avatarFileId={user.avatarFileId}
           />
           <UserInfo>
-            <UserName>{user.displayName || user.id}</UserName>
+            <UserName>{user.displayName}</UserName>
           </UserInfo>
         </UserItem>
       ))}
