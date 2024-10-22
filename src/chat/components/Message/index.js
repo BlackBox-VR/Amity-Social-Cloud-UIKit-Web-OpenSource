@@ -118,13 +118,16 @@ const Message = ({
     }
   }, [isIncoming]);
 
-  useEffect(() => {
+  useEffect(() => 
+  {
     console.log("showReactionUsers:", showReactionUsers);
     console.log("reactionUsers:", reactionUsers);
   }, [showReactionUsers, reactionUsers]);
 
-  const handleReactionClick = useCallback(async (reaction, event) => {
-    if (!event) {
+  const handleReactionClick = useCallback(async (reaction, event) => 
+  {
+    if (!event) 
+    {
       console.error('Event object is undefined in handleReactionClick');
       return;
     }
@@ -142,7 +145,8 @@ const Message = ({
       console.log("reactionsCollection type:", typeof reactionsCollection);
       console.log("reactionsCollection properties:", Object.keys(reactionsCollection));
 
-      if (reactionsCollection && typeof reactionsCollection.on === 'function') {
+      if (reactionsCollection && typeof reactionsCollection.on === 'function') 
+      {
         reactionsCollection.on('dataUpdated', (data) => {
           processReactions(data);
         });
@@ -186,7 +190,7 @@ const Message = ({
         })).then(users => {
           console.log("Processed users:", JSON.stringify(users));
           setReactionUsers(users);
-          setShowReactionUsers(true);
+          //setShowReactionUsers(true);
         });
       } else {
         console.error("Reactions is not an array:", reactions);
