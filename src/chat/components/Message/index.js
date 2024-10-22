@@ -149,10 +149,10 @@ const Message = ({
       {
         reactionsCollection.on('dataUpdated', (data) => 
         {
-          processReactions(data);
+          //processReactions(data);
         });
         // Trigger initial data processing
-        //processReactions(reactionsCollection.models);
+        processReactions(reactionsCollection.models);
       } 
       else 
       {
@@ -177,7 +177,7 @@ const Message = ({
               console.log("User data:", JSON.stringify(user));
               resolve({
                 id: user.userId,
-                displayName: user.displayName, // || user.userId,
+                displayName: user.displayName,
                 avatarUrl: user.avatarUrl,
                 avatarCustomUrl: user.avatarCustomUrl,
                 avatarFileId: user.avatarFileId
