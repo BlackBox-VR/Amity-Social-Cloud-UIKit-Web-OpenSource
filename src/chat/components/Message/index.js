@@ -144,22 +144,16 @@ const Message = ({
       console.log("Reactions FULL:", JSON.stringify(reactionsCollection, null, 2));
       console.log("reactionsCollection type:", typeof reactionsCollection);
       console.log("reactionsCollection properties:", Object.keys(reactionsCollection));
-
-      if (reactionsCollection && typeof reactionsCollection.on === 'function') 
+      
+      reactionsCollection.on('dataUpdated', (data) => 
       {
-        reactionsCollection.on('dataUpdated', (data) => 
-        {
-          //processReactions(data);
-        });
-        // Trigger initial data processing
-        processReactions(reactionsCollection.models);
-      } 
-      else 
-      {
-        console.error("Unexpected reactions data structure:", reactionsCollection);
-      }
-
-    } catch (error) {
+        //processReactions(data);
+      });
+      // Trigger initial data processing
+      processReactions(reactionsCollection.models);     
+    } 
+    catch (error) 
+    {
       console.error('Error fetching reaction users:', error);
     }
 
@@ -254,7 +248,6 @@ const Message = ({
     }
   }, 
   [messageId, reactions, message]);
-
   
   // useEffect for querying messages and their complete updated data
   useEffect(() => {
@@ -269,8 +262,6 @@ const Message = ({
           {
             setMessage(message);
             setReactions(message.reactions || {});
-            // You might want to store myReactions in a separate state if needed
-            // setMyReactions(message.myReactions || []);
           }
         };
   
