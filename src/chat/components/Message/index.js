@@ -147,12 +147,15 @@ const Message = ({
 
       if (reactionsCollection && typeof reactionsCollection.on === 'function') 
       {
-        reactionsCollection.on('dataUpdated', (data) => {
+        reactionsCollection.on('dataUpdated', (data) => 
+        {
           processReactions(data);
         });
         // Trigger initial data processing
-        processReactions(reactionsCollection.models);
-      } else {
+        //processReactions(reactionsCollection.models);
+      } 
+      else 
+      {
         console.error("Unexpected reactions data structure:", reactionsCollection);
       }
 
@@ -160,10 +163,14 @@ const Message = ({
       console.error('Error fetching reaction users:', error);
     }
 
-    function processReactions(reactions) {
-      if (Array.isArray(reactions)) {
+    function processReactions(reactions) 
+    {
+
+      if (Array.isArray(reactions)) 
+      {
         const filteredReactions = reactions.filter(r => r.reactionName === reaction);
-        Promise.all(filteredReactions.map(r => {
+        Promise.all(filteredReactions.map(r => 
+          {
           return new Promise((resolve) => {
             const liveUser = UserRepository.getUser(r.userId);
             liveUser.on("dataUpdated", user => {
@@ -177,7 +184,8 @@ const Message = ({
               });
             });
             // Add a timeout in case the user data doesn't load
-            setTimeout(() => {
+            setTimeout(() => 
+            {
               resolve({
                 id: r.userId,
                 displayName: r.userId,
@@ -187,12 +195,15 @@ const Message = ({
               });
             }, 5000); // 5 second timeout
           });
-        })).then(users => {
+        })).then(users => 
+          {
           console.log("Processed users:", JSON.stringify(users));
           setReactionUsers(users);
           setShowReactionUsers(true);
         });
-      } else {
+      } 
+      else 
+      {
         console.error("Reactions is not an array:", reactions);
       }
     }
