@@ -165,13 +165,13 @@ const Message = ({
 
     function processReactions(reactions) 
     {
-
       if (Array.isArray(reactions)) 
       {
         const filteredReactions = reactions.filter(r => r.reactionName === reaction);
         Promise.all(filteredReactions.map(r => 
+        {
+          return new Promise((resolve) => 
           {
-          return new Promise((resolve) => {
             const liveUser = UserRepository.getUser(r.userId);
             liveUser.on("dataUpdated", user => {
               console.log("User data:", JSON.stringify(user));
@@ -183,20 +183,9 @@ const Message = ({
                 avatarFileId: user.avatarFileId
               });
             });
-            // Add a timeout in case the user data doesn't load
-            setTimeout(() => 
-            {
-              resolve({
-                id: r.userId,
-                displayName: r.userId,
-                avatarUrl: null,
-                avatarCustomUrl: null,
-                avatarFileId: null
-              });
-            }, 9000); // 5 second timeout
           });
         })).then(users => 
-          {
+        {
           console.log("Processed users:", JSON.stringify(users));
           setReactionUsers(users);
           setShowReactionUsers(true);
@@ -206,7 +195,7 @@ const Message = ({
       {
         console.error("Reactions is not an array:", reactions);
       }
-    }
+    }    
   }, [messageId]);
 
   const handleReact = useCallback(async (newReaction) => 
