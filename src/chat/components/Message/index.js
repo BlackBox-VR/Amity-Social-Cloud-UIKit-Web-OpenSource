@@ -170,7 +170,7 @@ const Message = ({
               console.log("User data:", JSON.stringify(user));
               resolve({
                 id: user.userId,
-                displayName: user.displayName || user.userId,
+                displayName: user.displayName, // || user.userId,
                 avatarUrl: user.avatarUrl,
                 avatarCustomUrl: user.avatarCustomUrl,
                 avatarFileId: user.avatarFileId
@@ -190,7 +190,7 @@ const Message = ({
         })).then(users => {
           console.log("Processed users:", JSON.stringify(users));
           setReactionUsers(users);
-          //setShowReactionUsers(true);
+          setShowReactionUsers(true);
         });
       } else {
         console.error("Reactions is not an array:", reactions);
