@@ -13,4 +13,6 @@ export const MessageListContainer = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
