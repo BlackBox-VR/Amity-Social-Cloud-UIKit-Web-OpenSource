@@ -68,41 +68,42 @@ const ChatApplication = ({
   const [channels] = useChannelsList();
   const [channelCreated, setChannelCreated] = useState(false);
 
-  useEffect(() => 
-  {
-    const initChat = async () => 
-    {
-      try 
-      {
+  useEffect(() => {
+    const initChat = async () => {
+      try {
         console.log("--- Channels List ---");
         console.log(channels);
 
+        // Get user data once at the start
+        const userModel = await new Promise((resolve) => 
+        {
+          const liveObject = UserRepository.getUser(currentUserId);
+          liveObject.once('dataUpdated', user => 
+          {
+            console.log("Loaded user: " + JSON.stringify(user));
+            resolve(user);
+          });
+          liveObject.once('dataError', error => {
+            reject(error);
+          });
+        }).catch((error) => {
+          return null;
+        });
+
         if (channels != null && channels.length > 0) 
         {
-          console.log('Channels array existed, and had entries! Entering first one... ', channels[0].channelId);
-          handleChannelSelect({channelId: channels[0].channelId,channelType: ChannelType.Standard});
+          if (userModel && userModel.metadata.teamId) 
+          {
+            const teamChannel = channels.find(channel => channel.channelId === userModel.metadata.teamId);
+            if (teamChannel) {
+              console.log('Found matching team channel, entering... ', teamChannel.channelId);
+              handleChannelSelect({channelId: teamChannel.channelId, channelType: ChannelType.Standard});
+            }
+          }
         } 
         else 
         {
-          console.log(`Channels array didn't exist, now loading user '` + currentUserId + `' and their team data...`);
-  
-          const userModel = await new Promise((resolve) => 
-          {
-            const liveObject = UserRepository.getUser(currentUserId);
-            liveObject.once('dataUpdated', user => 
-            {
-              console.log("Loaded user: " + JSON.stringify(user));
-              resolve(user);
-            });
-            liveObject.once('dataError', error => 
-            {
-              reject(error);
-            });
-          }).catch((error) => 
-          {
-            return null;
-          });
-
+          console.log(`Channels array didn't exist, now checking team data...`);
           console.log("Checking user and their metadata...");
 
           if (userModel && userModel.metadata.teamId) 
