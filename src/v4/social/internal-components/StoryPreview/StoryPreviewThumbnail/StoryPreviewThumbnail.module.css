@@ -245,3 +245,11 @@
   color: #666;
   text-align: center;
 }
+
+.truncatedTitle {
+  display: inline-block;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

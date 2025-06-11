@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
-import Truncate from 'react-truncate-markup';
 import React, { useMemo, useState } from 'react';
 import { SerializedLexicalNode, SerializedParagraphNode } from 'lexical';
 import { Mentioned, Mentionees } from '~/v4/helpers/utils';
@@ -28,61 +27,72 @@ type TextWithMentionProps = {
 };
 
 export const TextWithMention = ({
-  data,
-  metadata,
-  mentionees,
   pageId = '*',
-  maxLines = 8,
-  isBold = false,
   componentId = '*',
+  isBold = false,
+  maxLines = 2,
+  data,
+  mentionees,
+  metadata,
 }: TextWithMentionProps) => {
-  const { goToUserProfilePage } = useNavigation();
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const Component = isBold ? Typography.BodyBold : Typography.Body;
-
+  const { goToUserProfilePage } = useNavigation();
   const editorState = useMemo(
     () => textToEditorState({ data, mentionees, metadata }),
     [data, mentionees, metadata],
   );
 
-  const convertSerializedToText = (child: SerializedLexicalNode, childIndex: number) => {
-    if ($isSerializedMentionNode<MentionData>(child)) {
-      return (
-        <Button
-          key={uuidv4()}
-          data-testid={`${pageId}/${componentId}/mention`}
-          className={clsx(styles.textWithMention__mention)}
-          onPress={() => goToUserProfilePage(child.data.userId)}
-        >
-          {child.text}
-        </Button>
-      );
+  const Component = isBold ? Typography.Headline : Typography.Body;
+
+  const convertSerializedToText = (node: SerializedLexicalNode, key: number) => {
+    if ($isSerializedTextNode(node)) {
+      return <span key={key}>{node.text}</span>;
     }
 
-    if ($isSerializedAutoLinkNode(child) || $isSerializedLinkNode(child)) {
+    if ($isSerializedLinkNode(node)) {
       return (
         <a
+          key={key}
+          href={node.url}
           target="_blank"
-          key={child.url}
-          href={child.url}
           rel="noopener noreferrer"
-          onMouseUp={(e) => e.stopPropagation()}
-          onTouchEnd={(e) => e.stopPropagation()}
-          onMouseDown={(e) => e.stopPropagation()}
-          onPointerUp={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-          className={clsx(styles.textWithMention__link)}
-          data-testid={`${pageId}/${componentId}/post_link`}
+          className={styles.textWithMention__link}
         >
-          {$isSerializedTextNode(child.children[0]) ? child.children[0]?.text : child.url}
+          {node.children.map((child, index) => convertSerializedToText(child, index))}
         </a>
       );
     }
 
-    if ($isSerializedTextNode(child)) {
-      return <React.Fragment key={childIndex}>{child.text}</React.Fragment>;
+    if ($isSerializedMentionNode<MentionData>(node)) {
+      const userMention = mentionees.find(
+        (m) => m.type === 'user' && m.userIds?.includes(node.data.userId),
+      );
+      if (userMention) {
+        return (
+          <span
+            key={key}
+            className={styles.textWithMention__mention}
+            onClick={() => goToUserProfilePage(node.data.userId)}
+          >
+            @{node.data.displayName || node.data.userId}
+          </span>
+        );
+      }
+      return null;
+    }
+
+    if ($isSerializedAutoLinkNode(node)) {
+      return (
+        <a
+          key={key}
+          href={node.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.textWithMention__link}
+        >
+          {node.children.map((child, index) => convertSerializedToText(child, index))}
+        </a>
+      );
     }
 
     return null;
@@ -102,22 +112,22 @@ export const TextWithMention = ({
       {isExpanded ? (
         renderText(editorState.root.children)
       ) : (
-        <Truncate
-          lines={maxLines}
-          ellipsis={
-            <>
-              ...{' '}
-              <Button
-                className={styles.textWithMention__seeMore}
-                onPress={() => setIsExpanded(true)}
-              >
-                See more
-              </Button>
-            </>
-          }
-        >
-          <div>{renderText(editorState.root.children)}</div>
-        </Truncate>
+        <div className={styles.truncateContainer}>
+          <div
+            className={styles.text}
+            style={{
+              WebkitLineClamp: maxLines,
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {renderText(editorState.root.children)}
+          </div>
+          <Button className={styles.textWithMention__seeMore} onPress={() => setIsExpanded(true)}>
+            See more
+          </Button>
+        </div>
       )}
     </Component>
   );

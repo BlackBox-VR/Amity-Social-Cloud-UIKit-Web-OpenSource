@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { VerifiedIcon } from '~/v4/social/icons';
 import { Avatar, Typography } from '~/v4/core/components';
 import { HyperLink } from '~/v4/social/elements/HyperLink';
-import TruncateMarkup from 'react-truncate-markup';
 import styles from './StoryPreview.module.css';
 import { PauseIcon, PlayIcon } from '~/icons';
 import ColorThief from 'colorthief';
@@ -186,7 +185,8 @@ export const StoryPreview: React.FC<StoryPreviewProps> = ({
                 </div>
                 <Typography.BodyBold className={styles.storyPreviewTitle}>
                   <span className={styles.nameContainer}>
-                    {title} {isOfficial && <VerifiedIcon fill="white" />}
+                    <span className={styles.truncatedTitle}>{title}</span>{' '}
+                    {isOfficial && <VerifiedIcon fill="white" />}
                   </span>
                 </Typography.BodyBold>
               </div>
@@ -254,9 +254,7 @@ export const StoryPreview: React.FC<StoryPreviewProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <TruncateMarkup lines={1}>
-                  <span>{hyperLink[0]?.data?.customText || hyperLink[0].data.url}</span>
-                </TruncateMarkup>
+                <span>{hyperLink[0]?.data?.customText || hyperLink[0].data.url}</span>
               </HyperLink>
             )}
           </div>
