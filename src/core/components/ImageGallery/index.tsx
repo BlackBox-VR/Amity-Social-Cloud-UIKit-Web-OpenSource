@@ -39,7 +39,7 @@ const ImageGallery = <T extends Amity.Post>({
   useKeyboard('ArrowRight', next);
   useKeyboard('Escape', handleClose);
 
-  const isDesktop = useMedia('(min-width: 768px)');
+  const isDesktop = false;
 
   if (isDesktop) {
     return (

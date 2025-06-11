@@ -1,6 +1,4 @@
-import { useMedia } from 'react-use';
-
 export const useResponsive = () => {
-  const isDesktop = useMedia('(width >= 48em)');
+  const isDesktop = false;
   return { isDesktop };
 };
