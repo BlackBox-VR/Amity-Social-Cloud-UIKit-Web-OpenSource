@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import ColorThief from 'colorthief';
 import { LinkIcon, VerifiedIcon } from '~/v4/social/icons';
 import { Avatar, Typography } from '~/v4/core/components';
+import TruncateMarkup from 'react-truncate-markup';
 import styles from './StoryPreviewThumbnail.module.css';
 import Community from '~/v4/icons/Community';
 import { StoryPreviewThumbnailSkeleton } from './StoryPreviewThumbnailSkeleton';
@@ -127,7 +128,9 @@ export const StoryPreviewThumbnail: React.FC<StoryPreviewThumbnailProps> = ({
             </div>
             <Typography.BodyBold className={styles.storyPreviewTitle}>
               <span className={styles.nameContainer}>
-                <span className={styles.truncatedTitle}>{title}</span>{' '}
+                <TruncateMarkup lines={1}>
+                  <span>{title}</span>
+                </TruncateMarkup>{' '}
                 {isOfficial && <VerifiedIcon width={12} height={12} fill="white" />}
               </span>
             </Typography.BodyBold>

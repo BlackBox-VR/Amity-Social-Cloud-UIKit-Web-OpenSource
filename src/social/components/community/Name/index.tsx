@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Truncate from 'react-truncate-markup';
 import Highlight from '~/core/components/Highlight';
 import Skeleton from '~/core/components/Skeleton';
 
@@ -49,19 +50,14 @@ const CommunityName = ({
           <Skeleton width={120} style={{ fontSize: 12 }} />
         </Name>
       ) : (
-        <Name
-          data-testid={`${dataQaAnchor}-community-name`}
-          title={name}
-          style={{
-            WebkitLineClamp: truncate,
-            display: '-webkit-box',
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}
-        >
-          {!isPublic && <PrivateIcon data-testid={`${dataQaAnchor}-private-icon`} />}
-          {name}
-        </Name>
+        <Truncate lines={truncate}>
+          <Name data-testid={`${dataQaAnchor}-community-name`} title={name}>
+            <>
+              {!isPublic && <PrivateIcon data-testid={`${dataQaAnchor}-private-icon`} />}
+              {name}
+            </>
+          </Name>
+        </Truncate>
       )}
 
       {!loading && isOfficial && <VerifiedIcon />}
