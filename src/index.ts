@@ -114,3 +114,6 @@ export {
 } from '~/v4/social/components/';
 
 export { HomePageTab as AmitySocialHomePageTab } from '~/v4/social/constants/HomePageTab';
+
+// Custom exports
+export { PageTypes as AmityPageTypes } from '~/social/constants';
