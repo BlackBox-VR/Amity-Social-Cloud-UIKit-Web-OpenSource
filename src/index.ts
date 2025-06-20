@@ -119,3 +119,4 @@ export { HomePageTab as AmitySocialHomePageTab } from '~/v4/social/constants/Hom
 
 // Custom exports
 export { PageTypes as AmityPageTypes } from '~/social/constants';
+export { default as useCommunity } from '~/social/hooks/useCommunity';
