@@ -63,22 +63,8 @@ export function SocialHomePage() {
   }, [isShowCreatePostMenu]);
 
   return (
-    <div
-      className={styles.socialHomePage}
-      style={{
-        ...themeStyles,
-        position: 'relative',
-        height: '100%',
-      }}
-    >
-      <div
-        className={styles.socialHomePage__topBar}
-        style={{
-          position: 'relative',
-          height: 'auto',
-          minHeight: '7.5rem',
-        }}
-      >
+    <div className={styles.socialHomePage} style={themeStyles}>
+      <div className={styles.socialHomePage__topBar}>
         <div className={styles.socialHomePage__topNavigation}>
           <TopNavigation
             pageId={pageId}
@@ -105,17 +91,7 @@ export function SocialHomePage() {
         </div>
       </div>
       <NoInternetConnectionHoc page="feed" className={styles.socialHomePage__noConnection}>
-        <div
-          className={styles.socialHomePage__contents}
-          ref={containerRef}
-          onScroll={handleScroll}
-          style={{
-            position: 'relative',
-            top: 'auto',
-            height: 'auto',
-            minHeight: '200px',
-          }}
-        >
+        <div className={styles.socialHomePage__contents} ref={containerRef} onScroll={handleScroll}>
           {activeTab === HomePageTab.Newsfeed && <Newsfeed pageId={pageId} />}
           {activeTab === HomePageTab.Explore && <Explore pageId={pageId} />}
           {activeTab === HomePageTab.MyCommunities && <MyCommunities pageId={pageId} />}
