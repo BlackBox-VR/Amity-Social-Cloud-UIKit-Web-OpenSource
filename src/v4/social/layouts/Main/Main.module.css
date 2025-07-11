@@ -7,10 +7,6 @@
   background: var(--asc-color-background-shade1);
 }
 
-.layout__noAside {
-  grid-template-columns: 1fr;
-}
-
 .layout__aside {
   width: 18rem;
 }
