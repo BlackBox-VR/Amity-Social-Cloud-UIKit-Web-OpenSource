@@ -45,7 +45,6 @@ import { LiveStreamContent } from './LiveStreamContent';
 import useCommunityModeratorsCollection from '~/v4/social/hooks/collections/useCommunityModeratorsCollection';
 import styles from './PostContent.module.css';
 import { BANNER_SPRITES_URL, WEB_COMMUNITY_URL } from '~/constants';
-import { theme } from '../../theme';
 
 export enum AmityPostContentComponentStyle {
   FEED = 'feed',
@@ -84,7 +83,7 @@ const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTit
     shouldCall: shouldCallUser,
   });
 
-  console.log("SRE post: ", post);
+  console.log(`SRE post: `, post);
 
   const { goToCommunityProfilePage, onClickUser } = useNavigation();
 
@@ -209,7 +208,7 @@ export const PostContent = ({
     componentId,
   });
 
-  console.log("SRE themeStyles: ", themeStyles);
+  console.log(`SRE themeStyles: `, themeStyles);
 
   const { isDesktop } = useResponsive();
   const { openPopup, closePopup } = usePopupContext();
@@ -341,8 +340,13 @@ export const PostContent = ({
 
   const hasReaction = hasLike || hasLove || hasFire || hasHappy || hasCrying;
 
-  const userBannerShortcode = post?.creator?.metadata?.bannerShortcode?.length > 0 ? post?.creator?.metadata?.bannerShortcode[0].shortCode : '';
-  const headerBgImage = !!userBannerShortcode ? `${BANNER_SPRITES_URL}/${userBannerShortcode.toLowerCase()}.png` : '';
+  const userBannerShortcode = post?.creator?.metadata?.bannerShortcode?.length > 0
+    ? post?.creator?.metadata?.bannerShortcode[0].shortCode
+    : '';
+
+  const headerBgImage = userBannerShortcode
+    ? `${BANNER_SPRITES_URL}/${userBannerShortcode.toLowerCase()}.png`
+    : '';
 
   //TODO: check needApprovalOnPostCreation and onlyAdminCanPost after postSetting fix from SDK
   const shouldShowConfirmEdit =
