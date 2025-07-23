@@ -44,6 +44,8 @@ import { CommunityPrivateBadge } from '~/v4/social/elements/CommunityPrivateBadg
 import { LiveStreamContent } from './LiveStreamContent';
 import useCommunityModeratorsCollection from '~/v4/social/hooks/collections/useCommunityModeratorsCollection';
 import styles from './PostContent.module.css';
+import { BANNER_SPRITES_URL, WEB_COMMUNITY_URL } from '~/constants';
+import { theme } from '../../theme';
 
 export enum AmityPostContentComponentStyle {
   FEED = 'feed',
@@ -62,9 +64,10 @@ interface PostTitleProps {
   pageId?: string;
   componentId?: string;
   hideTarget?: boolean;
+  timestamp: Date | string;
 }
 
-const PostTitle = ({ pageId, componentId, post, hideTarget }: PostTitleProps) => {
+const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTitleProps) => {
   const shouldCallCommunity = useMemo(() => post?.targetType === 'community', [post?.targetType]);
   const shouldCallUser = useMemo(
     () => post?.targetType === 'user' && post?.postedUserId !== post?.targetId,
@@ -81,6 +84,8 @@ const PostTitle = ({ pageId, componentId, post, hideTarget }: PostTitleProps) =>
     shouldCall: shouldCallUser,
   });
 
+  console.log("SRE post: ", post);
+
   const { goToCommunityProfilePage, onClickUser } = useNavigation();
 
   const showTargetCommunity = targetCommunity && !hideTarget;
@@ -91,64 +96,38 @@ const PostTitle = ({ pageId, componentId, post, hideTarget }: PostTitleProps) =>
 
   const showTarget = showTargetCommunity || showTargetUser;
 
+  const creatorTeamName = post?.creator?.metadata?.teamName || 'No Team';
+  const creatorXpTitle = post?.creator?.metadata?.xpTitle?.title || '';
+
+  const handleClickUser = () => {
+    window.open(
+      `${WEB_COMMUNITY_URL}/member/${post?.creator?.displayName}?version=webview&userId=${post?.creator?.userId}`,
+      '_self',
+    );
+  };
+
   return (
-    <div className={styles.postTitle} data-show-target-community={showTargetCommunity === true}>
-      {post.creator && (
-        <div
-          className={styles.postTitle__user__container}
-          data-show-brand-badge={showBrandBadge === true}
-          data-show-target={showTarget === true}
-        >
-          <Button
-            onPress={() => onClickUser(post.creator.userId)}
-            data-testid={`${pageId}/${componentId}/username`}
-          >
-            <Typography.BodyBold className={styles.postTitle__text}>
-              {post.creator.displayName}
-            </Typography.BodyBold>
-          </Button>
-          {showBrandBadge ? <BrandBadge className={styles.postTitle__brandIcon} /> : null}
-          {showTarget ? (
-            <AngleRight
-              data-testid={`${pageId}/${componentId}/arrow_right`}
-              className={styles.postTitle__icon}
-            />
-          ) : null}
+    <div className={styles.postContent__headerContainer}>
+      <Button
+        onPress={() => handleClickUser()}
+        className={styles.postContent__namesContainer}
+        data-testid={`${pageId}/${componentId}/username`}
+      >
+        <div className={styles.postContent__name}>{post.creator.displayName}</div>
+        <div className={styles.postContent__additionalInfo}>
+          {creatorXpTitle && (
+            <div className={styles.postContent__subTitle}>
+              XP title: <span>{creatorXpTitle}</span>
+            </div>
+          )}
+          <div className={styles.postContent__subTitle}>
+            Team: <span>{creatorTeamName}</span>
+          </div>
+          <div className={styles.postContent__timestampContainer}>
+            <Timestamp timestamp={timestamp} />
+          </div>
         </div>
-      )}
-      {showTargetCommunity && (
-        <div
-          className={styles.postTitle__community}
-          data-show-private-badge={showPrivateBadge === true}
-          data-show-official-badge={showOfficialBadge === true}
-        >
-          {showPrivateBadge && <CommunityPrivateBadge />}
-          <Button
-            className={styles.postTitle__communityText}
-            data-testid={`${pageId}/${componentId}/community_name`}
-            onPress={() => goToCommunityProfilePage(targetCommunity.communityId)}
-          >
-            <Typography.BodyBold>{targetCommunity.displayName}</Typography.BodyBold>
-          </Button>
-          {showOfficialBadge && <CommunityOfficialBadge />}
-        </div>
-      )}
-      {showTargetUser && (
-        <div
-          className={styles.postTitle__user__container}
-          data-show-brand-badge={targetUser?.isBrand === true}
-          data-show-target={false}
-        >
-          <Button onPress={() => onClickUser(targetUser.userId)}>
-            <Typography.BodyBold className={styles.postTitle__text}>
-              {targetUser.displayName}
-            </Typography.BodyBold>
-          </Button>
-          {targetUser?.isBrand === true ? (
-            <BrandBadge className={styles.postTitle__brandIcon} />
-          ) : null}
-        </div>
-      )}
+      </Button>
     </div>
   );
 };
@@ -229,6 +208,8 @@ export const PostContent = ({
     pageId,
     componentId,
   });
+
+  console.log("SRE themeStyles: ", themeStyles);
 
   const { isDesktop } = useResponsive();
   const { openPopup, closePopup } = usePopupContext();
@@ -344,11 +325,11 @@ export const PostContent = ({
     });
   };
 
-  const handleUnpinPost = async () => {};
+  const handleUnpinPost = async () => { };
 
-  const handleEditPost = () => {};
+  const handleEditPost = () => { };
 
-  const handleDeletePost = () => {};
+  const handleDeletePost = () => { };
 
   const isNotJoinedCommunity = !targetCommunity?.isJoined && post?.targetType === 'community';
 
@@ -359,6 +340,9 @@ export const PostContent = ({
   const hasCrying = post?.reactions?.crying > 0;
 
   const hasReaction = hasLike || hasLove || hasFire || hasHappy || hasCrying;
+
+  const userBannerShortcode = post?.creator?.metadata?.bannerShortcode?.length > 0 ? post?.creator?.metadata?.bannerShortcode[0].shortCode : '';
+  const headerBgImage = !!userBannerShortcode ? `${BANNER_SPRITES_URL}/${userBannerShortcode.toLowerCase()}.png` : '';
 
   //TODO: check needApprovalOnPostCreation and onlyAdminCanPost after postSetting fix from SDK
   const shouldShowConfirmEdit =
@@ -389,19 +373,24 @@ export const PostContent = ({
     >
       {(category === AmityPostCategory.ANNOUNCEMENT ||
         category === AmityPostCategory.PIN_AND_ANNOUNCEMENT) && (
-        <AnnouncementBadge pageId={pageId} componentId={componentId} />
-      )}
-      <div className={styles.postContent__bar} data-type={style}>
+          <AnnouncementBadge pageId={pageId} componentId={componentId} />
+        )}
+      <div
+        className={styles.postContent__bar}
+        data-type={style}
+        style={{ backgroundImage: headerBgImage ? `url(${headerBgImage})` : 'none' }}
+      >
         <div className={styles.postContent__bar__userAvatar}>
           <UserAvatar pageId={pageId} componentId={componentId} userId={post?.postedUserId} />
         </div>
         <div className={styles.postContent__bar__detail}>
-          <div>
+          <div className={styles.postContent__headerContainer}>
             <PostTitle
               post={post}
               hideTarget={hideTarget}
               pageId={pageId}
               componentId={componentId}
+              timestamp={post.createdAt} // Pass timestamp as a prop to PostTitle
             />
           </div>
           <div className={styles.postContent__bar__information__subtitle}>
@@ -411,7 +400,6 @@ export const PostContent = ({
                 <span className={styles.postContent__bar__information__subtitle__separator}>•</span>
               </div>
             ) : null}
-            <Timestamp timestamp={post.createdAt} />
             {post.createdAt !== post.editedAt && (
               <Typography.Caption
                 data-testid={`${pageId}/${componentId}/post_edited_text`}
@@ -422,67 +410,11 @@ export const PostContent = ({
             )}
           </div>
         </div>
-
         <div className={styles.postContent__wrapRightMenu}>
           {(category === AmityPostCategory.PIN ||
             category === AmityPostCategory.PIN_AND_ANNOUNCEMENT) && (
-            <PinBadge pageId={pageId} componentId={componentId} />
-          )}
-          {style === AmityPostContentComponentStyle.FEED && (
-            <Popover
-              containerClassName={styles.postContent__bar__actionButton}
-              trigger={{
-                pageId,
-                componentId,
-                onClick: ({ closePopover }) =>
-                  setDrawerData({
-                    content: (
-                      <PostMenu
-                        post={post}
-                        pageId={pageId}
-                        componentId={componentId}
-                        onPostDeleted={onPostDeleted}
-                        onConfirmEditPost={
-                          shouldShowConfirmEdit
-                            ? ({ onConfirm }) => {
-                                closePopover();
-                                removeDrawerData();
-                                onEditFeaturePost({ onConfirm });
-                              }
-                            : undefined
-                        }
-                        onCloseMenu={() => {
-                          closePopover();
-                          removeDrawerData();
-                        }}
-                      />
-                    ),
-                  }),
-              }}
-            >
-              {({ closePopover }) => (
-                <PostMenu
-                  post={post}
-                  pageId={pageId}
-                  componentId={componentId}
-                  onPostDeleted={onPostDeleted}
-                  onConfirmEditPost={
-                    shouldShowConfirmEdit
-                      ? ({ onConfirm }) => {
-                          closePopover();
-                          removeDrawerData();
-                          onEditFeaturePost({ onConfirm });
-                        }
-                      : undefined
-                  }
-                  onCloseMenu={() => {
-                    closePopover();
-                    removeDrawerData();
-                  }}
-                />
-              )}
-            </Popover>
-          )}
+              <PinBadge pageId={pageId} componentId={componentId} />
+            )}
         </div>
       </div>
       <div className={styles.postContent__content_and_reactions}>
@@ -543,12 +475,10 @@ export const PostContent = ({
                 data-testid={`${pageId}/${componentId}/like_count`}
                 className={styles.postContent__reactionsBar__reactions__count}
               >
-                {`${millify(post?.reactionsCount || 0)} ${
-                  post?.reactionsCount === 1 ? 'like' : 'likes'
-                }`}
+                {`${millify(post?.reactionsCount || 0)} ${post?.reactionsCount === 1 ? 'like' : 'likes'
+                  }`}
               </Typography.Caption>
             </div>
-
             <Typography.Caption
               data-testid={`${pageId}/${componentId}/comment_count`}
               className={styles.postContent__commentsCount}
@@ -564,41 +494,97 @@ export const PostContent = ({
               Join community to interact with all posts
             </Typography.Body>
           </>
-        ) : targetCommunity &&
-          !targetCommunity?.isJoined &&
-          page.type === PageTypes.PostDetailPage ? null : (
-          <>
-            <div className={styles.postContent__divider} />
-            <div className={styles.postContent__reactionBar}>
-              <div className={styles.postContent__reactionBar__leftPane}>
-                <ReactionButton
-                  pageId={pageId}
-                  componentId={componentId}
-                  reactionsCount={
-                    style === AmityPostContentComponentStyle.FEED ? reactionsCount : undefined
-                  }
-                  myReaction={reactionByMe}
-                  defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
-                  imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
-                  onReactionClick={handleReactionClick}
-                />
-                <CommentButton
-                  pageId={pageId}
-                  componentId={componentId}
-                  commentsCount={
-                    style === AmityPostContentComponentStyle.FEED ? post.commentsCount : undefined
-                  }
-                  defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
-                  imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
-                  onPress={() => onClick?.()}
-                />
+        ) : targetCommunity && !targetCommunity?.isJoined && page.type === PageTypes.PostDetailPage
+          ? null
+          : (
+            <>
+              <div className={styles.postContent__divider} />
+              <div className={styles.postContent__reactionBar}>
+                <div className={styles.postContent__reactionBar__leftPane}>
+                  <ReactionButton
+                    pageId={pageId}
+                    componentId={componentId}
+                    reactionsCount={
+                      style === AmityPostContentComponentStyle.FEED ? reactionsCount : undefined
+                    }
+                    myReaction={reactionByMe}
+                    defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
+                    imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
+                    onReactionClick={handleReactionClick}
+                  />
+                  <CommentButton
+                    pageId={pageId}
+                    componentId={componentId}
+                    commentsCount={
+                      style === AmityPostContentComponentStyle.FEED ? post.commentsCount : undefined
+                    }
+                    defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
+                    imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
+                    onPress={() => onClick?.()}
+                  />
+                </div>
+                <div className={styles.postContent__reactionBar__rightPane}>
+                  <ShareButton pageId={pageId} componentId={componentId} />
+                  {style === AmityPostContentComponentStyle.FEED && (
+                    <Popover
+                      containerClassName={styles.postContent__bar__actionButton}
+                      placement="top" // Position above the button
+                      trigger={{
+                        pageId,
+                        componentId,
+                        onClick: ({ closePopover }) =>
+                          setDrawerData({
+                            content: (
+                              <PostMenu
+                                post={post}
+                                pageId={pageId}
+                                componentId={componentId}
+                                onPostDeleted={onPostDeleted}
+                                onConfirmEditPost={
+                                  shouldShowConfirmEdit
+                                    ? ({ onConfirm }) => {
+                                      closePopover();
+                                      removeDrawerData();
+                                      onEditFeaturePost({ onConfirm });
+                                    }
+                                    : undefined
+                                }
+                                onCloseMenu={() => {
+                                  closePopover();
+                                  removeDrawerData();
+                                }}
+                              />
+                            ),
+                          }),
+                      }}
+                    >
+                      {({ closePopover }) => (
+                        <PostMenu
+                          post={post}
+                          pageId={pageId}
+                          componentId={componentId}
+                          onPostDeleted={onPostDeleted}
+                          onConfirmEditPost={
+                            shouldShowConfirmEdit
+                              ? ({ onConfirm }) => {
+                                closePopover();
+                                removeDrawerData();
+                                onEditFeaturePost({ onConfirm });
+                              }
+                              : undefined
+                          }
+                          onCloseMenu={() => {
+                            closePopover();
+                            removeDrawerData();
+                          }}
+                        />
+                      )}
+                    </Popover>
+                  )}
+                </div>
               </div>
-              <div className={styles.postContent__reactionBar__rightPane}>
-                <ShareButton pageId={pageId} componentId={componentId} />
-              </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
       </div>
       {isVideoViewerOpen && typeof clickedVideoIndex === 'number' ? (
         <VideoViewer post={post} onClose={closeVideoViewer} initialVideoIndex={clickedVideoIndex} />
