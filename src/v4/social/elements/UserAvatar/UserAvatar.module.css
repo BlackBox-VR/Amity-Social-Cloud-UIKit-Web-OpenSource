@@ -3,8 +3,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  width: 3.5rem; /* Increased from 2rem */
+  height: 3.5rem; /* Increased from 2rem */
   color: var(--asc-color-base-shade4);
   background-color: var(--asc-color-secondary-shade2);
   text-transform: uppercase;
@@ -13,8 +13,8 @@
 
 .userAvatar__placeholder {
   position: relative;
-  width: 2rem;
-  height: 2rem;
+  width: 3.5rem; /* Increased from 2rem */
+  height: 3.5rem; /* Increased from 2rem */
   border-radius: 50%;
   background-color: var(--asc-color-primary-shade2);
 }
@@ -40,8 +40,8 @@
 .userAvatar__img {
   border-radius: 50%;
   object-fit: cover;
-  width: 2rem;
-  height: 2rem;
+  width: 3.5rem; /* Increased from 2rem */
+  height: 3.5rem; /* Increased from 2rem */
 }
 
 .userAvatar__badge {
@@ -53,23 +53,58 @@
 }
 
 .userAvatar__skeleton {
-  width: 2rem;
-  height: 2rem;
+  width: 3.5rem; /* Increased from 2rem */
+  height: 3.5rem; /* Increased from 2rem */
   object-fit: cover;
   border-radius: 50%;
   background-color: var(--asc-color-base-shade4);
   animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
 
+/* Begin Custom CSS */
+.userAvatar__wrapper {
+  position: relative;
+  display: flex; /* Changed from inline-block to flex for better centering */
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Ensure it fills the parent circle */
+  height: 100%;
+}
+
+.userAvatar__trophy {
+  position: absolute;
+  bottom: -10px; /* Adjusted from -8px to account for larger avatar */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  border-radius: 10px;
+  padding: 1px 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.userAvatar__trophyText {
+  color: white;
+  font-size: 10px; /* Small text size */
+  font-weight: bold;
+  margin-right: 2px;
+}
+
+.userAvatar__trophy svg {
+  width: 10px; /* Reduce SVG size to fit */
+  height: 9px; /* Proportional to original 16x14 */
+  vertical-align: middle; /* Align with text baseline */
+}
+
+/* End Custom CSS */
+
 @keyframes skeleton-pulse {
   0% {
     opacity: 0.6;
   }
-
   50% {
     opacity: 1;
   }
-
   100% {
     opacity: 0.6;
   }
