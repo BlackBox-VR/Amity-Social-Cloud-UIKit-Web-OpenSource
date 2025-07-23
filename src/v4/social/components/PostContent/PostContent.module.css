@@ -336,12 +336,6 @@
   color: var(--asc-color-base-shade2);
 }
 
-.postContent__wrapRightMenu {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
 .postContent__imageViewer {
   border-radius: 0 !important;
   max-height: none !important;
