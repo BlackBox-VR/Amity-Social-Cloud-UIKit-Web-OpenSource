@@ -208,8 +208,6 @@ export const PostContent = ({
     componentId,
   });
 
-  console.log(`SRE themeStyles: `, themeStyles);
-
   const { isDesktop } = useResponsive();
   const { openPopup, closePopup } = usePopupContext();
   const { confirm } = useConfirmContext();
@@ -324,11 +322,11 @@ export const PostContent = ({
     });
   };
 
-  const handleUnpinPost = async () => { };
+  const handleUnpinPost = async () => {};
 
-  const handleEditPost = () => { };
+  const handleEditPost = () => {};
 
-  const handleDeletePost = () => { };
+  const handleDeletePost = () => {};
 
   const isNotJoinedCommunity = !targetCommunity?.isJoined && post?.targetType === 'community';
 
@@ -340,9 +338,10 @@ export const PostContent = ({
 
   const hasReaction = hasLike || hasLove || hasFire || hasHappy || hasCrying;
 
-  const userBannerShortcode = post?.creator?.metadata?.bannerShortcode?.length > 0
-    ? post?.creator?.metadata?.bannerShortcode[0].shortCode
-    : '';
+  const userBannerShortcode =
+    post?.creator?.metadata?.bannerShortcode?.length > 0
+      ? post?.creator?.metadata?.bannerShortcode[0].shortCode
+      : '';
 
   const headerBgImage = userBannerShortcode
     ? `${BANNER_SPRITES_URL}/${userBannerShortcode.toLowerCase()}.png`
@@ -377,8 +376,8 @@ export const PostContent = ({
     >
       {(category === AmityPostCategory.ANNOUNCEMENT ||
         category === AmityPostCategory.PIN_AND_ANNOUNCEMENT) && (
-          <AnnouncementBadge pageId={pageId} componentId={componentId} />
-        )}
+        <AnnouncementBadge pageId={pageId} componentId={componentId} />
+      )}
       <div
         className={styles.postContent__bar}
         data-type={style}
@@ -417,8 +416,8 @@ export const PostContent = ({
         <div className={styles.postContent__wrapRightMenu}>
           {(category === AmityPostCategory.PIN ||
             category === AmityPostCategory.PIN_AND_ANNOUNCEMENT) && (
-              <PinBadge pageId={pageId} componentId={componentId} />
-            )}
+            <PinBadge pageId={pageId} componentId={componentId} />
+          )}
         </div>
       </div>
       <div className={styles.postContent__content_and_reactions}>
@@ -479,8 +478,9 @@ export const PostContent = ({
                 data-testid={`${pageId}/${componentId}/like_count`}
                 className={styles.postContent__reactionsBar__reactions__count}
               >
-                {`${millify(post?.reactionsCount || 0)} ${post?.reactionsCount === 1 ? 'like' : 'likes'
-                  }`}
+                {`${millify(post?.reactionsCount || 0)} ${
+                  post?.reactionsCount === 1 ? 'like' : 'likes'
+                }`}
               </Typography.Caption>
             </div>
             <Typography.Caption
@@ -498,97 +498,97 @@ export const PostContent = ({
               Join community to interact with all posts
             </Typography.Body>
           </>
-        ) : targetCommunity && !targetCommunity?.isJoined && page.type === PageTypes.PostDetailPage
-          ? null
-          : (
-            <>
-              <div className={styles.postContent__divider} />
-              <div className={styles.postContent__reactionBar}>
-                <div className={styles.postContent__reactionBar__leftPane}>
-                  <ReactionButton
-                    pageId={pageId}
-                    componentId={componentId}
-                    reactionsCount={
-                      style === AmityPostContentComponentStyle.FEED ? reactionsCount : undefined
-                    }
-                    myReaction={reactionByMe}
-                    defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
-                    imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
-                    onReactionClick={handleReactionClick}
-                  />
-                  <CommentButton
-                    pageId={pageId}
-                    componentId={componentId}
-                    commentsCount={
-                      style === AmityPostContentComponentStyle.FEED ? post.commentsCount : undefined
-                    }
-                    defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
-                    imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
-                    onPress={() => onClick?.()}
-                  />
-                </div>
-                <div className={styles.postContent__reactionBar__rightPane}>
-                  <ShareButton pageId={pageId} componentId={componentId} />
-                  {style === AmityPostContentComponentStyle.FEED && (
-                    <Popover
-                      containerClassName={styles.postContent__bar__actionButton}
-                      placement="top" // Position above the button
-                      trigger={{
-                        pageId,
-                        componentId,
-                        onClick: ({ closePopover }) =>
-                          setDrawerData({
-                            content: (
-                              <PostMenu
-                                post={post}
-                                pageId={pageId}
-                                componentId={componentId}
-                                onPostDeleted={onPostDeleted}
-                                onConfirmEditPost={
-                                  shouldShowConfirmEdit
-                                    ? ({ onConfirm }) => {
+        ) : targetCommunity &&
+          !targetCommunity?.isJoined &&
+          page.type === PageTypes.PostDetailPage ? null : (
+          <>
+            <div className={styles.postContent__divider} />
+            <div className={styles.postContent__reactionBar}>
+              <div className={styles.postContent__reactionBar__leftPane}>
+                <ReactionButton
+                  pageId={pageId}
+                  componentId={componentId}
+                  reactionsCount={
+                    style === AmityPostContentComponentStyle.FEED ? reactionsCount : undefined
+                  }
+                  myReaction={reactionByMe}
+                  defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
+                  imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
+                  onReactionClick={handleReactionClick}
+                />
+                <CommentButton
+                  pageId={pageId}
+                  componentId={componentId}
+                  commentsCount={
+                    style === AmityPostContentComponentStyle.FEED ? post.commentsCount : undefined
+                  }
+                  defaultIconClassName={styles.postContent__reactionBar__leftPane__icon}
+                  imgIconClassName={styles.postContent__reactionBar__leftPane__iconImg}
+                  onPress={() => onClick?.()}
+                />
+              </div>
+              <div className={styles.postContent__reactionBar__rightPane}>
+                <ShareButton pageId={pageId} componentId={componentId} />
+                {style === AmityPostContentComponentStyle.FEED && (
+                  <Popover
+                    containerClassName={styles.postContent__bar__actionButton}
+                    placement="top" // Position above the button
+                    trigger={{
+                      pageId,
+                      componentId,
+                      onClick: ({ closePopover }) =>
+                        setDrawerData({
+                          content: (
+                            <PostMenu
+                              post={post}
+                              pageId={pageId}
+                              componentId={componentId}
+                              onPostDeleted={onPostDeleted}
+                              onConfirmEditPost={
+                                shouldShowConfirmEdit
+                                  ? ({ onConfirm }) => {
                                       closePopover();
                                       removeDrawerData();
                                       onEditFeaturePost({ onConfirm });
                                     }
-                                    : undefined
-                                }
-                                onCloseMenu={() => {
-                                  closePopover();
-                                  removeDrawerData();
-                                }}
-                              />
-                            ),
-                          }),
-                      }}
-                    >
-                      {({ closePopover }) => (
-                        <PostMenu
-                          post={post}
-                          pageId={pageId}
-                          componentId={componentId}
-                          onPostDeleted={onPostDeleted}
-                          onConfirmEditPost={
-                            shouldShowConfirmEdit
-                              ? ({ onConfirm }) => {
+                                  : undefined
+                              }
+                              onCloseMenu={() => {
+                                closePopover();
+                                removeDrawerData();
+                              }}
+                            />
+                          ),
+                        }),
+                    }}
+                  >
+                    {({ closePopover }) => (
+                      <PostMenu
+                        post={post}
+                        pageId={pageId}
+                        componentId={componentId}
+                        onPostDeleted={onPostDeleted}
+                        onConfirmEditPost={
+                          shouldShowConfirmEdit
+                            ? ({ onConfirm }) => {
                                 closePopover();
                                 removeDrawerData();
                                 onEditFeaturePost({ onConfirm });
                               }
-                              : undefined
-                          }
-                          onCloseMenu={() => {
-                            closePopover();
-                            removeDrawerData();
-                          }}
-                        />
-                      )}
-                    </Popover>
-                  )}
-                </div>
+                            : undefined
+                        }
+                        onCloseMenu={() => {
+                          closePopover();
+                          removeDrawerData();
+                        }}
+                      />
+                    )}
+                  </Popover>
+                )}
               </div>
-            </>
-          )}
+            </div>
+          </>
+        )}
       </div>
       {isVideoViewerOpen && typeof clickedVideoIndex === 'number' ? (
         <VideoViewer post={post} onClose={closeVideoViewer} initialVideoIndex={clickedVideoIndex} />
