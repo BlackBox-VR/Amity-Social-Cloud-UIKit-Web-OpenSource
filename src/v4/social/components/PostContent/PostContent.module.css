@@ -350,7 +350,7 @@
 .postContent__bar {
   display: flex;
   align-items: center;
-  padding: 4px 8px; /* Adjusted padding; tweak as needed */
+  padding: 4px 8px;
   background-color: black; /* Fallback color */
   background-repeat: no-repeat;
   background-size: 101%; /* Stretch to cover full width/height */
@@ -397,11 +397,11 @@
 
 .postContent__name {
   width: fit-content;
-  background: linear-gradient(180deg, #F87AE6 0%, #DF077B 36.98%, #BE3AC8 58.39%, #762188 100%);
+  background: linear-gradient(180deg, #f87ae6 0%, #df077b 36.98%, #be3ac8 58.39%, #762188 100%);
   background-clip: text;
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-family: Futura;
+  font-family: Futura, sans-serif;
   font-size: 24px; /* Slightly reduced for better fit */
   font-style: normal;
   font-weight: 800;
@@ -413,7 +413,7 @@
   overflow: hidden;
   text-overflow: ellipsis; /* Keep for name */
   max-width: 100%; /* Allow full width within container */
-  color: #ffffff; /* Ensure text is white for contrast, fallback */
+  color: #fff; /* Ensure text is white for contrast, fallback */
 }
 
 .postContent__additionalInfo {
@@ -423,7 +423,7 @@
 }
 
 .postContent__subTitle {
-  font-family: Futura;
+  font-family: Futura, sans-serif;
   font-size: 10px; /* Slightly reduced for compactness */
   font-style: normal;
   font-weight: 450;
@@ -443,7 +443,7 @@
 }
 
 .postContent__timestampContainer {
-  font-family: Futura;
+  font-family: Futura, sans-serif;
   font-size: 8px; /* Smaller font for timestamp */
   color: #b1b1b1;
   text-align: left; /* Align timestamp to the left */
