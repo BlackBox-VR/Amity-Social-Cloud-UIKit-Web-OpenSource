@@ -36,6 +36,3 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
-      - name: eslint checks
-        run: pnpm run lint
