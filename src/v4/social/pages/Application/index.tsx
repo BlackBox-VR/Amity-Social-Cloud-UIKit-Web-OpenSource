@@ -67,7 +67,7 @@ const Application = () => {
 
   return (
     <div className={styles.applicationContainer}>
-      <MainLayout aside={<CommunitySideBar />}>
+      <MainLayout>
         {page.type === PageTypes.SocialHomePage && <SocialHomePage />}
         {page.type === PageTypes.SocialGlobalSearchPage && !isDesktop && <SocialGlobalSearchPage />}
         {page.type === PageTypes.PostDetailPage && (
