@@ -1,5 +1,4 @@
 .divider {
-  background-color: var(--asc-color-base-shade4);
   width: 100%;
 
   /* support alphabet */
@@ -8,7 +7,7 @@
 }
 
 .divider[data-type='post'] {
-  min-height: 0.5rem;
+  min-height: 1rem;
 }
 
 .divider[data-type='fullWidth'],

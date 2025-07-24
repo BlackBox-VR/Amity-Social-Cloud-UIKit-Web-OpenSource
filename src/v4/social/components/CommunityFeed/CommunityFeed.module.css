@@ -25,8 +25,8 @@
 }
 
 .communityFeed__postContent {
+  margin-top: 0.5rem;
   padding-bottom: 0.5rem;
-  background-color: var(--asc-color-base-shade4);
 }
 
 @keyframes spin {

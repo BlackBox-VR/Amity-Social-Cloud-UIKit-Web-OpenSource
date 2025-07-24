@@ -128,7 +128,7 @@
   }
 
   .postDetailPage__postContent {
-    border-radius: 0;
+    border-radius: 0 !important;
   }
 
   .postDetailPage__commentList__container {
