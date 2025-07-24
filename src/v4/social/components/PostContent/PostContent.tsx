@@ -113,7 +113,7 @@ const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTit
         className={styles.postContent__namesContainer}
         data-testid={`${pageId}/${componentId}/username`}
       >
-        <div className={styles.postContent__name}>{post.creator.displayName}</div>
+        <div className={styles.postContent__name}>{post?.creator?.displayName}</div>
         <div className={styles.postContent__additionalInfo}>
           {creatorXpTitle && (
             <div className={styles.postContent__subTitle}>

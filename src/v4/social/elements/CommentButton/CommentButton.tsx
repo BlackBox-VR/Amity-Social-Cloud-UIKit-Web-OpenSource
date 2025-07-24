@@ -52,10 +52,14 @@ export function CommentButton({
   if (isExcluded) return null;
 
   return (
-    <Button onPress={onPress} data-testid={accessibilityId}>
+    <Button
+      onPress={onPress}
+      data-testid={accessibilityId}
+      className={clsx(styles.commentButton, buttonClassName)}
+    >
       <IconComponent
         defaultIcon={() => (
-          <div className={(clsx(styles.commentButton), buttonClassName)}>
+          <>
             <CommentSvg className={clsx(styles.commentButton__icon, defaultIconClassName)} />
             <Typography.BodyBold
               data-testid={`${pageId}/${componentId}/comment_count`}
@@ -63,7 +67,7 @@ export function CommentButton({
             >
               {typeof commentsCount === 'number' ? commentsCount : config.text}
             </Typography.BodyBold>
-          </div>
+          </>
         )}
         imgIcon={() => <img src={config.icon} alt={uiReference} className={imgIconClassName} />}
         defaultIconName={defaultConfig.icon}

@@ -3,6 +3,7 @@
   align-items: center;
   justify-content: start;
   gap: 0.25rem;
+  position: relative;
   cursor: pointer;
 }
 
