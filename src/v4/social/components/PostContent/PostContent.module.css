@@ -375,7 +375,6 @@
   align-items: center;
   justify-content: center;
   background: transparent; /* Make avatar container transparent */
-  z-index: 1; /* Ensure avatar stays on top */
   flex-shrink: 0; /* Prevent shrinking */
 }
 

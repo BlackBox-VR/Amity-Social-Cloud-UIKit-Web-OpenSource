@@ -1,12 +1,11 @@
 .communityTabs__container {
   background-color: var(--asc-color-background-default);
-  border-radius: 8px;
   display: flex;
   align-items: center;
   width: 100%;
   z-index: 1;
   position: sticky;
-  top: 5.375rem;
+  top: 4.7rem;
   border-bottom: 1px solid var(--asc-color-base-shade4);
 }
 
