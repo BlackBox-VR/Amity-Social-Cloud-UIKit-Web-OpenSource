@@ -360,7 +360,13 @@ export const PostContent = ({
         style={{ backgroundImage: headerBgImage ? `url(${headerBgImage})` : 'none' }}
       >
         <div className={styles.postContent__bar__userAvatar}>
-          <UserAvatar pageId={pageId} componentId={componentId} userId={post?.postedUserId} />
+          <UserAvatar
+            pageId={pageId}
+            componentId={componentId}
+            userId={post?.postedUserId}
+            avatarSize={'medium'}
+            showTrophies={true}
+          />
         </div>
         <div className={styles.postContent__bar__detail}>
           <div className={styles.postContent__headerContainer}>

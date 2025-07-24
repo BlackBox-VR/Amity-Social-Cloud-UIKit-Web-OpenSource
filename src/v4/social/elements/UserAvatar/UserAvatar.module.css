@@ -3,8 +3,8 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  width: 3.5rem; /* Increased from 2rem */
-  height: 3.5rem; /* Increased from 2rem */
+  width: var(--avatar-size, 3.5rem);
+  height: var(--avatar-size, 3.5rem);
   color: var(--asc-color-base-shade4);
   background-color: var(--asc-color-secondary-shade2);
   text-transform: uppercase;
@@ -13,8 +13,8 @@
 
 .userAvatar__placeholder {
   position: relative;
-  width: 3.5rem; /* Increased from 2rem */
-  height: 3.5rem; /* Increased from 2rem */
+  width: var(--avatar-size, 3.5rem);
+  height: var(--avatar-size, 3.5rem);
   border-radius: 50%;
   background-color: var(--asc-color-primary-shade2);
 }
@@ -40,8 +40,8 @@
 .userAvatar__img {
   border-radius: 50%;
   object-fit: cover;
-  width: 3.5rem; /* Increased from 2rem */
-  height: 3.5rem; /* Increased from 2rem */
+  width: var(--avatar-size, 3.5rem);
+  height: var(--avatar-size, 3.5rem);
 }
 
 .userAvatar__badge {
@@ -53,8 +53,8 @@
 }
 
 .userAvatar__skeleton {
-  width: 3.5rem; /* Increased from 2rem */
-  height: 3.5rem; /* Increased from 2rem */
+  width: var(--avatar-size, 3.5rem);
+  height: var(--avatar-size, 3.5rem);
   object-fit: cover;
   border-radius: 50%;
   background-color: var(--asc-color-base-shade4);
@@ -73,13 +73,14 @@
 
 .userAvatar__trophy {
   position: absolute;
-  bottom: -10px; /* Adjusted from -8px to account for larger avatar */
+  bottom: calc(var(--avatar-size, 3.5rem) * -0.1);
+  font-size: calc(var(--avatar-size, 3.5rem) * 0.2);
   left: 50%;
   transform: translateX(-50%);
   background-color: black;
   border-radius: 10px;
   padding: 1px 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   white-space: nowrap;
 }
 
@@ -91,8 +92,8 @@
 }
 
 .userAvatar__trophy svg {
-  width: 10px; /* Reduce SVG size to fit */
-  height: 9px; /* Proportional to original 16x14 */
+  width: calc(var(--avatar-size, 3.5rem) * 0.2);
+  height: auto;
   vertical-align: middle; /* Align with text baseline */
 }
 
@@ -102,9 +103,11 @@
   0% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     opacity: 0.6;
   }

@@ -28,7 +28,7 @@
 .commentComposer__container {
   display: flex;
   align-items: flex-end;
-  gap: 0.5rem;
+  gap: 1rem;
   padding: 0.5rem 0.75rem;
   background-color: var(--asc-color-background-default);
   width: 100%;

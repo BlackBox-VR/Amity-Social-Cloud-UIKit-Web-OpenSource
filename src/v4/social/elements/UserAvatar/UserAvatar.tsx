@@ -8,7 +8,7 @@ import { useAmityElement } from '~/v4/core/hooks/uikit';
 import { useUser } from '~/v4/core/hooks/objects/useUser';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 import { usePopupContext } from '~/v4/core/providers/PopupProvider';
-import { GoldCup } from '../../icons/gold_cup';
+import { GoldCup } from '~/v4/social/icons/gold_cup';
 import styles from './UserAvatar.module.css';
 
 type UserAvatarProps = {
@@ -22,6 +22,8 @@ type UserAvatarProps = {
   shouldRedirectToUserProfile?: boolean;
   onPressAvatar?: () => void;
   userData?: Amity.User;
+  showTrophies?: boolean;
+  avatarSize?: 'small' | 'medium' | 'large' | number;
 };
 
 export function UserAvatar({
@@ -35,6 +37,8 @@ export function UserAvatar({
   shouldRedirectToUserProfile = false,
   onPressAvatar,
   userData,
+  showTrophies = false,
+  avatarSize = 'small',
 }: UserAvatarProps) {
   const elementId = 'user_avatar';
 
@@ -45,12 +49,16 @@ export function UserAvatar({
     fileId: userData?.avatarFileId || user?.avatar?.fileId,
   });
 
-  const userImage = (user?.avatarCustomUrl && user?.avatarCustomUrl?.length > 0) ? user?.avatarCustomUrl : imageFromHook;
+  const userImage =
+    user?.avatarCustomUrl && user?.avatarCustomUrl?.length > 0
+      ? user?.avatarCustomUrl
+      : imageFromHook;
 
   const { accessibilityId } = useAmityElement({ pageId, componentId, elementId });
   const { closePopup } = usePopupContext();
 
-  const displayName = userData?.displayName || user?.displayName || userData?.userId || user?.userId || '';
+  const displayName =
+    userData?.displayName || user?.displayName || userData?.userId || user?.userId || '';
   const firstChar = displayName.trim().charAt(0).toUpperCase();
 
   const trophies = user?.metadata?.trophies || userData?.metadata?.trophies || 0;
@@ -63,8 +71,19 @@ export function UserAvatar({
     }
   }
 
-  if (isLoading && !userData)
-    return <div className={clsx(styles.userAvatar__skeleton, className)} />;
+  const sizeRem =
+    typeof avatarSize === 'number'
+      ? avatarSize
+      : { small: 2.5, medium: 3.5, large: 5 }[avatarSize] || 3.5;
+
+  if (isLoading && !userData) {
+    return (
+      <div
+        className={clsx(styles.userAvatar__skeleton, className)}
+        style={{ '--avatar-size': `${sizeRem}rem` } as React.CSSProperties}
+      />
+    );
+  }
 
   const handleAvatarClick = () => {
     if (!userId) return;
@@ -83,6 +102,7 @@ export function UserAvatar({
       <Button
         onPress={() => handleAvatarClick()}
         className={clsx(styles.userAvatar__container, imageContainerClassName)}
+        style={{ '--avatar-size': `${sizeRem}rem` } as React.CSSProperties}
       >
         <div className={styles.userAvatar__wrapper}>
           <img
@@ -91,10 +111,10 @@ export function UserAvatar({
             data-testid={accessibilityId}
             className={clsx(styles.userAvatar__img, className)}
           />
-          {trophyText && (
+          {showTrophies && trophyText && (
             <div className={styles.userAvatar__trophy}>
               <Typography.CaptionBold className={styles.userAvatar__trophyText}>
-                {trophyText} <GoldCup />
+                {trophyText} <GoldCup aria-hidden="true" />
               </Typography.CaptionBold>
             </div>
           )}
@@ -108,17 +128,20 @@ export function UserAvatar({
     <Button
       className={clsx(styles.userAvatar__placeholder, className)}
       onPress={() => handleAvatarClick()}
+      style={{ '--avatar-size': `${sizeRem}rem` } as React.CSSProperties}
     >
-      <div className={styles.userAvatar__wrapper}> {/* Wrapper for consistency */}
+      <div className={styles.userAvatar__wrapper}>
+        {' '}
+        {/* Wrapper for consistency */}
         <Typography.TitleBold
           className={clsx(styles.userAvatar__placeholder__text, textPlaceholderClassName)}
         >
           {firstChar}
         </Typography.TitleBold>
-        {trophyText && (
+        {showTrophies && trophyText && (
           <div className={styles.userAvatar__trophy}>
             <Typography.CaptionBold className={styles.userAvatar__trophyText}>
-              {trophyText} <GoldCup />
+              {trophyText} <GoldCup aria-hidden="true" />
             </Typography.CaptionBold>
           </div>
         )}
