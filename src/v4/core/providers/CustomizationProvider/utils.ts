@@ -312,6 +312,9 @@ export const defaultConfig: DefaultConfig = {
     'social_home_page/*/my_communities_button': {
       text: 'My Communities',
     },
+    'social_home_page/*/livestreams_button': {
+      text: 'Streams',
+    },
     'social_home_page/empty_newsfeed/illustration': {
       icon: 'emptyFeedIcon',
     },

@@ -5,8 +5,10 @@ import { TopNavigation } from '~/v4/social/components/TopNavigation';
 import { MyCommunities } from '~/v4/social/components/MyCommunities';
 import { NewsfeedButton } from '~/v4/social/elements/NewsfeedButton';
 import { ExploreButton } from '~/v4/social/elements/ExploreButton';
+import { LiveStreamsButton } from '~/v4/social/elements/LiveStreamsButton';
 import { MyCommunitiesButton } from '~/v4/social/elements/MyCommunitiesButton';
 import { Newsfeed } from '~/v4/social/components/Newsfeed';
+import { LiveStreamFeed } from '~/v4/social/components/LiveStreamFeed';
 import { useAmityPage } from '~/v4/core/hooks/uikit';
 import { CreatePostMenu } from '~/v4/social/components/CreatePostMenu';
 import { useGlobalFeedContext } from '~/v4/social/providers/GlobalFeedProvider';
@@ -103,6 +105,11 @@ export function SocialHomePage({ activeTab: initialActiveTab }: { activeTab?: Ho
             isActive={activeTab === HomePageTab.MyCommunities}
             onClick={() => setActiveTab(HomePageTab.MyCommunities)}
           />
+          <LiveStreamsButton
+            pageId={pageId}
+            isActive={activeTab === HomePageTab.LiveStreams}
+            onClick={() => setActiveTab(HomePageTab.LiveStreams)}
+          />
         </div>
       </div>
       <NoInternetConnectionHoc page="feed" className={styles.socialHomePage__noConnection}>
@@ -110,6 +117,9 @@ export function SocialHomePage({ activeTab: initialActiveTab }: { activeTab?: Ho
           {activeTab === HomePageTab.Newsfeed && <Newsfeed pageId={pageId} />}
           {activeTab === HomePageTab.Explore && <Explore pageId={pageId} />}
           {activeTab === HomePageTab.MyCommunities && <MyCommunities pageId={pageId} />}
+          {activeTab === HomePageTab.LiveStreams && (
+            <LiveStreamFeed pageId={pageId} communityId={'64af01593714fddb10e0c7d2'} />
+          )}
         </div>
       </NoInternetConnectionHoc>
 
