@@ -4,7 +4,7 @@
   display: grid;
   overflow: hidden;
   grid-template-columns: auto 1fr;
-  background: var(--asc-color-background-shade1);
+  background: linear-gradient(rgb(194 160 181), rgb(48 1 85));
 }
 
 .layout__noAside {

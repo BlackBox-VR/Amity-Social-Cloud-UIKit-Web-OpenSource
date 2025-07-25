@@ -17,7 +17,7 @@ export const MainLayout = ({ aside, children }: MainLayoutProps) => {
         display: 'grid',
         overflow: 'hidden',
         gridTemplateColumns: !hasAside ? '1fr' : 'auto 1fr',
-        background: 'var(--asc-color-background-shade1)',
+        background: `linear-gradient(rgb(194, 160, 181), rgb(48, 1, 85))`,
         position: 'relative',
       }}
     >
@@ -33,6 +33,7 @@ export const MainLayout = ({ aside, children }: MainLayoutProps) => {
           padding: '1rem 1.5rem 0',
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
+          background: `linear-gradient(rgb(194, 160, 181), rgb(48, 1, 85))`,
           position: 'relative',
         }}
       >
