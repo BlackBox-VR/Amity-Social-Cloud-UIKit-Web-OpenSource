@@ -60,11 +60,15 @@ export const JoinRequestContent = ({
                 componentId={componentId}
                 className={styles.joinRequestContent__avatar}
                 userId={joinRequest.user?.userId}
-                onPressAvatar={() => goToUserProfilePage(joinRequest.user?.userId as string)}
               />
               <Typography.BodyBold
                 className={styles.joinRequestContent__username}
-                onClick={() => goToUserProfilePage(joinRequest.user?.userId as string)}
+                onClick={() =>
+                  goToUserProfilePage(
+                    joinRequest.user?.userId as string,
+                    joinRequest.user?.displayName,
+                  )
+                }
               >
                 {joinRequest.user?.displayName}
               </Typography.BodyBold>

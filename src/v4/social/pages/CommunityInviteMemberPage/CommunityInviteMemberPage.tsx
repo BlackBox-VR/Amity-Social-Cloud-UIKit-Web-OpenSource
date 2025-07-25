@@ -379,9 +379,6 @@ type MemberLabelProps = {
 };
 
 function MemberLabel({ userId, displayName }: MemberLabelProps) {
-  const { isDesktop } = useResponsive();
-  const { AmityCommunityInviteMemberPageBehavior } = usePageBehavior();
-
   return (
     <div className={styles.communityInviteMemberPage__checkboxLabel}>
       <div className={styles.communityInviteMemberPage__memberAvatar}>
@@ -389,9 +386,6 @@ function MemberLabel({ userId, displayName }: MemberLabelProps) {
           userId={userId}
           className={styles.communityInviteMemberPage__selectedUserAvatarImage}
           textPlaceholderClassName={styles.communityInviteMemberPage__selectedUserAvatarImage}
-          onPressAvatar={() =>
-            !isDesktop && AmityCommunityInviteMemberPageBehavior?.goToUserProfilePage?.({ userId })
-          }
         />
       </div>
       <Typography.BodyBold className={styles.communityInviteMemberPage__memberName}>

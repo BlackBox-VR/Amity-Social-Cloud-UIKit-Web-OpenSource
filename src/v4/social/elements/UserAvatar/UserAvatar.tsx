@@ -89,11 +89,11 @@ export function UserAvatar({
     if (!userId) return;
     if (userId && shouldRedirectToUserProfile) {
       closePopup();
-      onClickUser(userId);
+      onClickUser(userId, undefined, displayName);
     } else if (onPressAvatar && !shouldRedirectToUserProfile) {
       onPressAvatar();
     } else {
-      shouldRedirectToUserProfile && onClickUser(userId);
+      shouldRedirectToUserProfile && onClickUser(userId, undefined, displayName);
     }
   };
 

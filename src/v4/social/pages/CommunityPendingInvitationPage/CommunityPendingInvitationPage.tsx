@@ -24,7 +24,7 @@ type CommunityPendingInvitationPageProps = {
 function useCommunityPendingInvitationPage({ community }: CommunityPendingInvitationPageProps) {
   const pageId = 'community_pending_invitation_page';
 
-  const { onBack } = useNavigation();
+  const { onBack, onClickUser } = useNavigation();
   const { online } = useNetworkState();
   const { isDesktop } = useResponsive();
   const { AmityCommunityPendingInvitationPageBehavior } = usePageBehavior();
@@ -57,8 +57,8 @@ function useCommunityPendingInvitationPage({ community }: CommunityPendingInvita
     },
   });
 
-  const onAvatarClick = (userId: string) => {
-    AmityCommunityPendingInvitationPageBehavior?.goToUserProfilePage?.({ userId });
+  const onAvatarClick = (userId: string, displayName?: string) => {
+    onClickUser(userId, undefined, displayName);
   };
 
   const isEmpty = online && invitations.length === 0 && !isLoading;
@@ -134,7 +134,8 @@ export function CommunityPendingInvitationPage(props: CommunityPendingInvitation
                 className={styles.communityPendingInvitationPage__memberAvatar}
                 textPlaceholderClassName={styles.communityPendingInvitationPage__memberAvatar}
                 onPressAvatar={() =>
-                  invitation.user?.userId && onAvatarClick(invitation.user?.userId)
+                  invitation.user?.userId &&
+                  onAvatarClick(invitation.user?.userId, invitation.user?.displayName)
                 }
               />
               <Typography.BodyBold className={styles.communityPendingInvitationPage__memberName}>

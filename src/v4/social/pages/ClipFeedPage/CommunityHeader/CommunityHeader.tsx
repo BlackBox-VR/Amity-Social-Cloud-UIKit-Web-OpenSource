@@ -8,6 +8,7 @@ import { Button } from '~/v4/core/components/AriaButton';
 import { usePageBehavior } from '~/v4/core/providers/PageBehaviorProvider';
 import { useUser } from '~/v4/core/hooks/objects/useUser';
 import { Typography } from '~/v4/core/components';
+import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 
 type ClipHeaderProps = {
   pageId?: string;
@@ -23,6 +24,7 @@ export const ClipHeader = ({
   targetType,
 }: ClipHeaderProps) => {
   const { AmityClipFeedPageBehavior } = usePageBehavior();
+  const { goToUserProfilePage } = useNavigation();
 
   const { community, isLoading: isCommunityLoading } = useCommunity({
     communityId: targetType === 'community' ? targetId : undefined,
@@ -73,7 +75,7 @@ export const ClipHeader = ({
         <Button
           variant="text"
           onPress={() => {
-            AmityClipFeedPageBehavior?.goToUserProfilePage?.({ userId: targetId });
+            goToUserProfilePage(targetId, user?.displayName);
           }}
           className={styles.clipHeader__button}
         >

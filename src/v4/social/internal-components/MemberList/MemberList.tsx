@@ -114,7 +114,7 @@ export const MemberList = ({ pageId = '*', community }: MemberListProps) => {
           refresh={refresh}
           community={community}
           currentUserId={currentUserId}
-          onClick={() => onClickUser(user?.userId as string)}
+          onClick={() => onClickUser(user?.userId as string, undefined, user?.displayName)}
         />
       ))}
       {(isLoading && memberSearch.length == 0) || (isSearchLoading && memberSearch.length > 0)

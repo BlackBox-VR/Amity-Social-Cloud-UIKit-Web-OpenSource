@@ -6,8 +6,8 @@ import { UserAvatar } from '~/v4/social/elements/UserAvatar';
 import { useUser } from '~/v4/core/hooks/objects/useUser';
 import { useDrawer } from '~/v4/core/providers/DrawerProvider';
 import { Popover } from '~/v4/core/components/AriaPopover';
-import { usePageBehavior } from '~/v4/core/providers/PageBehaviorProvider';
 import { UserItemMenu } from './UserItemMenu';
+import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 
 type UserItemProps = {
   userId: string;
@@ -16,7 +16,7 @@ type UserItemProps = {
 };
 
 export const UserItem: FC<UserItemProps> = ({ userId, pageId = '*', componentId = '*' }) => {
-  const { AmityUserRelationshipPageBehavior } = usePageBehavior();
+  const { goToUserProfilePage } = useNavigation();
   const { setDrawerData } = useDrawer();
 
   const { user } = useUser({ userId });
@@ -26,7 +26,7 @@ export const UserItem: FC<UserItemProps> = ({ userId, pageId = '*', componentId 
   return (
     <div className={styles.userItem}>
       <Button
-        onPress={() => AmityUserRelationshipPageBehavior?.goToUserProfilePage?.({ userId })}
+        onPress={() => goToUserProfilePage(userId, user.displayName)}
         className={styles.userItem__buttonWrap}
       >
         <UserAvatar

@@ -113,8 +113,6 @@ export const Comment = ({
 
   const isBrandUser = comment.creator?.isBrand ?? false;
 
-  const { onClickUser } = useNavigation();
-
   const toggleBottomSheet = () => setBottomSheetOpen((prev) => !prev);
 
   const isLiked = (comment.myReactions || []).some((reaction) => reaction === 'like');
@@ -292,12 +290,17 @@ export const Comment = ({
           <div className={styles.postComment__details}>
             <div
               className={styles.postComment__content}
-              onClick={() => onClickUser(comment.creator?.userId ?? '')}
+              onClick={() =>
+                goToUserProfilePage(comment.creator?.userId as string, comment.creator?.displayName)
+              }
             >
               <Button
                 onPress={() => {
                   closePopup();
-                  goToUserProfilePage(comment.creator?.userId as string);
+                  goToUserProfilePage(
+                    comment.creator?.userId as string,
+                    comment.creator?.displayName,
+                  );
                 }}
                 className={styles.postComment__userInfo}
               >

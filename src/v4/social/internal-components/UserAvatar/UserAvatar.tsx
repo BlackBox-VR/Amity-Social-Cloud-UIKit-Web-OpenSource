@@ -52,9 +52,9 @@ export function UserAvatar({
           if (!userId) return;
           if (userId && shouldRedirectToUserProfile) {
             closePopup();
-            onClickUser(userId);
+            onClickUser(userId, undefined, displayName);
           } else {
-            onClickUser(userId);
+            onClickUser(userId, undefined, displayName);
           }
         }}
       >
@@ -74,9 +74,9 @@ export function UserAvatar({
         if (!userId) return;
         if (userId && shouldRedirectToUserProfile) {
           closePopup();
-          onClickUser(userId);
+          onClickUser(userId, undefined, displayName);
         } else {
-          onClickUser(userId);
+          onClickUser(userId, undefined, displayName);
         }
       }}
       className={clsx(styles.userAvatar__container, imageContainerClassName)}

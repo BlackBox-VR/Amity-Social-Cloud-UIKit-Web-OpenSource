@@ -45,7 +45,7 @@ import useCommunityModeratorsCollection from '~/v4/social/hooks/collections/useC
 import styles from './PostContent.module.css';
 import { isTextPost } from '~/v4/social/utils/postTypeChecker';
 import { usePostReaction } from '~/v4/social/hooks/usePostReaction';
-import { BANNER_SPRITES_URL, WEB_COMMUNITY_URL } from '~/constants';
+import { BANNER_SPRITES_URL } from '~/constants';
 
 export enum AmityPostContentComponentStyle {
   FEED = 'feed',
@@ -98,18 +98,12 @@ const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTit
 
   const creatorTeamName = post?.creator?.metadata?.teamName || 'No Team';
   const creatorXpTitle = post?.creator?.metadata?.xpTitle?.title || '';
-
-  const handleClickUser = () => {
-    window.open(
-      `${WEB_COMMUNITY_URL}/member/${post?.creator?.displayName}?version=webview&userId=${post?.creator?.userId}`,
-      '_self',
-    );
-  };
+  const creatorUserId = post?.creator?.userId || '';
 
   return (
     <div className={styles.postContent__headerContainer}>
       <Button
-        onPress={() => handleClickUser()}
+        onPress={() => onClickUser(creatorUserId, undefined, post?.creator?.displayName)}
         className={styles.postContent__namesContainer}
         data-testid={`${pageId}/${componentId}/username`}
       >
@@ -237,7 +231,7 @@ export const PostContent = ({
   const [isVideoViewerOpen, setIsVideoViewerOpen] = useState(false);
   const [clickedVideoIndex, setClickedVideoIndex] = useState<number | null>(null);
 
-  const { page, goToClipFeedPage } = useNavigation();
+  const { page, goToClipFeedPage, onClickUser } = useNavigation();
 
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -343,6 +337,8 @@ export const PostContent = ({
     }
   }, [post, isVisible, page.type]);
 
+  const userId = post?.postedUserId || post?.creator?.userId || '';
+
   return (
     <div
       data-testid={accessibilityId}
@@ -363,7 +359,7 @@ export const PostContent = ({
           <UserAvatar
             pageId={pageId}
             componentId={componentId}
-            userId={post?.postedUserId}
+            userId={userId}
             avatarSize={'medium'}
             showTrophies={true}
           />
@@ -375,7 +371,7 @@ export const PostContent = ({
               hideTarget={hideTarget}
               pageId={pageId}
               componentId={componentId}
-              timestamp={post.createdAt} // Pass timestamp as a prop to PostTitle
+              timestamp={post.createdAt}
             />
           </div>
           <div className={styles.postContent__bar__information__subtitle}>

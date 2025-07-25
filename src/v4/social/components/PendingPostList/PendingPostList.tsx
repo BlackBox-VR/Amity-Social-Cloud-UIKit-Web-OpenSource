@@ -143,19 +143,12 @@ export const PendingPostList = ({
       <div className={styles.pendingPostList__wrapper} key={post.postId}>
         <div className={styles.pendingPostList__bar}>
           <div className={styles.pendingPostList__userDetail}>
-            <UserAvatar
-              pageId={pageId}
-              componentId={componentId}
-              userId={post?.postedUserId}
-              onPressAvatar={() => {
-                goToUserProfilePage(post?.postedUserId);
-              }}
-            />
+            <UserAvatar pageId={pageId} componentId={componentId} userId={post?.postedUserId} />
             <div>
               <Typography.BodyBold
                 className={styles.pendingPostList__username}
                 data-testid={`${pageId}/${componentId}/username`}
-                onClick={() => goToUserProfilePage(post?.postedUserId)}
+                onClick={() => goToUserProfilePage(post?.postedUserId, post?.creator?.displayName)}
               >
                 {post?.creator?.displayName}
               </Typography.BodyBold>

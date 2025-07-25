@@ -63,7 +63,7 @@ export const TextWithMention = ({
           key={uuidv4()}
           data-testid={`${pageId}/${componentId}/mention`}
           className={clsx(styles.textWithMention__mention, mentionClassName)}
-          onClick={() => goToUserProfilePage(child.data.userId)}
+          onClick={() => goToUserProfilePage(child.data.userId, child.data.displayName)}
         >
           {child.text}
         </span>

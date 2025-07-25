@@ -27,7 +27,7 @@ export const UserSearchItem = ({
       className={styles.userItem}
       onPress={() => {
         onClick?.();
-        onClickUser(user.userId);
+        onClickUser(user.userId, undefined, user.displayName);
       }}
     >
       <div

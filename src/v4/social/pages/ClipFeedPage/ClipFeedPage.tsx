@@ -44,7 +44,7 @@ export const ClipFeedPage = ({
   const { accessibilityId, themeStyles } = useAmityPage({
     pageId,
   });
-  const { onBack, prevPage } = useNavigation();
+  const { onBack, prevPage, onClickUser } = useNavigation();
   const { AmityClipFeedPageBehavior } = usePageBehavior();
   const { setDrawerData, removeDrawerData } = useDrawer();
   const { setActiveTab } = useLayoutContext();
@@ -506,9 +506,11 @@ export const ClipFeedPage = ({
                         isDragging={isDragging}
                         onClickSeeMoreButton={() => handleMenuClick(post.parentPostId)}
                         onClickUser={() =>
-                          AmityClipFeedPageBehavior?.goToUserProfilePage?.({
-                            userId: post.creator?.userId as string,
-                          })
+                          onClickUser(
+                            post.creator?.userId as string,
+                            undefined,
+                            post.creator?.displayName,
+                          )
                         }
                         isLoading={isLoadingVideo}
                       />
@@ -582,9 +584,11 @@ export const ClipFeedPage = ({
                     isDragging={isDragging}
                     onClickSeeMoreButton={() => handleMenuClick(post.parentPostId)}
                     onClickUser={() =>
-                      AmityClipFeedPageBehavior?.goToUserProfilePage?.({
-                        userId: post.creator?.userId as string,
-                      })
+                      onClickUser(
+                        post.creator?.userId as string,
+                        undefined,
+                        post.creator?.displayName,
+                      )
                     }
                     isLoading={isLoading}
                   />

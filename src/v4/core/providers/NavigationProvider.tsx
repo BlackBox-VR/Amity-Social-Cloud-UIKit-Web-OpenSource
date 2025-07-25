@@ -19,6 +19,7 @@ import {
 import { AmityRoute } from './AmityUIKitProvider';
 import { LiveStreamPlayerPageProps } from '~/v4/social/pages/LiveStreamPlayerPage';
 import { useLayoutContext } from '~/v4/social/providers/LayoutProvider';
+import { WEB_COMMUNITY_URL } from '~/constants';
 
 export enum PageTypes {
   Explore = 'explore',
@@ -277,12 +278,13 @@ type ContextValue = {
   onChangePage: (type: string) => void;
   onClickCategory: (categoryId: string) => void;
   onClickCommunity: (communityId: string) => void;
-  onClickUser: (userId: string, pageType?: string) => void;
+  onClickUser: (userId: string, pageType?: string, displayName?: string) => void;
+
   onCommunityCreated: (communityId: string) => void;
   onEditCommunity: (communityId: string, tab?: string) => void;
   onMessageUser: (userId: string) => void;
   onBack: (page?: number) => void;
-  goToUserProfilePage: (userId: string) => void;
+  goToUserProfilePage: (userId: string, displayName?: string) => void;
   goToEditUserPage: (userId: string) => void;
   goToUserRelationshipPage: (userId: string, selectedTab: UserRelationshipPageTabs) => void;
   goToPendingFollowRequestPage: () => void;
@@ -400,11 +402,11 @@ let defaultValue: ContextValue = {
   onChangePage: (type: string) => {},
   onClickCategory: (categoryId: string) => {},
   onClickCommunity: (communityId: string) => {},
-  onClickUser: (userId: string) => {},
+  onClickUser: (userId: string, pageType?: string, displayName?: string) => {},
   onCommunityCreated: (communityId: string) => {},
   onEditCommunity: (communityId: string) => {},
   onMessageUser: (userId: string) => {},
-  goToUserProfilePage: (userId: string) => {},
+  goToUserProfilePage: (userId: string, displayName?: string) => {},
   goToEditUserPage: (userId: string) => {},
   goToUserRelationshipPage: (userId: string, selectedTab: UserRelationshipPageTabs) => {},
   goToPendingFollowRequestPage: () => {},
@@ -783,20 +785,22 @@ export default function NavigationProvider({
   );
 
   const handleClickUser = useCallback(
-    (userId, pageType) => {
+    (userId: string, pageType?: string, displayName?: string) => {
+      if (!userId) return;
+
+      if (displayName) {
+        const url = `${WEB_COMMUNITY_URL}/member/${encodeURIComponent(displayName)}?version=webview&userId=${encodeURIComponent(userId)}`;
+        window.open(url, '_self');
+        return;
+      }
+
       const next = {
         type: pageType ?? PageTypes.UserProfilePage,
-        context: {
-          userId,
-        },
+        context: { userId },
       };
-
-      if (onChangePage) return onChangePage(next);
-      if (onClickUser) return onClickUser(userId);
-
       pushPage(next);
     },
-    [onChangePage, onClickUser, pushPage],
+    [pushPage],
   );
 
   const handleEditUser = useCallback(
@@ -928,17 +932,19 @@ export default function NavigationProvider({
   );
 
   const goToUserProfilePage = useCallback(
-    (userId) => {
-      const next = {
-        type: PageTypes.UserProfilePage,
-        context: {
-          userId,
-        },
-      };
+    (userId: string, displayName?: string) => {
+      if (!userId) return;
 
+      if (displayName) {
+        const url = `${WEB_COMMUNITY_URL}/member/${encodeURIComponent(displayName)}?version=webview&userId=${encodeURIComponent(userId)}`;
+        window.open(url, '_self');
+        return;
+      }
+
+      const next = { type: PageTypes.UserProfilePage, context: { userId } };
       pushPage(next);
     },
-    [onChangePage, pushPage],
+    [pushPage],
   );
 
   const goToPostDetailPage = useCallback(

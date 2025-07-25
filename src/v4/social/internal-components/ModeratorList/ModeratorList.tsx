@@ -54,7 +54,7 @@ export const ModeratorList = ({ pageId = '*', community }: ModeratorListProps) =
             pageId={pageId}
             community={community}
             currentUserId={currentUserId}
-            onClick={() => onClickUser(user?.userId as string)}
+            onClick={() => onClickUser(user?.userId as string, undefined, user?.displayName)}
           />
         ))}
       {isLoading && Array.from({ length: 5 }).map((_, index) => <UserListSkeleton key={index} />)}

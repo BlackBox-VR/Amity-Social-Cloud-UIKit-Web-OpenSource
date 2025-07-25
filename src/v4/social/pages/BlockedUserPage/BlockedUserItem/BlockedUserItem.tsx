@@ -30,7 +30,7 @@ export const BlockedUserItem: FC<BlockedUserItemProps> = ({
       <Button
         className={styles.blockUserItem__user}
         variant="text"
-        onPress={() => goToUserProfilePage(user.userId)}
+        onPress={() => goToUserProfilePage(user.userId, user.displayName)}
       >
         <UserAvatar userId={user.userId} className={styles.blockUserItem__avatar} />{' '}
         <Typography.BodyBold className={styles.blockUserItem__displayName}>
