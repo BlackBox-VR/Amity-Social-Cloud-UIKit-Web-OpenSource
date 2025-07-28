@@ -16,6 +16,7 @@ import { Typography } from '~/v4/core/components';
 import useIntersectionObserver from '~/v4/core/hooks/useIntersectionObserver';
 import { NoInternetConnectionHoc } from '~/v4/social/internal-components/NoInternetConnection/NoInternetConnectionHoc';
 import styles from './LiveStreamsFeed.module.css';
+import { useLiveStreamParentPosts } from '~/v4/social/hooks/useLiveStreamParentPosts';
 
 export const LiveStreamFeedPostContentSkeleton = () => {
   return (
@@ -64,6 +65,8 @@ export const LiveStreamFeed = ({ pageId = '*', communityId }: LiveStreamFeedProp
     limit: 10,
   });
 
+  const parentPosts = useLiveStreamParentPosts(posts);
+
   const { pinnedPost: allPinnedPost, refresh: refreshPinnedPosts } = usePinnedPostsCollection({
     communityId,
     shouldCall: !!communityId && community?.isJoined,
@@ -86,7 +89,7 @@ export const LiveStreamFeed = ({ pageId = '*', communityId }: LiveStreamFeedProp
         )
       : null;
 
-  const filteredPosts = posts.filter(
+  const filteredPosts = parentPosts.filter(
     (post) =>
       post &&
       !announcementPosts.some(
@@ -166,7 +169,7 @@ export const LiveStreamFeed = ({ pageId = '*', communityId }: LiveStreamFeedProp
           Array.from({ length: 3 }).map((_, index) => (
             <LiveStreamFeedPostContentSkeleton key={index} />
           ))}
-        {posts?.length === 0 && !isLoading && (
+        {parentPosts?.length === 0 && !isLoading && (
           <div className={styles.liveStreamFeed__emptyPost}>
             <EmptyPost className={styles.liveStreamFeed__emptyPostIcon} />
             <Typography.Body className={styles.liveStreamFeed__emptyPostText}>
