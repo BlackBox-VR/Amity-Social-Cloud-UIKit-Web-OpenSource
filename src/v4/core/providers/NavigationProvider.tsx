@@ -66,7 +66,7 @@ export enum PageTypes {
   ClipFeedPage = 'ClipFeedPage',
 }
 
-type Page =
+export type Page =
   | {
       type: PageTypes.Explore | PageTypes.NewsFeed;
       context: { communityId?: string };

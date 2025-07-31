@@ -11,6 +11,7 @@ export const enum PageTypes {
   Search = 'search',
   ChatSearch = 'chatsearch',
   Post = 'post',
+  UserRelationshipPage = 'UserRelationshipPage',
 }
 
 export const MemberRoles = Object.freeze({

@@ -46,11 +46,16 @@ import { LiveStreamPlayerPage } from '~/v4/social/pages/LiveStreamPlayerPage';
 import { useLayoutContext } from '~/v4/social/providers/LayoutProvider';
 import { CommunityInviteMemberPage } from '~/v4/social/pages/CommunityInviteMemberPage';
 import { CommunityPendingInvitationPage } from '~/v4/social/pages/CommunityPendingInvitationPage';
+import { Page } from '~/v4/core/providers/NavigationProvider';
 
-const Application = () => {
+type ApplicationProps = {
+  landingPage?: Page;
+};
+
+const Application = ({ landingPage }: ApplicationProps) => {
   const { isDesktop } = useResponsive();
   const [open, setOpen] = useState(false);
-  const { page, goToSocialHomePage } = useNavigation();
+  const { page, goToSocialHomePage, goToUserRelationshipPage } = useNavigation();
   const { liveStreamPlayer } = useLayoutContext();
   const toggleOpen = () => setOpen((open) => !open);
 
@@ -63,12 +68,22 @@ const Application = () => {
     ) {
       goToSocialHomePage();
     }
-  }, [isDesktop]);
+
+    if (page.type !== landingPage?.type && landingPage?.type === PageTypes.UserRelationshipPage) {
+      goToUserRelationshipPage(landingPage.context?.userId, landingPage.context?.selectedTab);
+    }
+  }, [isDesktop, landingPage, goToUserRelationshipPage, goToSocialHomePage, page]);
 
   return (
     <div className={styles.applicationContainer}>
       <MainLayout>
         {page.type === PageTypes.SocialHomePage && <SocialHomePage />}
+        {page.type === PageTypes.UserRelationshipPage && (
+          <UserRelationshipPage
+            userId={page.context?.userId}
+            selectedTab={page.context?.selectedTab}
+          />
+        )}
         {page.type === PageTypes.SocialGlobalSearchPage && !isDesktop && <SocialGlobalSearchPage />}
         {page.type === PageTypes.PostDetailPage && (
           <PostDetailPage
