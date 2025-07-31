@@ -6,6 +6,7 @@ import { Button } from '~/v4/core/natives/Button';
 import { useImage } from '~/v4/core/hooks/useImage';
 import { useAmityElement } from '~/v4/core/hooks/uikit';
 import { useUser } from '~/v4/core/hooks/objects/useUser';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 import { usePopupContext } from '~/v4/core/providers/PopupProvider';
 import { GoldCup } from '~/v4/social/icons/gold_cup';
@@ -44,6 +45,8 @@ export function UserAvatar({
 
   const { onClickUser } = useNavigation();
   const { user, isLoading } = useUser({ userId, shouldCall: !!userId });
+  const sdk = useSDK();
+  const currentUserId = sdk?.currentUserId || '';
 
   const imageFromHook = useImage({
     fileId: userData?.avatarFileId || user?.avatar?.fileId,
@@ -89,11 +92,11 @@ export function UserAvatar({
     if (!userId) return;
     if (userId && shouldRedirectToUserProfile) {
       closePopup();
-      onClickUser(userId, undefined, displayName);
+      onClickUser(currentUserId, undefined, displayName);
     } else if (onPressAvatar && !shouldRedirectToUserProfile) {
       onPressAvatar();
     } else {
-      shouldRedirectToUserProfile && onClickUser(userId, undefined, displayName);
+      shouldRedirectToUserProfile && onClickUser(currentUserId, undefined, displayName);
     }
   };
 

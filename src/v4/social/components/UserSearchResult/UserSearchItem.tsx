@@ -5,6 +5,7 @@ import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 import { BrandBadge } from '~/v4/social/internal-components/BrandBadge';
 import { UserAvatar } from '~/v4/social/elements/UserAvatar/UserAvatar';
 import styles from './UserSearchItem.module.css';
+import useSDK from '~/v4/core/hooks/useSDK';
 
 interface UserSearchItemProps {
   pageId?: string;
@@ -20,6 +21,7 @@ export const UserSearchItem = ({
   componentId = '*',
 }: UserSearchItemProps) => {
   const { onClickUser } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
 
   return (
     <Button
@@ -27,7 +29,7 @@ export const UserSearchItem = ({
       className={styles.userItem}
       onPress={() => {
         onClick?.();
-        onClickUser(user.userId, undefined, user.displayName);
+        onClickUser(currentUserId, undefined, user.displayName);
       }}
     >
       <div

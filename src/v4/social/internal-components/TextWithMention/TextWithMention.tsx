@@ -16,6 +16,7 @@ import {
 import { Typography } from '~/v4/core/components';
 import { Button } from '~/v4/core/components/AriaButton';
 import styles from './TextWithMention.module.css';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type TextWithMentionProps = {
   pageId?: string;
@@ -47,6 +48,7 @@ export const TextWithMention = ({
   mentionClassName,
 }: TextWithMentionProps) => {
   const { goToUserProfilePage } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
   const [isExpanded, setIsExpanded] = useState(false);
 
   const Component = isBold ? Typography.BodyBold : Typography.Body;
@@ -63,7 +65,7 @@ export const TextWithMention = ({
           key={uuidv4()}
           data-testid={`${pageId}/${componentId}/mention`}
           className={clsx(styles.textWithMention__mention, mentionClassName)}
-          onClick={() => goToUserProfilePage(child.data.userId, child.data.displayName)}
+          onClick={() => goToUserProfilePage(currentUserId, child.data.displayName)}
         >
           {child.text}
         </span>

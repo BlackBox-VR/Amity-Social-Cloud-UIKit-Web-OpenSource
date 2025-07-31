@@ -32,6 +32,7 @@ import { useNotifications } from '~/v4/core/providers/NotificationProvider';
 import { useNetworkState } from 'react-use';
 import { ERROR_RESPONSE } from '~/v4/social/constants/errorResponse';
 import styles from './Comment.module.css';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 const Like = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -94,6 +95,7 @@ export const Comment = ({
   const { openPopup, closePopup } = usePopupContext();
   const { confirm } = useConfirmContext();
   const { goToUserProfilePage } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
   const mentionRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
@@ -291,16 +293,13 @@ export const Comment = ({
             <div
               className={styles.postComment__content}
               onClick={() =>
-                goToUserProfilePage(comment.creator?.userId as string, comment.creator?.displayName)
+                goToUserProfilePage(currentUserId as string, comment.creator?.displayName)
               }
             >
               <Button
                 onPress={() => {
                   closePopup();
-                  goToUserProfilePage(
-                    comment.creator?.userId as string,
-                    comment.creator?.displayName,
-                  );
+                  goToUserProfilePage(currentUserId as string, comment.creator?.displayName);
                 }}
                 className={styles.postComment__userInfo}
               >

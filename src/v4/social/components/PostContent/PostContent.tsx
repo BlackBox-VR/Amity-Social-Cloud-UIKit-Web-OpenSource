@@ -46,6 +46,7 @@ import styles from './PostContent.module.css';
 import { isTextPost } from '~/v4/social/utils/postTypeChecker';
 import { usePostReaction } from '~/v4/social/hooks/usePostReaction';
 import { BANNER_SPRITES_URL } from '~/constants';
+import useSDK from '~/v4/core/hooks/useSDK';
 
 export enum AmityPostContentComponentStyle {
   FEED = 'feed',
@@ -84,9 +85,9 @@ const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTit
     shouldCall: shouldCallUser,
   });
 
-  console.log(`SRE post: `, post);
-
   const { goToCommunityProfilePage, onClickUser } = useNavigation();
+  const sdk = useSDK();
+  const currentUserId = sdk?.currentUserId || '';
 
   const showTargetCommunity = targetCommunity && !hideTarget;
   const showTargetUser = targetUser && !hideTarget;
@@ -103,7 +104,7 @@ const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTit
   return (
     <div className={styles.postContent__headerContainer}>
       <Button
-        onPress={() => onClickUser(creatorUserId, undefined, post?.creator?.displayName)}
+        onPress={() => onClickUser(currentUserId, undefined, post?.creator?.displayName)}
         className={styles.postContent__namesContainer}
         data-testid={`${pageId}/${componentId}/username`}
       >

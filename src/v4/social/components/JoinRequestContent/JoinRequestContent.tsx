@@ -13,6 +13,7 @@ import FireworkPaper from '~/v4/icons/FireworkPaper';
 import { useJoinRequests } from '~/v4/social/hooks/useJoinRequests';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 import { UserListSkeleton } from '~/v4/core/components/UserListSkeleton';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type JoinRequestContentProps = {
   pageId?: string;
@@ -33,6 +34,7 @@ export const JoinRequestContent = ({
   });
 
   const { goToUserProfilePage } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
 
   const { approveJoinRequest, declineJoinRequest } = useJoinRequests();
 
@@ -64,10 +66,7 @@ export const JoinRequestContent = ({
               <Typography.BodyBold
                 className={styles.joinRequestContent__username}
                 onClick={() =>
-                  goToUserProfilePage(
-                    joinRequest.user?.userId as string,
-                    joinRequest.user?.displayName,
-                  )
+                  goToUserProfilePage(currentUserId as string, joinRequest.user?.displayName)
                 }
               >
                 {joinRequest.user?.displayName}

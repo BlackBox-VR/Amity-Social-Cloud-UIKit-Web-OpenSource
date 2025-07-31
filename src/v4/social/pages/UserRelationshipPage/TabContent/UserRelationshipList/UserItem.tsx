@@ -8,6 +8,7 @@ import { useDrawer } from '~/v4/core/providers/DrawerProvider';
 import { Popover } from '~/v4/core/components/AriaPopover';
 import { UserItemMenu } from './UserItemMenu';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type UserItemProps = {
   userId: string;
@@ -18,6 +19,7 @@ type UserItemProps = {
 export const UserItem: FC<UserItemProps> = ({ userId, pageId = '*', componentId = '*' }) => {
   const { goToUserProfilePage } = useNavigation();
   const { setDrawerData } = useDrawer();
+  const currentUserId = useSDK()?.currentUserId || '';
 
   const { user } = useUser({ userId });
 
@@ -26,7 +28,7 @@ export const UserItem: FC<UserItemProps> = ({ userId, pageId = '*', componentId 
   return (
     <div className={styles.userItem}>
       <Button
-        onPress={() => goToUserProfilePage(userId, user.displayName)}
+        onPress={() => goToUserProfilePage(currentUserId, user.displayName)}
         className={styles.userItem__buttonWrap}
       >
         <UserAvatar

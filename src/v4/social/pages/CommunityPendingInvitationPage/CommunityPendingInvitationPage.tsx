@@ -16,6 +16,7 @@ import { SearchResultSkeleton } from '~/v4/social/internal-components/SearchResu
 import styles from './CommunityPendingInvitationPage.module.css';
 import { IconComponent } from '~/v4/core/IconComponent';
 import GoldenBadge from '~/v4/icons/GoldenBadge';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type CommunityPendingInvitationPageProps = {
   community: Amity.Community;
@@ -25,6 +26,7 @@ function useCommunityPendingInvitationPage({ community }: CommunityPendingInvita
   const pageId = 'community_pending_invitation_page';
 
   const { onBack, onClickUser } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
   const { online } = useNetworkState();
   const { isDesktop } = useResponsive();
   const { AmityCommunityPendingInvitationPageBehavior } = usePageBehavior();
@@ -57,8 +59,8 @@ function useCommunityPendingInvitationPage({ community }: CommunityPendingInvita
     },
   });
 
-  const onAvatarClick = (userId: string, displayName?: string) => {
-    onClickUser(userId, undefined, displayName);
+  const onAvatarClick = (displayName?: string) => {
+    onClickUser(currentUserId, undefined, displayName);
   };
 
   const isEmpty = online && invitations.length === 0 && !isLoading;
@@ -134,8 +136,7 @@ export function CommunityPendingInvitationPage(props: CommunityPendingInvitation
                 className={styles.communityPendingInvitationPage__memberAvatar}
                 textPlaceholderClassName={styles.communityPendingInvitationPage__memberAvatar}
                 onPressAvatar={() =>
-                  invitation.user?.userId &&
-                  onAvatarClick(invitation.user?.userId, invitation.user?.displayName)
+                  invitation.user?.userId && onAvatarClick(invitation.user?.displayName)
                 }
               />
               <Typography.BodyBold className={styles.communityPendingInvitationPage__memberName}>

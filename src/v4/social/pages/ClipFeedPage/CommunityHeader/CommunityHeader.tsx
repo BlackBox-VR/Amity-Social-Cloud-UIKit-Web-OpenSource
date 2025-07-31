@@ -9,6 +9,7 @@ import { usePageBehavior } from '~/v4/core/providers/PageBehaviorProvider';
 import { useUser } from '~/v4/core/hooks/objects/useUser';
 import { Typography } from '~/v4/core/components';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type ClipHeaderProps = {
   pageId?: string;
@@ -25,6 +26,7 @@ export const ClipHeader = ({
 }: ClipHeaderProps) => {
   const { AmityClipFeedPageBehavior } = usePageBehavior();
   const { goToUserProfilePage } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
 
   const { community, isLoading: isCommunityLoading } = useCommunity({
     communityId: targetType === 'community' ? targetId : undefined,
@@ -75,7 +77,7 @@ export const ClipHeader = ({
         <Button
           variant="text"
           onPress={() => {
-            goToUserProfilePage(targetId, user?.displayName);
+            goToUserProfilePage(currentUserId, user?.displayName);
           }}
           className={styles.clipHeader__button}
         >

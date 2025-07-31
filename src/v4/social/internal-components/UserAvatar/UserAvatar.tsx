@@ -9,6 +9,7 @@ import { useUser } from '~/v4/core/hooks/objects/useUser';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 import styles from './UserAvatar.module.css';
 import { usePopupContext } from '~/v4/core/providers/PopupProvider';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type UserAvatarProps = {
   pageId?: string;
@@ -34,6 +35,7 @@ export function UserAvatar({
   const elementId = 'user_avatar';
 
   const { onClickUser } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
   const { user, isLoading } = useUser({ userId });
   const userImage = useImage({ fileId: user?.avatar?.fileId });
   const { accessibilityId } = useAmityElement({ pageId, componentId, elementId });
@@ -52,9 +54,9 @@ export function UserAvatar({
           if (!userId) return;
           if (userId && shouldRedirectToUserProfile) {
             closePopup();
-            onClickUser(userId, undefined, displayName);
+            onClickUser(currentUserId, undefined, displayName);
           } else {
-            onClickUser(userId, undefined, displayName);
+            onClickUser(currentUserId, undefined, displayName);
           }
         }}
       >
@@ -74,9 +76,9 @@ export function UserAvatar({
         if (!userId) return;
         if (userId && shouldRedirectToUserProfile) {
           closePopup();
-          onClickUser(userId, undefined, displayName);
+          onClickUser(currentUserId, undefined, displayName);
         } else {
-          onClickUser(userId, undefined, displayName);
+          onClickUser(currentUserId, undefined, displayName);
         }
       }}
       className={clsx(styles.userAvatar__container, imageContainerClassName)}

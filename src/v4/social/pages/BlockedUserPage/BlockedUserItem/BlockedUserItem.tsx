@@ -8,6 +8,7 @@ import { Button } from '~/v4/core/components/AriaButton';
 import { useNavigation } from '~/v4/core/providers/NavigationProvider';
 import { useNetworkState } from 'react-use';
 import { useNotifications } from '~/v4/core/providers/NotificationProvider';
+import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type BlockedUserItemProps = {
   pageId?: string;
@@ -22,6 +23,7 @@ export const BlockedUserItem: FC<BlockedUserItemProps> = ({
 }) => {
   const { unblockUser } = useUserBlock();
   const { goToUserProfilePage } = useNavigation();
+  const currentUserId = useSDK()?.currentUserId || '';
   const { online } = useNetworkState();
   const notification = useNotifications();
 
@@ -30,7 +32,7 @@ export const BlockedUserItem: FC<BlockedUserItemProps> = ({
       <Button
         className={styles.blockUserItem__user}
         variant="text"
-        onPress={() => goToUserProfilePage(user.userId, user.displayName)}
+        onPress={() => goToUserProfilePage(currentUserId, user.displayName)}
       >
         <UserAvatar userId={user.userId} className={styles.blockUserItem__avatar} />{' '}
         <Typography.BodyBold className={styles.blockUserItem__displayName}>

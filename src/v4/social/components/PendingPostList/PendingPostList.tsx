@@ -148,7 +148,9 @@ export const PendingPostList = ({
               <Typography.BodyBold
                 className={styles.pendingPostList__username}
                 data-testid={`${pageId}/${componentId}/username`}
-                onClick={() => goToUserProfilePage(post?.postedUserId, post?.creator?.displayName)}
+                onClick={() =>
+                  goToUserProfilePage(currentUserId as string, post?.creator?.displayName)
+                }
               >
                 {post?.creator?.displayName}
               </Typography.BodyBold>

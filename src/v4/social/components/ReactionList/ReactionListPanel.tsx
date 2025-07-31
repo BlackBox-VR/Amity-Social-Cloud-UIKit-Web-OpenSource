@@ -35,9 +35,9 @@ export const ReactionListPanel = ({
 
   if (!currentRef || !filteredReactions) return null;
 
-  const onClickUserDetails = (userId: string, displayName?: string) => {
+  const onClickUserDetails = (displayName?: string) => {
     closePopup();
-    goToUserProfilePage(userId, displayName);
+    goToUserProfilePage(currentUserId as string, displayName);
   };
 
   return (
@@ -64,23 +64,13 @@ export const ReactionListPanel = ({
                           data-testid="user_avatar_view"
                           avatarUrl={reaction.user?.avatar?.fileUrl}
                           defaultImage={<User />}
-                          onClick={() =>
-                            onClickUserDetails(
-                              reaction.user?.userId as string,
-                              reaction.user?.displayName,
-                            )
-                          }
+                          onClick={() => onClickUserDetails(reaction.user?.displayName)}
                         />
                       </div>
                       <div>
                         <Button
                           variant="text"
-                          onPress={() =>
-                            onClickUserDetails(
-                              reaction.user?.userId as string,
-                              reaction.user?.displayName,
-                            )
-                          }
+                          onPress={() => onClickUserDetails(reaction.user?.displayName)}
                         >
                           <Typography.BodyBold
                             data-testid="user_display_name"
