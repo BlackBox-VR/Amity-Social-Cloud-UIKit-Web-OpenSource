@@ -1,14 +1,11 @@
-import { ReactNode } from 'react';
 import styled from 'styled-components';
 import UiKitAvatar from '~/core/components/Avatar';
 
-import { Close, EllipsisV, Save, TrashIcon } from '~/icons';
+import { Close, EllipsisV, Save, Trash } from '~/icons';
 
 export const EditingContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 10px;
 `;
 
 export const EditingInput = styled.input`
@@ -20,26 +17,26 @@ export const EditingInput = styled.input`
   border-radius: 4px;
 `;
 
-export const SaveIcon = styled(Save).attrs<{ icon?: ReactNode }>({
-  width: 14,
-  height: 14,
-})`
+export const SaveIcon = styled(Save)`
   opacity: 0.7;
+  padding: 0 10px;
   cursor: pointer;
 `;
 
-export const CloseIcon = styled(Close).attrs<{ icon?: ReactNode }>({
-  width: 14,
-  height: 14,
-})`
+export const DeleteIcon = styled(Trash)`
   opacity: 0.7;
+  padding: 0 10px;
   cursor: pointer;
 `;
 
-export const MessageOptionsIcon = styled(EllipsisV).attrs<{ icon?: ReactNode }>({
-  width: 11,
-  height: 11,
-})`
+export const CloseIcon = styled(Close)`
+  opacity: 0.7;
+  padding: 0 10px;
+  cursor: pointer;
+`;
+
+export const MessageOptionsIcon = styled(EllipsisV).attrs({ width: 11, height: 11 })`
+  color: white;
   opacity: 0.5;
   margin: 0 5px;
   cursor: pointer;
@@ -47,40 +44,52 @@ export const MessageOptionsIcon = styled(EllipsisV).attrs<{ icon?: ReactNode }>(
 
 export const Avatar = styled(UiKitAvatar)`
   margin-right: auto;
+  width: 92px;
+  height: 92px;
 `;
 
-export const MessageReservedRow = styled.div<{ isIncoming?: boolean }>`
+interface MessageReservedRowProps {
+  isIncoming?: boolean;
+}
+
+export const MessageReservedRow = styled.div<MessageReservedRowProps>`
   display: flex;
   width: 100%;
   ${({ isIncoming }) => !isIncoming && 'justify-content: flex-end;'}
 `;
 
-export const MessageWrapper = styled.div`
+interface MessageWrapperProps {
+  isAutoPost?: boolean;
+}
+
+export const MessageWrapper = styled.div<MessageWrapperProps>`
   display: flex;
-  max-width: 60%;
+  gap: 12px;
+  width: ${({ isAutoPost }) => (isAutoPost ? '90%' : '85%')};
 `;
 
 export const MessageContainer = styled.div`
-  min-width: 265px;
+  flex: 1;
+  position: relative; // Add this line
 `;
 
 export const AvatarWrapper = styled.div`
-  width: 52px;
+  width: 92px;
   flex-shrink: 0;
 `;
 
 export const UserName = styled.div`
-  color: ${({ theme }) => theme.palette.neutral.main};
-  font-size: 14px;
-  font-weight: 600;
+  color: black;
+  font-size: 14.2px;
+  font-weight: 500;
   margin-bottom: 4px;
 `;
 
 const CommonMessageBody = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 8px;
-  padding: 8px;
+  margin-bottom: 12px;
+  padding: 9px;
   word-break: break-word;
 
   & pre {
@@ -88,21 +97,58 @@ const CommonMessageBody = styled.div`
   }
 `;
 
-export const GeneralMessageBody = styled(CommonMessageBody)<{ isIncoming?: boolean }>`
+interface GeneralMessageBodyProps {
+  isIncoming?: boolean;
+}
+
+export const GeneralMessageBody = styled(CommonMessageBody)<GeneralMessageBodyProps>`
+  position: relative; // Add this line
   ${({ theme, isIncoming }) =>
     isIncoming
       ? `
-      background: ${theme.palette.neutral.shade4};
-      border-radius: 0px 6px 6px 6px;
+      background: white;
+      color: #000;
+      border-radius: 10px;
     `
       : `
-      background: ${theme.palette.primary.main};
-      color: #fff;
-      border-radius: 6px 0px 6px 6px;
+      background: white;
+      color: #000;
+      border-radius: 10px;
   `}
+  padding-bottom: 15px; // Add some extra padding at the bottom
 `;
 
-export const DeletedMessageBody = styled(CommonMessageBody)<{ isIncoming?: boolean }>`
+export const MemberActivityAutoPostBody = styled(CommonMessageBody)`
+  background: #121212;
+  color: white;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 8px 1px rgba(255, 255, 255, 0.55);
+  padding: 12px;
+`;
+
+export const SharedQuestsAutoPostBody = styled(CommonMessageBody)`
+  background: linear-gradient(#00a4ea, #5433ff);
+  color: white;
+  border-radius: 10px;
+`;
+
+export const AnnouncementsAutoPostBody = styled(CommonMessageBody)`
+  background: linear-gradient(#ffc700, #e65c00);
+  color: white;
+  border-radius: 10px;
+`;
+
+export const ArenaRaidAutoPostBody = styled(CommonMessageBody)`
+  background: linear-gradient(#ff008a, #ff2d2d);
+  color: white;
+  border-radius: 10px;
+`;
+
+interface DeletedMessageBodyProps {
+  isIncoming?: boolean;
+}
+
+export const DeletedMessageBody = styled(CommonMessageBody)<DeletedMessageBodyProps>`
   text-align: ${({ isIncoming }) => (isIncoming ? 'left' : 'right')};
 `;
 
@@ -113,13 +159,88 @@ export const UnsupportedMessageBody = styled(CommonMessageBody)`
 `;
 
 export const MessageDate = styled.div`
-  font-size: 13px;
-  opacity: 0.5;
-  margin-left: auto;
+  font-size: 11px;
+  opacity: 0.65;
 `;
 
 export const BottomLine = styled.div`
   margin-top: 3px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+`;
+
+export const ReactionDisplay = styled.div`
+  position: absolute;
+  bottom: -4px; // Adjusted from -10px to -5px to move it up
+  right: 10px;
+  display: flex;
+  flex-direction: row-reverse;
+  z-index: 1; // Ensure it appears above the message content
+`;
+
+interface ReactionBubbleProps {
+  isfromme?: boolean;
+}
+
+export const ReactionBubble = styled.div<ReactionBubbleProps>`
+  background-color: ${(props) => (props.isfromme ? '#1f3c69' : '#212121')};
+  font-weight: ${(props) => (props.isfromme ? 'bold' : 'normal')};
+  border: 1.6px solid #8f8f8f;
+  border-radius: 20px;
+  padding: 1.25px 9px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  font-size: 17px;
+  color: white;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25); // Subtle shadow for depth
+  user-select: none;
+  cursor: pointer;
+`;
+
+export const EmptyReactionBubble = styled.div`
+  background-color: #2b2b2b;
+  font-weight: bold;
+  border: 1.6px solid #8f8f8f;
+  border-radius: 20px;
+  padding: 1.25px 7px;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  font-size: 17px;
+  color: white;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    opacity 0.2s;
+  opacity: 0.55;
+  user-select: none;
+
+  &:hover {
+    background-color: #2e2e2e;
+    opacity: 1;
+  }
+
+  &::before {
+    content: '+🙂';
+    opacity: 0.5;
+    filter: grayscale(100%) brightness(200%);
+  }
+`;
+
+export const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 `;

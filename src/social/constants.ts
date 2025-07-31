@@ -85,3 +85,16 @@ export const ERROR_RESPONSE = Object.freeze({
   NOT_INCLUDE_WHITELIST_LINK: 'Data contains a link that is not in the whitelist',
   CONTAIN_BLOCKLISTED_WORD: 'Your text contains a blocklisted word.',
 });
+
+export const UnityMessageBaseURLs = {
+  QUEST: 'uniwebview://quest?',
+  CLAIM_REWARDS: 'uniwebview://claim?',
+};
+
+export const UnityMessageKeys = {
+  LIKE: 'like',
+  COMMENT: 'comment',
+  FOLLOW: 'follow',
+  TEAM_POST: 'team-post',
+  CLAIM_CAREPOINTS: 'claim-carepoints',
+};

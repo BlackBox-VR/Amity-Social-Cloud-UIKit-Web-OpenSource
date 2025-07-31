@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChannelRepository, Client as ASCClient } from '@amityco/ts-sdk';
+import { ChannelRepository, Client as ASCClient, UserRepository } from '@amityco/ts-sdk';
 import { useIntl } from 'react-intl';
 
 import RecentChat from '~/chat/components/RecentChat';
@@ -10,6 +10,10 @@ import { ApplicationContainer } from './styles';
 import CreateChatModal from '~/chat/components/Chat/CreateChatModal';
 import EditChatMemberModal from '~/chat/components/ChatDetails/EditChatMemberModal';
 import { useNotifications } from '~/core/providers/NotificationProvider';
+
+import { useSDK } from '~/core/hooks/useSDK';
+import useUser from '~/core/hooks/useUser';
+import useChannelsCollection from '~/chat/hooks/collections/useChannelsCollection';
 
 type PartialChannel = Pick<Amity.Channel, 'channelId' | 'type'>;
 
@@ -37,6 +41,7 @@ const ChatApplication = ({
   const { formatMessage } = useIntl();
   const [currentChannelData, setCurrentChannelData] = useState<PartialChannel | null>(null);
   const [shouldShowChatDetails, setShouldShowChatDetails] = useState(false);
+  const [shouldShowChatHeader, setShouldShowChatHeader] = useState(true);
   const notification = useNotifications();
 
   const showChatDetails = () => setShouldShowChatDetails(true);
@@ -44,12 +49,12 @@ const ChatApplication = ({
 
   const [isChatModalOpened, setChatModalOpened] = useState(false);
   const [isEditChatMemberModalOpened, setIsEditChatMemberModalOpened] = useState(false);
-  const openChatModal = () => setChatModalOpened(true);
 
   const handleChannelSelect = (newChannelData: PartialChannel) => {
     if (currentChannelData?.channelId === newChannelData?.channelId) {
       return;
     }
+
     hideChatDetails();
     setCurrentChannelData(newChannelData);
     onChannelSelect?.(newChannelData);
@@ -71,14 +76,36 @@ const ChatApplication = ({
     }
   };
 
+  const { channels } = useChannelsCollection({
+    membership: membershipFilter,
+    sortBy: 'lastActivity',
+    limit: 20,
+  });
+
+  const { currentUserId } = useSDK();
+  const userModel = useUser(currentUserId);
+
   useEffect(() => {
-    if (!defaultChannelId) return;
-    handleChannelSelect({ channelId: defaultChannelId, type: 'standard' });
-  }, [defaultChannelId]);
+    if (!defaultChannelId) {
+      if (channels != null && channels.length > 0) {
+        if (userModel && userModel?.metadata?.teamId) {
+          const teamChannel = channels.find(
+            (channel) => channel.channelId === userModel?.metadata?.teamId,
+          );
+          if (teamChannel) {
+            setShouldShowChatHeader(false);
+            handleChannelSelect({ channelId: teamChannel.defaultSubChannelId, type: 'live' });
+          }
+        }
+      }
+    } else {
+      handleChannelSelect({ channelId: defaultChannelId, type: 'live' });
+    }
+  }, [defaultChannelId, channels, userModel]);
 
   return (
     <ApplicationContainer>
-      <RecentChat
+      {/* <RecentChat
         selectedChannelId={currentChannelData?.channelId}
         membershipFilter={membershipFilter}
         onChannelSelect={handleChannelSelect}
@@ -86,12 +113,13 @@ const ChatApplication = ({
           openChatModal();
           onAddNewChannel?.();
         }}
-      />
+      /> */}
       {currentChannelData ? (
         <Chat
           channelId={currentChannelData.channelId}
           shouldShowChatDetails={shouldShowChatDetails}
           onChatDetailsClick={showChatDetails}
+          shouldShowChatHeader={shouldShowChatHeader}
         />
       ) : null}
       {shouldShowChatDetails && currentChannelData ? (

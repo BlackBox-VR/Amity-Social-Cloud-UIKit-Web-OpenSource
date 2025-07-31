@@ -1,10 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  MessageRepository,
-  ChannelRepository,
-  SubChannelRepository,
-  CommunityRepository,
-} from '@amityco/ts-sdk';
+import { MessageRepository, SubChannelRepository } from '@amityco/ts-sdk';
 
 import MessageList from '~/chat/components/MessageList';
 import MessageComposeBar from '~/chat/components/MessageComposeBar';
@@ -20,9 +15,15 @@ interface ChatProps {
   channelId: string;
   onChatDetailsClick: () => void;
   shouldShowChatDetails: boolean;
+  shouldShowChatHeader?: boolean;
 }
 
-const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails }: ChatProps) => {
+const Chat = ({
+  channelId,
+  onChatDetailsClick,
+  shouldShowChatDetails,
+  shouldShowChatHeader,
+}: ChatProps) => {
   useEffect(() => {
     return () => {
       SubChannelRepository.stopMessageReceiptSync(channelId);
@@ -34,7 +35,7 @@ const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails }: ChatProp
 
   const sendMessage = async (text: string) => {
     return MessageRepository.createMessage({
-      subChannelId: channelId,
+      subChannelId: channel?.defaultSubChannelId || channelId,
       data: { text },
       dataType: 'text',
     });
@@ -49,12 +50,14 @@ const Chat = ({ channelId, onChatDetailsClick, shouldShowChatDetails }: ChatProp
 
   return (
     <ChannelContainer>
-      <ChatHeader
-        channelId={channelId}
-        shouldShowChatDetails={shouldShowChatDetails}
-        onChatDetailsClick={onChatDetailsClick}
-      />
-      <MessageList channelId={channelId} />
+      {shouldShowChatHeader ? (
+        <ChatHeader
+          channelId={channelId}
+          shouldShowChatDetails={shouldShowChatDetails}
+          onChatDetailsClick={onChatDetailsClick}
+        />
+      ) : null}
+      <MessageList channelId={channel?.defaultSubChannelId || channelId} />
       {renderMessageComposeBar()}
     </ChannelContainer>
   );

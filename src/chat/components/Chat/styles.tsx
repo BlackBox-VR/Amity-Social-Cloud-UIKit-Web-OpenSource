@@ -9,6 +9,40 @@ export const ChannelContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  height: 100vh;
+  background: ${({ theme }) => theme?.palette?.system?.background || '#ffffff'};
+
+  & > div:first-child {
+    // ChatHeader
+    flex: 0 0 auto;
+  }
+
+  & > div:nth-child(2) {
+    // InfiniteScrollContainer (MessageList)
+    flex: 1 1 auto;
+    overflow: auto;
+    padding-bottom: 60px; // Adjust based on MessageComposeBar height
+  }
+
+  & > div:last-child {
+    // MessageComposeBar
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: ${({ theme }) => theme?.palette?.system?.background || '#ffffff'};
+    padding: 8px;
+    border-top: 1px solid ${({ theme }) => theme?.palette?.base?.shade3 || '#ccc'};
+  }
+
+  @media (prefers-color-scheme: dark) {
+    background: ${({ theme }) => theme?.palette?.neutral?.dark || '#333333'};
+    & > div:last-child {
+      background: ${({ theme }) => theme?.palette?.neutral?.dark || '#333333'};
+      border-top: 1px solid ${({ theme }) => theme?.palette?.base?.shade2 || '#999'};
+    }
+  }
 `;
 
 export const FormBlockBody = styled.div`
