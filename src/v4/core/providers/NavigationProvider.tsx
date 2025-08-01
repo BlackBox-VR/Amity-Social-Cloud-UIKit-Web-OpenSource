@@ -112,7 +112,10 @@ export type Page =
         posts?: Amity.Post<'clip' | 'video'>[];
       };
     }
-  | { type: PageTypes.CommunityProfilePage; context: { communityId: string; page?: number } }
+  | {
+      type: PageTypes.CommunityProfilePage;
+      context: { communityId: string; page?: number; removeHeaders?: boolean };
+    }
   | { type: PageTypes.UserProfilePage; context: { userId: string; communityId?: string } }
   | { type: PageTypes.EditUserProfilePage; context: { userId: string } }
   | {
@@ -297,7 +300,7 @@ type ContextValue = {
     parentId?: string,
     posts?: Amity.Post<'clip' | 'video'>[],
   ) => void;
-  goToCommunityProfilePage: (communityId: string, page?: number) => void;
+  goToCommunityProfilePage: (communityId: string, page?: number, removeHeaders?: boolean) => void;
   goToSocialGlobalSearchPage: (tab?: string) => void;
   goToMyCommunitiesSearchPage: () => void;
   goToSelectPostTargetPage: () => void;
@@ -430,7 +433,7 @@ let defaultValue: ContextValue = {
     mediaType: AmityStoryMediaType,
     storyType: 'communityFeed' | 'globalFeed',
   ) => {},
-  goToCommunityProfilePage: (communityId: string, page?: number) => {},
+  goToCommunityProfilePage: (communityId: string, page?: number, removeHeaders?: boolean) => {},
   goToSocialGlobalSearchPage: (tab?: string) => {},
   goToSelectPostTargetPage: () => {},
   goToSelectClipPostTargetPage: (context: { isClipPost: boolean }) => {},
@@ -510,8 +513,10 @@ if (process.env.NODE_ENV !== 'production') {
       console.log(
         `NavigationContext goToPostDetailPage(${postId} ${hideTarget} ${category} ${commentId} ${parentId} ${posts})`,
       ),
-    goToCommunityProfilePage: (communityId, page) =>
-      console.log(`NavigationContext goToCommunityProfilePage(${communityId} ${page})`),
+    goToCommunityProfilePage: (communityId, page, removeHeaders) =>
+      console.log(
+        `NavigationContext goToCommunityProfilePage(${communityId} ${page} ${removeHeaders})`,
+      ),
     goToSocialGlobalSearchPage: (tab) =>
       console.log(`NavigationContext goToSocialGlobalSearchPage(${tab})`),
     goToSelectPostTargetPage: () => console.log('NavigationContext goToTargetPage()'),
@@ -967,12 +972,13 @@ export default function NavigationProvider({
   );
 
   const goToCommunityProfilePage = useCallback(
-    (communityId, page = 1) => {
+    (communityId, page = 1, removeHeaders = false) => {
       const next = {
         type: PageTypes.CommunityProfilePage,
         context: {
           communityId,
           page,
+          removeHeaders,
         },
       };
 
