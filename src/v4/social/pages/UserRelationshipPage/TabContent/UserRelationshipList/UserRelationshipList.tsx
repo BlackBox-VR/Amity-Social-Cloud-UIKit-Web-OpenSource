@@ -65,7 +65,13 @@ export const UserRelationshipList: React.FC<UserRelationshipListProps> = ({
             const userId =
               relationship[type === UserRelationshipPageTabs.FOLLOWING ? 'to' : 'from'];
             return (
-              <UserItem key={userId} userId={userId} pageId={pageId} componentId={componentId} />
+              <UserItem
+                key={userId}
+                userId={userId}
+                pageId={pageId}
+                componentId={componentId}
+                isShowFollow={type === UserRelationshipPageTabs.FOLLOWER}
+              />
             );
           })}
         </>

@@ -2,15 +2,16 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  height: 100%;
+  height: 100vh;
   background-color: var(--asc-color-background-default);
+  margin: -1rem -1.5rem;
 }
 
 .userRelationshipPage__container {
   flex-direction: column;
   display: flex;
   flex: 1;
-  margin-top: 3.62rem;
+  margin-top: 0.5rem;
   overflow-y: scroll;
   scrollbar-width: none;
 }
@@ -92,9 +93,61 @@
   .userRelationshipPage__tabPanel {
     padding: 0 1rem;
     margin-top: 0.75rem;
-    height: max-content;
     background-color: var(--asc-color-background-default);
     border-radius: 0.5rem;
     border: 1px solid var(--asc-color-base-shade4);
+    height: 100% !important;
+    overflow-y: scroll !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+}
+
+.userRelationshipPage__tabList {
+  gap: 0 !important;
+  width: 100%;
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+}
+
+.userRelationshipPage__tabList [role='tab'] {
+  flex: 1;
+  text-align: center;
+  border-bottom: 1px solid #b1b1b1;
+  color: var(--asc-color-base-shade1);
+}
+
+.userRelationshipPage__tabList [role='tab'] * {
+  font-weight: 400;
+}
+
+.userRelationshipPage__tabList [role='tab'][data-selected] {
+  border-bottom: 4px solid #f0f;
+  color: white;
+}
+
+.userRelationshipPage__tabList [role='tab'][data-selected] * {
+  color: white;
+  font-weight: 700;
+}
+
+.userRelationshipPage__tabList [role='tab'][data-hovered]:not([data-selected]) * {
+  color: #f0f;
+}
+
+.userRelationshipPage__tabList [role='tab'][data-hovered]:not([data-selected]) {
+  color: #f0f;
+}
+
+.userRelationshipPage__content [data-cancel='true'] {
+  gap: 0 !important;
+}
+
+.userRelationshipPage__tabPanel {
+  height: 100% !important;
+  overflow-y: scroll !important;
+}
+
+.userRelationshipPage__tabPanel::-webkit-scrollbar {
+  display: none;
 }

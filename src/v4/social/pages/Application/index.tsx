@@ -172,12 +172,6 @@ const Application = ({ landingPage }: ApplicationProps) => {
         {page.type === PageTypes.EditUserProfilePage && (
           <EditUserProfilePage userId={page.context.userId} />
         )}
-        {page.type === PageTypes.UserRelationshipPage && (
-          <UserRelationshipPage
-            userId={page.context.userId}
-            selectedTab={page.context.selectedTab}
-          />
-        )}
         {page.type === PageTypes.UserPendingFollowRequestPage && <UserPendingFollowRequestPage />}
         {page.type === PageTypes.BlockedUsersPage && <BlockedUserPage />}
         {page.type === PageTypes.LiveStreamTerminatedPage && <LivestreamTerminatedPage />}

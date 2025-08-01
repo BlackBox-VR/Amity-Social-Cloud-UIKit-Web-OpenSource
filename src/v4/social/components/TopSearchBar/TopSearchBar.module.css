@@ -3,6 +3,7 @@
   grid-template-columns: minmax(0, 1fr) min-content;
   align-items: center;
   background-color: var(--asc-color-background-default);
+  margin-bottom: 0.5rem;
 }
 
 .topSearchBar[data-cancel='true'] {

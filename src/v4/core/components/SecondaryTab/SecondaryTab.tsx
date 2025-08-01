@@ -11,6 +11,7 @@ type TabsBarProps = TabsProps & {
   tabPanelClassName?: string;
   onChange: (key: Key) => void;
   tabs: { value: string; label: string; accessibilityId?: string; content: () => ReactNode }[];
+  renderAfterTabs?: () => ReactNode;
 };
 
 export const SecondaryTab = ({
@@ -21,6 +22,7 @@ export const SecondaryTab = ({
   labelClassName,
   tabListClassName,
   tabPanelClassName,
+  renderAfterTabs,
   ...props
 }: TabsBarProps) => {
   return (
@@ -42,6 +44,7 @@ export const SecondaryTab = ({
           </Tab>
         ))}
       </TabList>
+      {renderAfterTabs && renderAfterTabs()}
       {tabs.map((tab) => (
         <TabPanel
           id={tab.value}

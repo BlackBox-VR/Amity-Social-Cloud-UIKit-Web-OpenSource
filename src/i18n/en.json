@@ -121,6 +121,8 @@
   "user.message": "Message",
   "follow.placeholder.noFollowings": "No followings found",
   "follow.placeholder.noFollowers": "No followers found",
+  "follow.button.label": "Follow",
+  "following.button.label": "Following",
 
   "ProfileSettings.editProfile": "Edit profile",
   "ProfileSettings.returnTo": "Return to ",
