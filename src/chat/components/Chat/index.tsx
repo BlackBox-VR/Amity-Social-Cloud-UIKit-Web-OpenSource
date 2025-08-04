@@ -13,6 +13,7 @@ import useChannel from '~/chat/hooks/useChannel';
 
 interface ChatProps {
   channelId: string;
+  subChannelId: string;
   onChatDetailsClick: () => void;
   shouldShowChatDetails: boolean;
   shouldShowChatHeader?: boolean;
@@ -20,22 +21,24 @@ interface ChatProps {
 
 const Chat = ({
   channelId,
+  subChannelId,
   onChatDetailsClick,
   shouldShowChatDetails,
   shouldShowChatHeader,
 }: ChatProps) => {
   useEffect(() => {
     return () => {
-      SubChannelRepository.stopMessageReceiptSync(channelId);
+      SubChannelRepository.stopMessageReceiptSync(subChannelId);
     };
-  }, [channelId]);
+  }, [subChannelId]);
 
   const { isModerator } = useChannelPermission(channelId);
   const channel = useChannel(channelId);
+  console.log('Channel:', channel);
 
   const sendMessage = async (text: string) => {
     return MessageRepository.createMessage({
-      subChannelId: channel?.defaultSubChannelId || channelId,
+      subChannelId: subChannelId,
       data: { text },
       dataType: 'text',
     });
@@ -57,7 +60,7 @@ const Chat = ({
           onChatDetailsClick={onChatDetailsClick}
         />
       ) : null}
-      <MessageList channelId={channel?.defaultSubChannelId || channelId} />
+      <MessageList subChannelId={subChannelId} />
       {renderMessageComposeBar()}
     </ChannelContainer>
   );

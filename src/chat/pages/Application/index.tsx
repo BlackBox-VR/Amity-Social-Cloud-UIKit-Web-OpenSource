@@ -15,7 +15,7 @@ import { useSDK } from '~/core/hooks/useSDK';
 import useUser from '~/core/hooks/useUser';
 import useChannelsCollection from '~/chat/hooks/collections/useChannelsCollection';
 
-type PartialChannel = Pick<Amity.Channel, 'channelId' | 'type'>;
+type PartialChannel = Pick<Amity.Channel, 'channelId' | 'defaultSubChannelId' | 'type'>;
 
 const ChatApplication = ({
   membershipFilter = 'all',
@@ -94,12 +94,20 @@ const ChatApplication = ({
           );
           if (teamChannel) {
             setShouldShowChatHeader(false);
-            handleChannelSelect({ channelId: teamChannel.defaultSubChannelId, type: 'live' });
+            handleChannelSelect({
+              channelId: teamChannel.channelId,
+              defaultSubChannelId: teamChannel.defaultSubChannelId,
+              type: 'live',
+            });
           }
         }
       }
     } else {
-      handleChannelSelect({ channelId: defaultChannelId, type: 'live' });
+      handleChannelSelect({
+        channelId: defaultChannelId,
+        defaultSubChannelId: defaultChannelId,
+        type: 'live',
+      });
     }
   }, [defaultChannelId, channels, userModel]);
 
@@ -117,6 +125,7 @@ const ChatApplication = ({
       {currentChannelData ? (
         <Chat
           channelId={currentChannelData.channelId}
+          subChannelId={currentChannelData.defaultSubChannelId}
           shouldShowChatDetails={shouldShowChatDetails}
           onChatDetailsClick={showChatDetails}
           shouldShowChatHeader={shouldShowChatHeader}

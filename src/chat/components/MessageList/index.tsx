@@ -58,16 +58,16 @@ const MessageItem = React.memo(
 );
 
 interface MessageListProps {
-  channelId: string;
+  subChannelId: string;
 }
 
-const MessageList = ({ channelId }: MessageListProps) => {
+const MessageList = ({ subChannelId }: MessageListProps) => {
   const { client } = useSDK();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const scrollPositionRef = useRef(0);
   const [isLoading, setIsLoading] = useState(false);
   const { messages, hasMore, loadMore } = useMessagesCollection({
-    subChannelId: channelId,
+    subChannelId: subChannelId,
     sortBy: 'segmentDesc',
     limit: 30,
   });
