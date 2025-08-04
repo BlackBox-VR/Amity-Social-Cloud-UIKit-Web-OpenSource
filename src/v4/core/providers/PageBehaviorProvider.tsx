@@ -7,6 +7,7 @@ import {
 } from '~/v4/social/pages/CommunitySetupPage/CommunitySetupPage';
 import { Mode } from '~/v4/social/pages/PostComposerPage/PostComposerPage';
 import { UserRelationshipPageTabs } from '~/v4/social/pages/UserRelationshipPage/UserRelationshipPage';
+import {GlobalFeedFilterTypes} from "~/social/constants";
 
 export interface PageBehavior {
   AmityStoryViewPageBehavior?: {
@@ -876,11 +877,14 @@ export const PageBehaviorProvider: React.FC<PageBehaviorProviderProps> = ({
         communityId: string;
         page?: number;
         removeHeaders?: boolean;
+        filterBy?: GlobalFeedFilterTypes;
+        filterValues?: string[];
       }) => {
         if (pageBehavior?.AmityClipFeedPageBehavior?.goToCommunityProfilePage) {
           return pageBehavior.AmityClipFeedPageBehavior.goToCommunityProfilePage(context);
         }
-        goToCommunityProfilePage(context.communityId, context.page, context.removeHeaders);
+        goToCommunityProfilePage(context.communityId, context.page, 
+            context.removeHeaders, context.filterBy, context.filterValues);
       },
     },
   };

@@ -16,6 +16,7 @@ import { Typography } from '~/v4/core/components';
 import useIntersectionObserver from '~/v4/core/hooks/useIntersectionObserver';
 import { NoInternetConnectionHoc } from '~/v4/social/internal-components/NoInternetConnection/NoInternetConnectionHoc';
 import styles from './CommunityFeed.module.css';
+import {GlobalFeedFilterTypes} from "~/social/constants";
 
 export const CommunityFeedPostContentSkeleton = () => {
   return (
@@ -39,9 +40,11 @@ export const CommunityFeedPostContentSkeleton = () => {
 interface CommunityFeedProps {
   communityId: string;
   pageId?: string;
+  filterBy?: GlobalFeedFilterTypes; // Optional filter to apply on the feed
+  filterValues?: string[]; // Values to filter by, e.g., user IDs, gym IDs, etc.
 }
 
-export const CommunityFeed = ({ pageId = '*', communityId }: CommunityFeedProps) => {
+export const CommunityFeed = ({ pageId = '*', communityId, filterBy, filterValues }: CommunityFeedProps) => {
   const componentId = 'community_feed_component';
   const { isExcluded, accessibilityId, themeStyles } = useAmityComponent({
     pageId,
@@ -61,7 +64,7 @@ export const CommunityFeed = ({ pageId = '*', communityId }: CommunityFeedProps)
     targetId: communityId,
     targetType: 'community',
     limit: 10,
-  });
+  }, filterBy, filterValues);
 
   const { pinnedPost: allPinnedPost, refresh: refreshPinnedPosts } = usePinnedPostsCollection({
     communityId,

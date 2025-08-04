@@ -100,3 +100,11 @@ export const UnityMessageKeys = {
   TEAM_POST: 'team-post',
   CLAIM_CAREPOINTS: 'claim-carepoints',
 };
+
+export const enum GlobalFeedFilterTypes {
+    NONE = 'none',
+    USER = 'user',
+    TEAM = 'team',
+    GYM = 'gym',
+    METADATA_TYPE = 'metadata-type',
+};

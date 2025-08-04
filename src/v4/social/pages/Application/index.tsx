@@ -76,7 +76,9 @@ const Application = ({ landingPage }: ApplicationProps) => {
       goToCommunityProfilePage(
         landingPage.context?.communityId,
         landingPage.context?.page || 0,
-        landingPage.context?.removeHeaders,
+        landingPage.context?.removeHeaders, 
+        landingPage.context?.filterBy, 
+        landingPage.context?.filterValues,
       );
     }
   }, [
@@ -116,6 +118,8 @@ const Application = ({ landingPage }: ApplicationProps) => {
               communityId={page.context.communityId}
               page={page.context.page}
               removeHeaders={page.context.removeHeaders}
+              filterBy={page.context.filterBy}
+              filterValues={page.context.filterValues}
             />
           </CommunityTabProvider>
         )}

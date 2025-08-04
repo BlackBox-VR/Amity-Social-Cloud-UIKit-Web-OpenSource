@@ -90,6 +90,8 @@ const PageRenderer = ({ children }: PageRendererProps) => {
             communityId={page.context.communityId}
             page={page.context.page}
             removeHeaders={page.context.removeHeaders}
+            filterBy={page.context.filterBy}
+            filterValues={page.context.filterValues}
           />
         </CommunityTabProvider>
       );
