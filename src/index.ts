@@ -118,5 +118,5 @@ export {
 export { HomePageTab as AmitySocialHomePageTab } from '~/v4/social/constants/HomePageTab';
 
 // Custom exports
-export { PageTypes as AmityPageTypes } from '~/social/constants';
+export { PageTypes as AmityPageTypes, GlobalFeedFilterTypes as BBVRGlobalFeedFilters } from '~/social/constants';
 export { default as useCommunity } from '~/social/hooks/useCommunity';

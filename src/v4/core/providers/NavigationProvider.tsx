@@ -20,6 +20,7 @@ import { AmityRoute } from './AmityUIKitProvider';
 import { LiveStreamPlayerPageProps } from '~/v4/social/pages/LiveStreamPlayerPage';
 import { useLayoutContext } from '~/v4/social/providers/LayoutProvider';
 import { WEB_COMMUNITY_URL } from '~/constants';
+import {GlobalFeedFilterTypes} from "~/social/constants";
 
 export enum PageTypes {
   Explore = 'explore',
@@ -114,7 +115,8 @@ export type Page =
     }
   | {
       type: PageTypes.CommunityProfilePage;
-      context: { communityId: string; page?: number; removeHeaders?: boolean };
+      context: { communityId: string; page?: number; 
+        removeHeaders?: boolean, filterBy?: GlobalFeedFilterTypes; filterValues?: string[] };
     }
   | { type: PageTypes.UserProfilePage; context: { userId: string; communityId?: string } }
   | { type: PageTypes.EditUserProfilePage; context: { userId: string } }
@@ -300,7 +302,8 @@ type ContextValue = {
     parentId?: string,
     posts?: Amity.Post<'clip' | 'video'>[],
   ) => void;
-  goToCommunityProfilePage: (communityId: string, page?: number, removeHeaders?: boolean) => void;
+  goToCommunityProfilePage: (communityId: string, page?: number, removeHeaders?: boolean, 
+                             filterBy?: GlobalFeedFilterTypes, filterValues?: string[]) => void;
   goToSocialGlobalSearchPage: (tab?: string) => void;
   goToMyCommunitiesSearchPage: () => void;
   goToSelectPostTargetPage: () => void;
@@ -433,7 +436,9 @@ let defaultValue: ContextValue = {
     mediaType: AmityStoryMediaType,
     storyType: 'communityFeed' | 'globalFeed',
   ) => {},
-  goToCommunityProfilePage: (communityId: string, page?: number, removeHeaders?: boolean) => {},
+  goToCommunityProfilePage: (communityId: string, page?: number, 
+                             removeHeaders?: boolean, filterBy?: GlobalFeedFilterTypes, 
+                             filterValues?: string[]) => {},
   goToSocialGlobalSearchPage: (tab?: string) => {},
   goToSelectPostTargetPage: () => {},
   goToSelectClipPostTargetPage: (context: { isClipPost: boolean }) => {},
@@ -513,9 +518,11 @@ if (process.env.NODE_ENV !== 'production') {
       console.log(
         `NavigationContext goToPostDetailPage(${postId} ${hideTarget} ${category} ${commentId} ${parentId} ${posts})`,
       ),
-    goToCommunityProfilePage: (communityId, page, removeHeaders) =>
+    goToCommunityProfilePage: (communityId, page, 
+                               removeHeaders, filterBy, 
+                               filterValues) =>
       console.log(
-        `NavigationContext goToCommunityProfilePage(${communityId} ${page} ${removeHeaders})`,
+        `NavigationContext goToCommunityProfilePage(${communityId} ${page} ${removeHeaders} ${filterBy} ${filterValues})`,
       ),
     goToSocialGlobalSearchPage: (tab) =>
       console.log(`NavigationContext goToSocialGlobalSearchPage(${tab})`),
@@ -972,13 +979,16 @@ export default function NavigationProvider({
   );
 
   const goToCommunityProfilePage = useCallback(
-    (communityId, page = 1, removeHeaders = false) => {
+    (communityId, page = 1, removeHeaders = false, 
+     filterBy = GlobalFeedFilterTypes.NONE, filterValues = []) => {
       const next = {
         type: PageTypes.CommunityProfilePage,
         context: {
           communityId,
           page,
           removeHeaders,
+          filterBy,
+          filterValues,
         },
       };
 

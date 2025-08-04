@@ -35,17 +35,22 @@ import { useGetInvitation } from '~/v4/social/hooks';
 import { useResponsive } from '~/v4/core/hooks/useResponsive';
 import { CreateClipButton } from '~/v4/social/elements/CreateClipButton';
 import { useClipContext } from '~/v4/social/providers/ClipProvider';
+import {GlobalFeedFilterTypes} from "~/social/constants";
 
 interface CommunityProfileProps {
   communityId: string;
   page?: number;
   removeHeaders?: boolean;
+    filterBy?: GlobalFeedFilterTypes; // Optional filter to apply on the feed
+    filterValues?: string[]; // Optional value for the filter
 }
 
 export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
   communityId,
   page,
   removeHeaders,
+  filterBy,
+  filterValues,
 }) => {
   const pageId = 'community_profile_page';
 
@@ -79,7 +84,7 @@ export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'community_feed':
-        return <CommunityFeed pageId={pageId} communityId={communityId} />;
+        return <CommunityFeed pageId={pageId} communityId={communityId} filterBy={filterBy} filterValues={filterValues} />;
       case 'community_pin':
         return <CommunityPin pageId={pageId} communityId={communityId} />;
       case 'community_image_feed':
