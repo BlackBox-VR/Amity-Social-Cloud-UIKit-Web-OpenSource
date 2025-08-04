@@ -33,6 +33,7 @@ import { useNetworkState } from 'react-use';
 import { ERROR_RESPONSE } from '~/v4/social/constants/errorResponse';
 import styles from './Comment.module.css';
 import { useSDK } from '~/v4/core/hooks/useSDK';
+import { UnityMessageBaseURLs, UnityMessageKeys } from '~/social/constants';
 
 const Like = ({ ...props }: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -164,8 +165,10 @@ export const Comment = ({
 
     if (!isLiked) {
       await ReactionRepository.addReaction('comment', comment?.commentId, LIKE_REACTION_KEY);
+      location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + '=1';
     } else {
       await ReactionRepository.removeReaction('comment', comment?.commentId, LIKE_REACTION_KEY);
+      location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + '=-1';
     }
   };
 

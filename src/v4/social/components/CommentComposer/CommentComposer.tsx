@@ -20,6 +20,7 @@ import { ERROR_RESPONSE } from '~/v4/social/constants/errorResponse';
 import { UserAvatar } from '~/v4/social/elements';
 import styles from './CommentComposer.module.css';
 import usePost from '~/v4/core/hooks/objects/usePost';
+import { UnityMessageBaseURLs, UnityMessageKeys } from '~/social/constants';
 
 const LockSvg = () => {
   return (
@@ -123,6 +124,7 @@ export const CommentComposer = ({
       }
     },
     onSuccess: () => {
+      location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.COMMENT + '=1';
       setTextValue({
         data: { text: '' },
         mentionees: [],

@@ -47,6 +47,7 @@ import { isTextPost } from '~/v4/social/utils/postTypeChecker';
 import { usePostReaction } from '~/v4/social/hooks/usePostReaction';
 import { BANNER_SPRITES_URL } from '~/constants';
 import useSDK from '~/v4/core/hooks/useSDK';
+import { UnityMessageBaseURLs, UnityMessageKeys } from '~/social/constants';
 
 export enum AmityPostContentComponentStyle {
   FEED = 'feed',
@@ -250,8 +251,10 @@ export const PostContent = ({
 
   const handleReactionClick = (reactionKey: string) => {
     if (reactionByMe) {
+      location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + '=-1';
       mutateRemoveReactionAsync(reactionByMe);
     } else {
+      location.href = UnityMessageBaseURLs.QUEST + UnityMessageKeys.LIKE + '=1';
       mutateAddReactionAsync(reactionKey);
     }
   };
