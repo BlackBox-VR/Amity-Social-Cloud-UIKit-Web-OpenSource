@@ -198,20 +198,21 @@ export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
       {!isLoading && !isShowFailed && !isInvitationLoading && community && !community.isDeleted && (
         <>
           {!removeHeaders && (
-              <CommunityHeader
-                pageId={pageId}
-                community={community}
-                isSticky={isSticky}
-                page={page}
-              />
-            ) && (
-              <CommunityProfileTab
-                pageId={pageId}
-                ref={profileTabRef}
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-              />
-            )}
+            <CommunityHeader
+              pageId={pageId}
+              community={community}
+              isSticky={isSticky}
+              page={page}
+            />
+          )}
+          {!removeHeaders && (
+            <CommunityProfileTab
+              pageId={pageId}
+              ref={profileTabRef}
+              activeTab={activeTab}
+              onTabChange={handleTabChange}
+            />
+          )}
         </>
       )}
       {!isShowFailed &&
