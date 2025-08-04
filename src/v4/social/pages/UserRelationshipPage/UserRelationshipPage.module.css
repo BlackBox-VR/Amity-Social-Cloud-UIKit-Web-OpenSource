@@ -123,11 +123,11 @@
 
 .userRelationshipPage__tabList [role='tab'][data-selected] {
   border-bottom: 4px solid #f0f;
-  color: white;
+  color: var(--asc-color-base-inverse);
 }
 
 .userRelationshipPage__tabList [role='tab'][data-selected] * {
-  color: white;
+  color: var(--asc-color-base-inverse);
   font-weight: 700;
 }
 
