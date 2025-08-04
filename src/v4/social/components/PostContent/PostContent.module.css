@@ -451,8 +451,8 @@
 
 .postContent__timestampContainer {
   font-family: Futura, sans-serif;
-  font-size: 8px; /* Smaller font for timestamp */
-  color: #b1b1b1;
+  font-size: 12px; /* Smaller font for timestamp */
+  color: var(--asc-color-secondary-default) !important;
   text-align: left; /* Align timestamp to the left */
   white-space: nowrap; /* Prevent wrapping */
 }

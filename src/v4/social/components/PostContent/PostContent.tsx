@@ -48,6 +48,7 @@ import { usePostReaction } from '~/v4/social/hooks/usePostReaction';
 import { BANNER_SPRITES_URL } from '~/constants';
 import useSDK from '~/v4/core/hooks/useSDK';
 import { UnityMessageBaseURLs, UnityMessageKeys } from '~/social/constants';
+import Time from '~/core/components/Time';
 
 export enum AmityPostContentComponentStyle {
   FEED = 'feed',
@@ -66,10 +67,9 @@ interface PostTitleProps {
   pageId?: string;
   componentId?: string;
   hideTarget?: boolean;
-  timestamp: Date | string;
 }
 
-const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTitleProps) => {
+const PostTitle = ({ pageId, componentId, post, hideTarget }: PostTitleProps) => {
   const shouldCallCommunity = useMemo(() => post?.targetType === 'community', [post?.targetType]);
   const shouldCallUser = useMemo(
     () => post?.targetType === 'user' && post?.postedUserId !== post?.targetId,
@@ -118,9 +118,6 @@ const PostTitle = ({ pageId, componentId, post, hideTarget, timestamp }: PostTit
           )}
           <div className={styles.postContent__subTitle}>
             Team: <span>{creatorTeamName}</span>
-          </div>
-          <div className={styles.postContent__timestampContainer}>
-            <Timestamp timestamp={timestamp} />
           </div>
         </div>
       </Button>
@@ -342,6 +339,7 @@ export const PostContent = ({
   }, [post, isVisible, page.type]);
 
   const userId = post?.postedUserId || post?.creator?.userId || '';
+  const createdDate = new Date(post.createdAt).getTime();
 
   return (
     <div
@@ -375,7 +373,6 @@ export const PostContent = ({
               hideTarget={hideTarget}
               pageId={pageId}
               componentId={componentId}
-              timestamp={post.createdAt}
             />
           </div>
           <div className={styles.postContent__bar__information__subtitle}>
@@ -404,6 +401,9 @@ export const PostContent = ({
       </div>
       <div className={styles.postContent__content_and_reactions}>
         <div className={styles.postContent__content}>
+          <div className={styles.postContent__timestampContainer}>
+            <Time className={styles.postContent__timestampContainer} date={createdDate} />
+          </div>
           <TextContent
             pageId={pageId}
             componentId={componentId}
