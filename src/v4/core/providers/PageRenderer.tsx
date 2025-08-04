@@ -86,7 +86,11 @@ const PageRenderer = ({ children }: PageRendererProps) => {
     case PageTypes.CommunityProfilePage:
       return (
         <CommunityTabProvider>
-          <CommunityProfilePage communityId={page.context.communityId} page={page.context.page} />
+          <CommunityProfilePage
+            communityId={page.context.communityId}
+            page={page.context.page}
+            removeHeaders={page.context.removeHeaders}
+          />
         </CommunityTabProvider>
       );
     case PageTypes.ViewStoryPage:

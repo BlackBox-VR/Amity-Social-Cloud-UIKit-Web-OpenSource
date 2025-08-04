@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SocialHomePage } from '~/v4/social/pages/SocialHomePage';
 import { PostComposerPage } from '~/v4/social/pages/PostComposerPage';
 import { PostDetailPage } from '~/v4/social/pages/PostDetailPage';
-import { PageTypes, useNavigation } from '~/v4/core/providers/NavigationProvider';
+import { Page, PageTypes, useNavigation } from '~/v4/core/providers/NavigationProvider';
 import { SocialGlobalSearchPage } from '~/v4/social/pages/SocialGlobalSearchPage';
 import { ViewStoryPage } from '~/v4/social/pages/StoryPage';
 import { SelectPostTargetPage } from '~/v4/social/pages/SelectPostTargetPage';
@@ -29,7 +29,6 @@ import { CommunityTabProvider } from '~/v4/core/providers/CommunityTabProvider';
 import { AllCategoriesPage } from '~/v4/social/pages/AllCategoriesPage';
 import { CommunitiesByCategoryPage } from '~/v4/social/pages/CommunitiesByCategoryPage';
 import { MainLayout } from '~/v4/social/layouts/Main';
-import { CommunitySideBar } from '~/v4/social/components/CommunitySideBar';
 import { useResponsive } from '~/v4/core/hooks/useResponsive';
 import { UserRelationshipPage } from '~/v4/social/pages/UserRelationshipPage';
 import { UserPendingFollowRequestPage } from '~/v4/social/pages/UserPendingFollowRequestPage/UserPendingFollowRequestPage';
@@ -46,7 +45,6 @@ import { LiveStreamPlayerPage } from '~/v4/social/pages/LiveStreamPlayerPage';
 import { useLayoutContext } from '~/v4/social/providers/LayoutProvider';
 import { CommunityInviteMemberPage } from '~/v4/social/pages/CommunityInviteMemberPage';
 import { CommunityPendingInvitationPage } from '~/v4/social/pages/CommunityPendingInvitationPage';
-import { Page } from '~/v4/core/providers/NavigationProvider';
 
 type ApplicationProps = {
   landingPage?: Page;
@@ -55,7 +53,8 @@ type ApplicationProps = {
 const Application = ({ landingPage }: ApplicationProps) => {
   const { isDesktop } = useResponsive();
   const [open, setOpen] = useState(false);
-  const { page, goToSocialHomePage, goToUserRelationshipPage } = useNavigation();
+  const { page, goToSocialHomePage, goToUserRelationshipPage, goToCommunityProfilePage } =
+    useNavigation();
   const { liveStreamPlayer } = useLayoutContext();
   const toggleOpen = () => setOpen((open) => !open);
 
@@ -72,7 +71,22 @@ const Application = ({ landingPage }: ApplicationProps) => {
     if (page.type !== landingPage?.type && landingPage?.type === PageTypes.UserRelationshipPage) {
       goToUserRelationshipPage(landingPage.context?.userId, landingPage.context?.selectedTab);
     }
-  }, [isDesktop, landingPage, goToUserRelationshipPage, goToSocialHomePage, page]);
+
+    if (page.type !== landingPage?.type && landingPage?.type === PageTypes.CommunityProfilePage) {
+      goToCommunityProfilePage(
+        landingPage.context?.communityId,
+        landingPage.context?.page || 0,
+        landingPage.context?.removeHeaders,
+      );
+    }
+  }, [
+    isDesktop,
+    landingPage,
+    goToCommunityProfilePage,
+    goToUserRelationshipPage,
+    goToSocialHomePage,
+    page,
+  ]);
 
   return (
     <div className={styles.applicationContainer}>
@@ -98,7 +112,11 @@ const Application = ({ landingPage }: ApplicationProps) => {
         {page.type === PageTypes.StoryTargetSelectionPage && <StoryTargetSelectionPage />}
         {page.type === PageTypes.CommunityProfilePage && (
           <CommunityTabProvider>
-            <CommunityProfilePage communityId={page.context.communityId} page={page.context.page} />
+            <CommunityProfilePage
+              communityId={page.context.communityId}
+              page={page.context.page}
+              removeHeaders={page.context.removeHeaders}
+            />
           </CommunityTabProvider>
         )}
         {page.type === PageTypes.ViewStoryPage && (
