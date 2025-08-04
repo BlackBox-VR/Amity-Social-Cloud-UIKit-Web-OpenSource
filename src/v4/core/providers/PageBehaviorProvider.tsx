@@ -872,15 +872,11 @@ export const PageBehaviorProvider: React.FC<PageBehaviorProviderProps> = ({
         }
         goToUserProfilePage(context.userId);
       },
-      goToCommunityProfilePage: (context: {
-        communityId: string;
-        page?: number;
-        removeHeaders?: boolean;
-      }) => {
+      goToCommunityProfilePage: (context: { communityId: string }) => {
         if (pageBehavior?.AmityClipFeedPageBehavior?.goToCommunityProfilePage) {
           return pageBehavior.AmityClipFeedPageBehavior.goToCommunityProfilePage(context);
         }
-        goToCommunityProfilePage(context.communityId, context.page, context.removeHeaders);
+        goToCommunityProfilePage(context.communityId);
       },
     },
   };

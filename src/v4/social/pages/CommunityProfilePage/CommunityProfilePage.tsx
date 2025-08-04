@@ -39,14 +39,9 @@ import { useClipContext } from '~/v4/social/providers/ClipProvider';
 interface CommunityProfileProps {
   communityId: string;
   page?: number;
-  removeHeaders?: boolean;
 }
 
-export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
-  communityId,
-  page,
-  removeHeaders,
-}) => {
+export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({ communityId, page }) => {
   const pageId = 'community_profile_page';
 
   const { openPopup } = usePopupContext();
@@ -197,21 +192,13 @@ export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
       {isShowFailed && <FailedToShow pageId={pageId} onBack={onBack} />}
       {!isLoading && !isShowFailed && !isInvitationLoading && community && !community.isDeleted && (
         <>
-          {!removeHeaders && (
-              <CommunityHeader
-                pageId={pageId}
-                community={community}
-                isSticky={isSticky}
-                page={page}
-              />
-            ) && (
-              <CommunityProfileTab
-                pageId={pageId}
-                ref={profileTabRef}
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-              />
-            )}
+          <CommunityHeader pageId={pageId} community={community} isSticky={isSticky} page={page} />
+          <CommunityProfileTab
+            pageId={pageId}
+            ref={profileTabRef}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
         </>
       )}
       {!isShowFailed &&
