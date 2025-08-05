@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { SocialHomePage } from '~/v4/social/pages/SocialHomePage';
 import { PostComposerPage } from '~/v4/social/pages/PostComposerPage';
 import { PostDetailPage } from '~/v4/social/pages/PostDetailPage';
@@ -53,10 +53,17 @@ type ApplicationProps = {
 const Application = ({ landingPage }: ApplicationProps) => {
   const { isDesktop } = useResponsive();
   const [open, setOpen] = useState(false);
-  const { page, goToSocialHomePage, goToUserRelationshipPage, goToCommunityProfilePage } =
-    useNavigation();
+  const {
+    page,
+    goToSocialHomePage,
+    goToUserRelationshipPage,
+    goToCommunityProfilePage,
+    goToPostDetailPage,
+  } = useNavigation();
   const { liveStreamPlayer } = useLayoutContext();
   const toggleOpen = () => setOpen((open) => !open);
+
+  const hasHandledLanding = useRef(false);
 
   useEffect(() => {
     if (
@@ -68,18 +75,26 @@ const Application = ({ landingPage }: ApplicationProps) => {
       goToSocialHomePage();
     }
 
-    if (page.type !== landingPage?.type && landingPage?.type === PageTypes.UserRelationshipPage) {
-      goToUserRelationshipPage(landingPage.context?.userId, landingPage.context?.selectedTab);
-    }
+    if (!hasHandledLanding.current) {
+      if (page.type !== landingPage?.type && landingPage?.type === PageTypes.UserRelationshipPage) {
+        goToUserRelationshipPage(landingPage.context?.userId, landingPage.context?.selectedTab);
+      }
 
-    if (page.type !== landingPage?.type && landingPage?.type === PageTypes.CommunityProfilePage) {
-      goToCommunityProfilePage(
-        landingPage.context?.communityId,
-        landingPage.context?.page || 0,
-        landingPage.context?.removeHeaders, 
-        landingPage.context?.filterBy, 
-        landingPage.context?.filterValues,
-      );
+      if (page.type !== landingPage?.type && landingPage?.type === PageTypes.CommunityProfilePage) {
+        goToCommunityProfilePage(
+          landingPage.context?.communityId,
+          landingPage.context?.page || 0,
+          landingPage.context?.removeHeaders,
+          landingPage.context?.filterBy,
+          landingPage.context?.filterValues,
+        );
+      }
+
+      if (page.type !== landingPage?.type && landingPage?.type === PageTypes.PostDetailPage) {
+        goToPostDetailPage(landingPage.context?.postId);
+      }
+
+      hasHandledLanding.current = true;
     }
   }, [
     isDesktop,
@@ -87,7 +102,7 @@ const Application = ({ landingPage }: ApplicationProps) => {
     goToCommunityProfilePage,
     goToUserRelationshipPage,
     goToSocialHomePage,
-    page,
+    goToPostDetailPage,
   ]);
 
   return (

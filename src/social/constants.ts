@@ -13,6 +13,8 @@ export const enum PageTypes {
   Post = 'post',
   UserRelationshipPage = 'UserRelationshipPage',
   CommunityProfilePage = 'CommunityProfilePage',
+  PostDetailPage = 'PostDetailPage',
+  SocialHomePage = 'SocialHomePage',
 }
 
 export const MemberRoles = Object.freeze({
@@ -102,9 +104,9 @@ export const UnityMessageKeys = {
 };
 
 export const enum GlobalFeedFilterTypes {
-    NONE = 'none',
-    USER = 'user',
-    TEAM = 'team',
-    GYM = 'gym',
-    METADATA_TYPE = 'metadata-type',
-};
+  NONE = 'none',
+  USER = 'user',
+  TEAM = 'team',
+  GYM = 'gym',
+  METADATA_TYPE = 'metadata-type',
+}
