@@ -38,8 +38,11 @@ import useCommunityMembersCollection from '~/v4/social/hooks/collections/useComm
 import useSDK from '~/v4/core/hooks/useSDK';
 
 export type LiveStreamPlayerPageProps = {
-  post: Amity.Post;
+  post?: Amity.Post;
   goToDetailPage?: () => void;
+  targetStreamId?: string;
+  targetPostId?: string;
+  streamOwnerName?: string;
 };
 
 const usePostSubscription = (postId: string) => {
@@ -240,20 +243,40 @@ const useLivechat = ({
   };
 };
 
-export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerPageProps) {
+export function LiveStreamPlayerPage({
+  post,
+  goToDetailPage,
+  targetStreamId,
+  targetPostId,
+  streamOwnerName,
+}: LiveStreamPlayerPageProps) {
+  console.log('🎥 <LiveStreamPlayerPage> props:', {
+    post,
+    targetStreamId,
+    targetPostId,
+    streamOwnerName,
+  });
+
   const pageId = 'livestream_player_page';
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const stream = useStream(post.childrenPosts[0]?.getLivestreamInfo()?.streamId);
+
+  targetStreamId ??= post?.childrenPosts[0]?.getLivestreamInfo()?.streamId || targetStreamId || '';
+  targetPostId ??= post?.postId || targetPostId || '';
+
+  const stream = useStream(targetStreamId);
 
   const { currentUserId } = useSDK();
   const { keyboardOffset } = useKeyboardVisibility();
   const [chatContainerHeight, setChatContainerHeight] = useState<number>();
   const [hideChatFeed, setHideChatFeed] = useState(false);
   const { isDesktop } = useResponsive();
-  const { post: subscribedPost } = usePostSubscription(post.postId);
+  const { post: subscribedPost } = usePostSubscription(targetPostId);
   const { community } = useCommunity({
-    communityId: post.targetId,
+    communityId: targetPostId,
   });
+
+  console.log('🧠 stream from useStream:', stream);
+  console.log('📬 post from usePostSubscription:', subscribedPost);
 
   const { setStreamPlayer } = useLayoutContext();
   const { themeStyles, accessibilityId } = useAmityPage({ pageId });
@@ -270,8 +293,10 @@ export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerP
 
   const { channel, isLoading: isChannelLoading } = useLivechat({
     stream,
-    targetType: post.targetType,
+    targetType: post?.targetType || 'community',
   });
+
+  console.log('💬 channel from useLivechat:', channel);
 
   const { members } = useCommunityMembersCollection({
     queryParams: {
@@ -456,7 +481,7 @@ export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerP
                         <Typography.CaptionSmall
                           className={styles.livestreamPlayer__liveDetail__text}
                         >
-                          By {post.creator?.displayName}
+                          By {post?.creator?.displayName || streamOwnerName || 'Unknown'}
                         </Typography.CaptionSmall>
                       </div>
                     </div>
@@ -477,7 +502,7 @@ export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerP
                 className={styles.liveStreamPlayer}
                 data-is-live={isLive}
               >
-                {isLive && isDesktop && post.feedType === 'reviewing' && (
+                {isLive && isDesktop && post?.feedType === 'reviewing' && (
                   <div className={styles.liveStreamPlayer__pendingPost__banner}>
                     <div className={styles.livestreamChat__overlay__top} />
                     <div className={styles.livestreamChat__overlay__bottom}>
@@ -527,7 +552,7 @@ export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerP
           )}
         </Dialog>
 
-        {isLive && channel && post.targetType !== 'user' && (
+        {isLive && channel && post?.targetType !== 'user' && (
           <>
             {isDesktop ? (
               <div className={styles.livestreamChat__container}>
@@ -538,13 +563,13 @@ export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerP
                     channelId={channel.channelId}
                     disabled={stream?.status === liveStreamStatus.ended || isPoorConnection}
                     isJoined={!!community?.isJoined}
-                    isPendingPost={post.feedType === 'reviewing'}
+                    isPendingPost={post?.feedType === 'reviewing'}
                   />
                 </div>
               </div>
             ) : (
               <>
-                {post.targetType !== 'user' &&
+                {post?.targetType !== 'user' &&
                   plyrContainer &&
                   ReactDOM.createPortal(
                     <>
@@ -576,7 +601,7 @@ export function LiveStreamPlayerPage({ post, goToDetailPage }: LiveStreamPlayerP
                   channelId={channel.channelId}
                   disabled={stream?.status === liveStreamStatus.ended || isPoorConnection}
                   isJoined={!!community?.isJoined}
-                  isPendingPost={post.feedType === 'reviewing'}
+                  isPendingPost={post?.feedType === 'reviewing'}
                 />
               </>
             )}
