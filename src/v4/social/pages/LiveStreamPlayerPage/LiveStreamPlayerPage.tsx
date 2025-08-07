@@ -36,6 +36,13 @@ import { useKeyboardVisibility } from './useKeyboardVisibility';
 import { CommunityAvatar } from '~/v4/social/elements/CommunityAvatar';
 import useCommunityMembersCollection from '~/v4/social/hooks/collections/useCommunityMembersCollection';
 import useSDK from '~/v4/core/hooks/useSDK';
+import {
+  AmityPostCategory,
+  AmityPostContentComponentStyle,
+  PostContent,
+} from '~/v4/social/components/PostContent/PostContent';
+import EmptyPost from '~/v4/icons/EmptyPost';
+import { CommunityFeedPostContentSkeleton } from '~/v4/social/components/CommunityFeed/CommunityFeed';
 
 export type LiveStreamPlayerPageProps = {
   post?: Amity.Post;
@@ -44,6 +51,7 @@ export type LiveStreamPlayerPageProps = {
   targetPostId?: string;
   streamOwnerName?: string;
   allowGuestAccessToChannel?: boolean;
+  isModal?: boolean; // Optional prop to determine if the player is in a modal
 };
 
 const usePostSubscription = (postId: string) => {
@@ -250,7 +258,8 @@ export function LiveStreamPlayerPage({
   targetStreamId,
   targetPostId,
   streamOwnerName,
-  allowGuestAccessToChannel,
+  allowGuestAccessToChannel = false,
+  isModal = true,
 }: LiveStreamPlayerPageProps) {
   const pageId = 'livestream_player_page';
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -356,43 +365,7 @@ export function LiveStreamPlayerPage({
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (entry.contentRect) {
-          setChatContainerHeight(entry.contentRect.height);
-        }
-      }
-    });
-
-    observer.observe(chatContainerRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [chatContainerRef.current]);
-
-  useEffect(() => {
-    if (!chatContainerRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect) {
           console.log('entry', entry.contentRect.height);
-          setChatContainerHeight(entry.contentRect.height);
-        }
-      }
-    });
-
-    observer.observe(chatContainerRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [chatContainerRef.current]);
-
-  useEffect(() => {
-    if (!chatContainerRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.contentRect) {
           setChatContainerHeight(entry.contentRect.height);
         }
       }
@@ -408,24 +381,9 @@ export function LiveStreamPlayerPage({
   const isLive = stream?.status === liveStreamStatus.live;
   const isEnded = stream?.status === liveStreamStatus.ended && !stream?.moderation?.terminateLabels;
 
-  return (
-    <ModalOverlay
-      isOpen={(!!streamId && !isUserBanned) || isDesktop}
-      className={styles.liveStreamPlayer__overlay}
-      onOpenChange={(open) => !open && onClose()}
-      data-is-live={isLive}
-      style={{
-        // ✅ Move the entire modal up when keyboard is open
-        transform:
-          keyboardOffset > 0 && !isDesktop ? `translateY(-${keyboardOffset * 0.5}px)` : 'none',
-        transition: 'transform 0.3s ease-in-out',
-      }}
-    >
-      <Modal
-        className={styles.livestreamPlayer__modal}
-        data-is-live={isLive}
-        data-is-ended={isEnded}
-      >
+  const renderStreamContent = () => {
+    return (
+      <>
         <Dialog className={styles.liveStreamPlayer__dialog} data-is-live={isLive}>
           {isUserBanned ? (
             <>
@@ -597,7 +555,38 @@ export function LiveStreamPlayerPage({
             )}
           </>
         )}
-      </Modal>
-    </ModalOverlay>
+      </>
+    );
+  };
+
+  if (isModal) {
+    return (
+      <ModalOverlay
+        isOpen={(!!streamId && !isUserBanned) || isDesktop}
+        className={styles.liveStreamPlayer__overlay}
+        onOpenChange={(open) => !open && onClose()}
+        data-is-live={isLive}
+        style={{
+          // ✅ Move the entire modal up when keyboard is open
+          transform:
+            keyboardOffset > 0 && !isDesktop ? `translateY(-${keyboardOffset * 0.5}px)` : 'none',
+          transition: 'transform 0.3s ease-in-out',
+        }}
+      >
+        <Modal
+          className={styles.livestreamPlayer__modal}
+          data-is-live={isLive}
+          data-is-ended={isEnded}
+        >
+          {renderStreamContent()}
+        </Modal>
+      </ModalOverlay>
+    );
+  }
+
+  return (
+    <div className={styles.livestreamPlayer__page} data-is-live={isLive} data-is-ended={isEnded}>
+      {renderStreamContent()}
+    </div>
   );
 }
