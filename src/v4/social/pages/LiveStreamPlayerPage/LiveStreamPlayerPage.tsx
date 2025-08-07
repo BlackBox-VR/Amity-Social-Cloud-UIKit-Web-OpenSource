@@ -43,6 +43,7 @@ export type LiveStreamPlayerPageProps = {
   targetStreamId?: string;
   targetPostId?: string;
   streamOwnerName?: string;
+  allowGuestAccessToChannel?: boolean;
 };
 
 const usePostSubscription = (postId: string) => {
@@ -249,14 +250,8 @@ export function LiveStreamPlayerPage({
   targetStreamId,
   targetPostId,
   streamOwnerName,
+  allowGuestAccessToChannel,
 }: LiveStreamPlayerPageProps) {
-  console.log('🎥 <LiveStreamPlayerPage> props:', {
-    post,
-    targetStreamId,
-    targetPostId,
-    streamOwnerName,
-  });
-
   const pageId = 'livestream_player_page';
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -271,12 +266,7 @@ export function LiveStreamPlayerPage({
   const [hideChatFeed, setHideChatFeed] = useState(false);
   const { isDesktop } = useResponsive();
   const { post: subscribedPost } = usePostSubscription(targetPostId);
-  const { community } = useCommunity({
-    communityId: targetPostId,
-  });
-
-  console.log('🧠 stream from useStream:', stream);
-  console.log('📬 post from usePostSubscription:', subscribedPost);
+  const { community } = useCommunity({ communityId: targetPostId });
 
   const { setStreamPlayer } = useLayoutContext();
   const { themeStyles, accessibilityId } = useAmityPage({ pageId });
@@ -295,8 +285,6 @@ export function LiveStreamPlayerPage({
     stream,
     targetType: post?.targetType || 'community',
   });
-
-  console.log('💬 channel from useLivechat:', channel);
 
   const { members } = useCommunityMembersCollection({
     queryParams: {
@@ -564,6 +552,7 @@ export function LiveStreamPlayerPage({
                     disabled={stream?.status === liveStreamStatus.ended || isPoorConnection}
                     isJoined={!!community?.isJoined}
                     isPendingPost={post?.feedType === 'reviewing'}
+                    allowGuest={allowGuestAccessToChannel}
                   />
                 </div>
               </div>
@@ -602,6 +591,7 @@ export function LiveStreamPlayerPage({
                   disabled={stream?.status === liveStreamStatus.ended || isPoorConnection}
                   isJoined={!!community?.isJoined}
                   isPendingPost={post?.feedType === 'reviewing'}
+                  allowGuest={allowGuestAccessToChannel}
                 />
               </>
             )}

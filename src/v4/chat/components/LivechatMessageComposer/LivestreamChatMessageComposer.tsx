@@ -25,6 +25,7 @@ interface LivestreamChatMessageComposerProps {
   pageId?: string;
   isJoined?: boolean;
   isPendingPost?: boolean;
+  allowGuest?: boolean;
 }
 
 const LIVESTREAM_MESSAGE_MAX_CHARACTOR = 200;
@@ -35,6 +36,7 @@ export const LivestreamChatMessageComposer = ({
   disabled = false,
   isJoined,
   isPendingPost = false,
+  allowGuest = false,
 }: LivestreamChatMessageComposerProps) => {
   const componentId = 'livestream_chat_compose_bar';
   const editorRef = useRef<LexicalEditor | null>(null);
@@ -257,7 +259,7 @@ export const LivestreamChatMessageComposer = ({
         </div>
       );
 
-    if (!isJoined)
+    if (!isJoined && !allowGuest)
       return (
         <div className={styles.livestreamChatMessageComposer__unJoined__container}>
           <Typography.Body className={styles.livestreamChatMessageComposer__unJoined__text}>
