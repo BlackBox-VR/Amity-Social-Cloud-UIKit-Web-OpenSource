@@ -87,7 +87,7 @@
   width: 100%;
   height: auto;
   display: block;
-  object-fit: cover; /* mobile + modal keep cover */
+  object-fit: cover;
   position: relative;
   object-position: center;
 }
@@ -136,7 +136,6 @@
   border-top-color: var(--asc-color-white);
 }
 
-/* show if live stream status = live */
 .livestreamChat__container {
   position: fixed;
   top: 0;
@@ -194,7 +193,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Non-modal wrapper */
 .livestreamPlayer__page {
   width: 100%;
   height: 100%;
@@ -206,8 +204,7 @@
     position: absolute;
     width: 100dvw;
   }
-
-  /* Modal stays as-is */
+  
   .livestreamPlayer__modal[data-is-live='true'],
   .livestreamPlayer__modal[data-is-ended='true'] {
     height: 100dvh;
@@ -215,41 +212,38 @@
     display: flex;
     flex-direction: row;
   }
-
-  /* Non-modal desktop grid */
+  
   .livestreamPlayer__page[data-is-live='true'],
   .livestreamPlayer__page[data-is-ended='true'] {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(18rem, 28vw, 24rem); /* responsive chat */
+    grid-template-columns: minmax(0, 1fr) clamp(18rem, 28vw, 24rem);
     column-gap: 1.5rem;
-    align-items: stretch;      /* same row height */
+    align-items: stretch;
     justify-content: center;
   }
-
-  /* Non-modal ONLY: make the stage a true 16:9 */
+  
   .livestreamPlayer__page .liveStreamPlayer {
     width: 100%;
-    aspect-ratio: 16 / 9;     /* fixed viewing area */
+    aspect-ratio: 16 / 9;
     background: #000;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
   }
-
-  /* Non-modal ONLY: show whole frame, no cropping */
+  
   .livestreamPlayer__page .liveStreamPlayer__video {
     width: 100% !important;
     height: 100% !important;
     max-height: 100% !important;
-    object-fit: contain !important;   /* key change for desktop non-modal */
+    object-fit: contain !important;
   }
 
   .liveStreamPlayer__dialog {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;               /* match grid row height */
+    height: 100%;
   }
 
   .liveStreamPlayer[data-is-live='true'] {
@@ -257,26 +251,23 @@
     justify-content: center;
     position: unset;
   }
-
-  /* ✅ default; will be updated by ResizeObserver in TSX */
+  
   .livestreamPlayer__page {
     --stage-height: auto;
   }
-
-  /* Non-modal: lock chat height to the player stage and enable scrolling */
+  
   .livestreamPlayer__page .livestreamChat__container {
     position: unset;
     box-sizing: border-box;
     width: clamp(18rem, 28vw, 24rem);
-    height: var(--stage-height);     /* exact player height */
+    height: var(--stage-height);
     max-height: var(--stage-height);
     display: flex;
     align-self: stretch;
-    overflow: hidden;                /* prevent growth */
-    min-height: 0;                   /* critical for scroll */
+    overflow: hidden;
+    min-height: 0;
   }
-
-  /* Two rows: [scroll area] [composer] */
+  
   .livestreamPlayer__page .livestreamChat__container__inner {
     mask-image: unset;
     position: relative;
@@ -289,26 +280,23 @@
     overflow: hidden;
     min-height: 0;
   }
-
-  /* Scroll wrapper for ChatFeed (we wrap it in TSX) */
+  
   .livestreamPlayer__page .chatFeedScroll {
     min-height: 0;
-    overflow: hidden; /* the next node will scroll */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
   }
-
-  /* Belt & suspenders against nested scrollers */
+  
   .livestreamPlayer__page .chatFeedScroll .chatFeed__container {
     flex: 1 1 auto;
     min-height: 0;
-    overflow: hidden;     /* stop this one from scrolling */
-    padding: 1rem 1rem 0; /* preserve desktop padding */
+    overflow: hidden;
+    padding: 1rem 1rem 0;
     display: flex;
     flex-direction: column;
   }
-
-  /* Actual scroll target used by InfiniteScroll */
+  
   .livestreamPlayer__page .chatFeedScroll #chatFeedScrollableContainer,
   .livestreamPlayer__page .chatFeedScroll .chatFeed__messageList__container {
     flex: 1 1 auto;
@@ -343,10 +331,9 @@
     right: max(env(safe-area-inset-right), 0px);
     left: auto;
     bottom: 0;
-    border-top-left-radius: 0.75rem; /* optional, looks nicer */
+    border-top-left-radius: 0.75rem;
   }
-
-  /* Keep the gradients and reaction lane aligned with the feed width */
+  
   .livestreamChat__overlay__bottom,
   .livestreamChat__overlay__top,
   .livestreamChat__reactionLane__ref {
