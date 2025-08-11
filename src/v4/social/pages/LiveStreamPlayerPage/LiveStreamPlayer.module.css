@@ -336,3 +336,22 @@
     height: 100%;
   }
 }
+
+@media (max-width: 47.99em) {
+  .livestreamChat__container__inner {
+    width: 80%;
+    right: max(env(safe-area-inset-right), 0px);
+    left: auto;
+    bottom: 0;
+    border-top-left-radius: 0.75rem; /* optional, looks nicer */
+  }
+
+  /* Keep the gradients and reaction lane aligned with the feed width */
+  .livestreamChat__overlay__bottom,
+  .livestreamChat__overlay__top,
+  .livestreamChat__reactionLane__ref {
+    width: 80%;
+    right: max(env(safe-area-inset-right), 0px);
+    left: auto;
+  }
+}

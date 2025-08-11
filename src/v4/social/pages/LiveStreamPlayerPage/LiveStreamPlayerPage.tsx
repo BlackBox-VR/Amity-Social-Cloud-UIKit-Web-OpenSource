@@ -506,7 +506,7 @@ export function LiveStreamPlayerPage({
                     )}
                     {isEnded && <LiveStreamEndThumbnail view="full-screen" />}
                     {isLive && isDesktop && stream?.post && (
-                        <ReactionFloating post={stream.post as Amity.Post} />
+                        <ReactionFloating post={stream?.post as Amity.Post} />
                     )}
                   </div>
                 </>
