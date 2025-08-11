@@ -157,41 +157,45 @@ export function ReactionButton({
 
   return (
     <div
-      style={themeStyles}
-      data-testid={accessibilityId}
-      className={clsx(styles.reactButton, buttonClassName)}
-      onClick={handleClick}
-      role="button"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
     >
-      {myReaction ? (
-        renderMyReaction()
-      ) : (
-        <IconComponent
-          defaultIcon={defaultIcon ?? renderDefaultIcon}
-          imgIcon={() => (
-            <img
-              src={config.icon}
-              alt={uiReference}
-              className={imgIconClassName}
-              style={{ pointerEvents: 'none' }}
-            />
-          )} // Inline for img
-          defaultIconName={defaultConfig.icon}
-          configIconName={config.icon}
-        />
-      )}
-      <Typography.BodyBold
-        className={clsx(styles.reactButton__reactionsText, reactionsCountClassName)}
-        data-has-my-reaction={hasMyReaction}
-        style={{ pointerEvents: 'none' }} // Inline for text
+      <Button
+        style={themeStyles}
+        data-testid={accessibilityId}
+        aria-pressed={hasMyReaction}
+        aria-label={`${myReaction ? `Remove ${myReaction} reaction` : 'Add reaction'} ${
+          reactionsCount
+            ? `(${reactionsCount} ${reactionsCount === 1 ? 'reaction' : 'reactions'})`
+            : ''
+        }`}
+        className={clsx(styles.reactButton, buttonClassName)}
+        onPress={() => {
+          handleMouseLeave();
+          handleTouchEnd();
+          onReactionClick('like');
+        }}
       >
-        {typeof reactionsCount === 'number' ? millify(reactionsCount) : myReaction || config.text}
-      </Typography.BodyBold>
+        {myReaction ? (
+          renderMyReaction()
+        ) : (
+          <IconComponent
+            defaultIcon={defaultIcon ?? renderDefaultIcon}
+            imgIcon={() => <img src={config.icon} alt={uiReference} className={imgIconClassName} />}
+            defaultIconName={defaultConfig.icon}
+            configIconName={config.icon}
+          />
+        )}
+        <Typography.BodyBold
+          className={clsx(styles.reactButton__reactionsText, reactionsCountClassName)}
+          data-has-my-reaction={hasMyReaction}
+        >
+          {typeof reactionsCount === 'number' ? millify(reactionsCount) : myReaction || config.text}
+        </Typography.BodyBold>
+      </Button>
     </div>
   );
 }

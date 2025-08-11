@@ -51,6 +51,7 @@ export class AdSupplier {
     const minLastSeen = AdEngine.instance.getLastSeen(
       recencySortedAds?.[recencySortedAds.length - 1]?.adId,
     );
+
     const maxLastSeen = AdEngine.instance.getLastSeen(recencySortedAds[0]?.adId);
 
     if (maxLastSeen === minLastSeen) {

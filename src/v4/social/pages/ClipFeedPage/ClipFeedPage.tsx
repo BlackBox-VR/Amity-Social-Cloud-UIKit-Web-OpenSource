@@ -45,14 +45,12 @@ export const ClipFeedPage = ({
   const { accessibilityId, themeStyles } = useAmityPage({
     pageId,
   });
-  const { onBack, prevPage, onClickUser } = useNavigation();
   const currentUserId = useSDK()?.currentUserId || '';
   const { AmityClipFeedPageBehavior } = usePageBehavior();
   const { setDrawerData, removeDrawerData } = useDrawer();
   const { setActiveTab } = useLayoutContext();
   const drawerData = useDrawerData();
 
-  const [activeIndex, setActiveIndex] = useState(0);
   const [initialSlideSet, setInitialSlideSet] = useState(false);
   const videoRefs = useRef<Record<string, HTMLVideoElement>>({});
   const swiperRef = useRef<SwiperCore | null>(null);
@@ -111,7 +109,11 @@ export const ClipFeedPage = ({
   }, []);
 
   // for post content render with no posts
-  const { post, isLoading } = usePost(currentPostId, posts?.length === 0);
+  const { post, isLoading, refresh: refreshPost } = usePost(currentPostId, posts?.length === 0);
+
+  useEffect(() => {
+    if (currentPostId) refreshPost();
+  }, [currentPostId]);
 
   // Check if currentPostId exists in the posts array
   const isCurrentPostInPosts =
@@ -123,8 +125,6 @@ export const ClipFeedPage = ({
   // Determine if we should enable infinite loop
   const hasMorePosts = shouldUseGlobalFeed ? hasMoreGlobalPosts : hasMoreCollectionPosts;
   const shouldEnableLoop = posts && posts.length >= 10 && !hasMorePosts && !shouldShowDeletedClip;
-
-  const BACK_NAVIGATION_STEPS = 3;
 
   // Hide interaction menu for pending post
   useEffect(() => {
@@ -170,7 +170,7 @@ export const ClipFeedPage = ({
   // Set initial active index based on postIndex or currentPostId
   useEffect(() => {
     if (posts && posts.length > 0 && !initialSlideSet) {
-      let targetIndex = 0;
+      let targetIndex = activeIndex ?? 0;
 
       // Priority 1: Use postIndex if provided
       if (postIndex !== undefined && postIndex >= 0 && postIndex < posts.length) {
@@ -193,7 +193,7 @@ export const ClipFeedPage = ({
       }
 
       // Calculate actual index accounting for deleted clip view
-      const actualIndex = shouldShowDeletedClip ? targetIndex + 1 : targetIndex;
+      const actualIndex = targetIndex;
       setActiveIndex(actualIndex);
       setInitialSlideSet(true);
 
@@ -378,6 +378,7 @@ export const ClipFeedPage = ({
   const handleOnBack = () => {
     if (prevPage?.type === PageTypes.SocialHomePage) {
       setActiveTab(HomePageTab.Newsfeed);
+      setActiveIndex(0);
     }
     onBack();
   };
@@ -395,13 +396,12 @@ export const ClipFeedPage = ({
       data-testid={accessibilityId}
       className={styles.clipFeedPage__container}
     >
-      {(post === undefined || post?.isDeleted) &&
-      posts.length === 0 &&
-      !isLoading &&
-      !isLoadingCollectionPosts ? (
+      {post === undefined ||
+      post?.isDeleted ||
+      (posts.length === 0 && !isLoading && !isLoadingCollectionPosts) ? (
         <EmptyFeed
           pageId={pageId}
-          onClickBack={() => onBack(BACK_NAVIGATION_STEPS)}
+          onClickBack={() => onBack()}
           onPressCreateNewClip={() =>
             AmityClipFeedPageBehavior?.goToSelectClipPostTargetPage?.({
               isClipPost: true,

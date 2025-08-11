@@ -20,7 +20,7 @@ import { AmityRoute } from './AmityUIKitProvider';
 import { LiveStreamPlayerPageProps } from '~/v4/social/pages/LiveStreamPlayerPage';
 import { useLayoutContext } from '~/v4/social/providers/LayoutProvider';
 import { WEB_COMMUNITY_URL } from '~/constants';
-import {GlobalFeedFilterTypes} from "~/social/constants";
+import { GlobalFeedFilterTypes } from '~/social/constants';
 
 export enum PageTypes {
   Explore = 'explore',
@@ -115,8 +115,13 @@ export type Page =
     }
   | {
       type: PageTypes.CommunityProfilePage;
-      context: { communityId: string; page?: number; 
-        removeHeaders?: boolean, filterBy?: GlobalFeedFilterTypes; filterValues?: string[] };
+      context: {
+        communityId: string;
+        page?: number;
+        removeHeaders?: boolean;
+        filterBy?: GlobalFeedFilterTypes;
+        filterValues?: string[];
+      };
     }
   | { type: PageTypes.UserProfilePage; context: { userId: string; communityId?: string } }
   | { type: PageTypes.EditUserProfilePage; context: { userId: string } }
@@ -279,6 +284,8 @@ type ContextValue = {
   prevPage?: Page;
   prev2Page?: Page;
   prev3Page?: Page;
+  currentClip: number;
+  setCurrentClip: (index: number) => void;
   setDefaultPage: (page: Page) => void;
   onChangePage: (type: string) => void;
   onClickCategory: (categoryId: string) => void;
@@ -302,8 +309,13 @@ type ContextValue = {
     parentId?: string,
     posts?: Amity.Post<'clip' | 'video'>[],
   ) => void;
-  goToCommunityProfilePage: (communityId: string, page?: number, removeHeaders?: boolean, 
-                             filterBy?: GlobalFeedFilterTypes, filterValues?: string[]) => void;
+  goToCommunityProfilePage: (
+    communityId: string,
+    page?: number,
+    removeHeaders?: boolean,
+    filterBy?: GlobalFeedFilterTypes,
+    filterValues?: string[],
+  ) => void;
   goToSocialGlobalSearchPage: (tab?: string) => void;
   goToMyCommunitiesSearchPage: () => void;
   goToSelectPostTargetPage: () => void;
@@ -404,6 +416,8 @@ type ContextValue = {
 
 let defaultValue: ContextValue = {
   page: { type: PageTypes.SocialHomePage, context: { communityId: undefined } },
+  currentClip: 0,
+  setCurrentClip: (index: number) => {},
   setDefaultPage: (page: Page) => {},
   onChangePage: (type: string) => {},
   onClickCategory: (categoryId: string) => {},
@@ -436,9 +450,13 @@ let defaultValue: ContextValue = {
     mediaType: AmityStoryMediaType,
     storyType: 'communityFeed' | 'globalFeed',
   ) => {},
-  goToCommunityProfilePage: (communityId: string, page?: number, 
-                             removeHeaders?: boolean, filterBy?: GlobalFeedFilterTypes, 
-                             filterValues?: string[]) => {},
+  goToCommunityProfilePage: (
+    communityId: string,
+    page?: number,
+    removeHeaders?: boolean,
+    filterBy?: GlobalFeedFilterTypes,
+    filterValues?: string[],
+  ) => {},
   goToSocialGlobalSearchPage: (tab?: string) => {},
   goToSelectPostTargetPage: () => {},
   goToSelectClipPostTargetPage: (context: { isClipPost: boolean }) => {},
@@ -491,6 +509,8 @@ let defaultValue: ContextValue = {
 if (process.env.NODE_ENV !== 'production') {
   defaultValue = {
     page: { type: PageTypes.SocialHomePage, context: { communityId: undefined } },
+    currentClip: 0,
+    setCurrentClip: (index: number) => console.log(`Current Clip ${index}`),
     setDefaultPage: (page: Page) => console.log(`Default page ${page}`),
     onChangePage: (type) => console.log(`NavigationContext onChangePage(${type})`),
     onClickCategory: (categoryId) =>
@@ -518,9 +538,7 @@ if (process.env.NODE_ENV !== 'production') {
       console.log(
         `NavigationContext goToPostDetailPage(${postId} ${hideTarget} ${category} ${commentId} ${parentId} ${posts})`,
       ),
-    goToCommunityProfilePage: (communityId, page, 
-                               removeHeaders, filterBy, 
-                               filterValues) =>
+    goToCommunityProfilePage: (communityId, page, removeHeaders, filterBy, filterValues) =>
       console.log(
         `NavigationContext goToCommunityProfilePage(${communityId} ${page} ${removeHeaders} ${filterBy} ${filterValues})`,
       ),
@@ -692,6 +710,7 @@ export default function NavigationProvider({
   const currentPage = useMemo(() => pages[pages.length - 1], [pages]);
   const prevPage = useMemo((page = 2) => pages[pages.length - page], [pages]);
   const prev2Page = useMemo((page = 3) => pages[pages.length - page], [pages]);
+  const [currentClip, setCurrentClip] = useState(0);
 
   const [navigationBlocker, setNavigationBlocker] = useState<
     | {
@@ -979,8 +998,13 @@ export default function NavigationProvider({
   );
 
   const goToCommunityProfilePage = useCallback(
-    (communityId, page = 1, removeHeaders = false, 
-     filterBy = GlobalFeedFilterTypes.NONE, filterValues = []) => {
+    (
+      communityId,
+      page = 1,
+      removeHeaders = false,
+      filterBy = GlobalFeedFilterTypes.NONE,
+      filterValues = [],
+    ) => {
       const next = {
         type: PageTypes.CommunityProfilePage,
         context: {
@@ -1423,6 +1447,8 @@ export default function NavigationProvider({
         page: currentPage,
         prevPage,
         prev2Page,
+        currentClip,
+        setCurrentClip,
         setDefaultPage,
         onChangePage: handleChangePage,
         onClickCategory: handleClickCategory,
