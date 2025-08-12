@@ -248,7 +248,7 @@ export interface PageBehavior {
       parentId?: string;
       posts?: Amity.Post<'clip' | 'video'>[];
     }): void;
-    goToUserProfilePage?(context: { userId: string }): void;
+    goToUserProfilePage?(context: { userId: string; displayName: string }): void;
     goToCommunityProfilePage?(context: { communityId: string }): void;
   };
 }
@@ -867,11 +867,11 @@ export const PageBehaviorProvider: React.FC<PageBehaviorProviderProps> = ({
           context.posts,
         );
       },
-      goToUserProfilePage: (context: { userId: string }) => {
+      goToUserProfilePage: (context: { userId: string; displayName: string }) => {
         if (pageBehavior?.AmityClipFeedPageBehavior?.goToUserProfilePage) {
           return pageBehavior.AmityClipFeedPageBehavior.goToUserProfilePage(context);
         }
-        goToUserProfilePage(context.userId);
+        goToUserProfilePage(context.userId, context.displayName);
       },
       goToCommunityProfilePage: (context: {
         communityId: string;

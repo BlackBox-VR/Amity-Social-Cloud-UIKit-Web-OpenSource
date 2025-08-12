@@ -25,7 +25,6 @@ import styles from './ClipFeedPage.module.css';
 import usePostsCollection from '~/v4/social/hooks/collections/usePostsCollection';
 import { useQueryClipGlobalFeed } from '~/v4/social/hooks/useQueryClipGlobalFeed';
 import useIntersectionObserver from '~/v4/core/hooks/useIntersectionObserver';
-import { useSDK } from '~/v4/core/hooks/useSDK';
 
 type ClipFeedPageProps = {
   currentPostId?: string;
@@ -45,7 +44,12 @@ export const ClipFeedPage = ({
   const { accessibilityId, themeStyles } = useAmityPage({
     pageId,
   });
-  const currentUserId = useSDK()?.currentUserId || '';
+  const {
+    onBack,
+    prevPage,
+    currentClip: activeIndex,
+    setCurrentClip: setActiveIndex,
+  } = useNavigation();
   const { AmityClipFeedPageBehavior } = usePageBehavior();
   const { setDrawerData, removeDrawerData } = useDrawer();
   const { setActiveTab } = useLayoutContext();
@@ -508,7 +512,10 @@ export const ClipFeedPage = ({
                         isDragging={isDragging}
                         onClickSeeMoreButton={() => handleMenuClick(post.parentPostId)}
                         onClickUser={() =>
-                          onClickUser(currentUserId as string, undefined, post.creator?.displayName)
+                          AmityClipFeedPageBehavior?.goToUserProfilePage?.({
+                            userId: post.creator?.userId as string,
+                            displayName: post.creator?.displayName as string,
+                          })
                         }
                         isLoading={isLoadingVideo}
                       />
@@ -582,7 +589,10 @@ export const ClipFeedPage = ({
                     isDragging={isDragging}
                     onClickSeeMoreButton={() => handleMenuClick(post.parentPostId)}
                     onClickUser={() =>
-                      onClickUser(currentUserId as string, undefined, post.creator?.displayName)
+                      AmityClipFeedPageBehavior?.goToUserProfilePage?.({
+                        userId: post.creator?.userId as string,
+                        displayName: post.creator?.displayName as string,
+                      })
                     }
                     isLoading={isLoading}
                   />
