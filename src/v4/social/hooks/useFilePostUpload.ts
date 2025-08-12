@@ -33,6 +33,7 @@ export function useFilePostUpload(pageId?: string) {
 
   const onProgress = (currentFile: FileItem, currentPercent: number) => {
     const value = currentPercent < MAX_PERCENT ? currentPercent : 100;
+    console.log('Upload progress:', { id: currentFile.id, percent: value });
     setProgress((prev) => ({ ...prev, [currentFile.id]: value }));
   };
 
@@ -69,10 +70,14 @@ export function useFilePostUpload(pageId?: string) {
     }));
 
     if (failedFiles.length > 0) {
+      console.warn('Failed to upload files:', failedFiles);
       setFiles((prev) => [...prev, ...failedFiles]);
     }
 
-    if (validFiles.length === 0) return;
+    if (validFiles.length === 0) {
+      console.warn('No valid files to upload.');
+      return;
+    }
 
     // Process files and generate thumbnails for videos
     const processedFiles = await Promise.all(
@@ -83,6 +88,8 @@ export function useFilePostUpload(pageId?: string) {
           status: 'selected',
         };
 
+        console.log('Processing file:', { fileName: file.name, fileId: fileItem.id });
+
         if (file.type.includes(FileType.VIDEO) || file.type.includes(FileType.CLIP)) {
           const thumbnail = await generateThumbnailVideo(file);
           setVideoThumbnail((prev) => [
@@ -90,10 +97,14 @@ export function useFilePostUpload(pageId?: string) {
             { file, videoUrl: URL.createObjectURL(file), thumbnail },
           ]);
           if (thumbnail) {
+            console.log('Generated thumbnail for video:', file.name);
             fileItem.thumbnailVideo = thumbnail;
+          } else {
+            console.log('No thumbnail generated for video:', file.name);
           }
         }
 
+        console.log('File processed:', file.name);
         return fileItem;
       }),
     );
@@ -154,6 +165,7 @@ export function useFilePostUpload(pageId?: string) {
 
   const getUploadFunction = (fileType: string) => {
     if (fileType.includes(FileType.VIDEO)) {
+      console.log('Uploading video file:', fileType);
       return (formData: FormData, onProgress: (percent: number) => void) =>
         FileRepository.uploadVideo(formData, undefined, onProgress);
     }
