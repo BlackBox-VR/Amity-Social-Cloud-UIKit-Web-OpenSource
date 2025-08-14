@@ -24,7 +24,7 @@ const MessageItem = React.memo(
 
     const imageResult = useImage({ fileId: user?.avatarFileId, imageSize: 'small' }) || '';
     const avatarFileUrl = user?.avatarCustomUrl || imageResult;
-    const { bannerShortcode = [], xpTitle = {} } = user?.metadata ?? {};
+    const { bannerShortCode = [], xpTitle = {} } = user?.metadata ?? {};
 
     return (
       <MessageComponent
@@ -42,7 +42,7 @@ const MessageItem = React.memo(
         messageTags={message.tags || []}
         metadData={message.metadata || {}}
         client={client}
-        bannerCode={bannerShortcode[0]?.shortcode?.toLowerCase() || ''}
+        bannerCode={bannerShortCode[0]?.shortCode?.toLowerCase() || ''}
         xpTitle={xpTitle?.title || ''}
         reactions={message.reactions || {}}
         myReactions={message.myReactions || []}
