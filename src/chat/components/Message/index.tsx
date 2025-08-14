@@ -1,13 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { backgroundImage as UserImage } from '~/icons/User';
-import {
-  ReactionRepository,
-  UserRepository,
-  MessageRepository,
-  subscribeTopic,
-  getMessageTopic,
-  getUserTopic,
-} from '@amityco/ts-sdk';
+import { ReactionRepository, UserRepository, subscribeTopic, getUserTopic } from '@amityco/ts-sdk';
 import Options from './Options';
 import MessageContent from './MessageContent';
 import MessageHeader from './MessageHeader';
@@ -89,7 +82,11 @@ interface MessageProps {
   metadData?: { [key: string]: any };
   client?: { [key: string]: any };
   reactions?: { [key: string]: number }; // Adjusted to match the expected type
+  myReactions?: string[];
+  creatorId: string;
 }
+
+const failedReactions = new Map<string, boolean>(); // Global cache for messages where addReaction failed (key: messageId)
 
 const Message = ({
   messageId,
@@ -107,7 +104,9 @@ const Message = ({
   xpTitle,
   metadData,
   client,
-  reactions: initialReactions,
+  reactions: initialReactions = {},
+  myReactions: initialMyReactions = [],
+  creatorId,
 }: MessageProps) => {
   // Auto-post related state vars
   const isSupportedMessageType = ['text', 'custom'].includes(type);
@@ -122,10 +121,17 @@ const Message = ({
   const reactionTrayRef = useRef<HTMLDivElement | null>(null);
   const [reactionTrayPosition, setReactionTrayPosition] = useState({ x: 0, y: 0 });
   const messageRef = useRef<HTMLDivElement | null>(null);
-  const [reactions, setReactions] = useState<{ [reactionName: string]: number }>(
-    initialReactions || {},
-  );
-  const [message, setMessage] = useState<Amity.Message | null>(null);
+  const [reactions, setReactions] = useState<{ [reactionName: string]: number }>(initialReactions);
+  const [localMyReactions, setLocalMyReactions] = useState<string[]>(initialMyReactions);
+
+  // Sync local state with props for live updates
+  useEffect(() => {
+    setReactions(initialReactions);
+  }, [initialReactions]);
+
+  useEffect(() => {
+    setLocalMyReactions(initialMyReactions);
+  }, [initialMyReactions]);
 
   // Reaction user list state vars
   const [showReactionUsers, setShowReactionUsers] = useState(false);
@@ -133,71 +139,16 @@ const Message = ({
   const [reactionUsers, setReactionUsers] = useState<Amity.User[]>([]);
 
   // Subscription refs
-  const messageDataRef = useRef<Amity.Message | null>(null);
-  const messageDisposers = useRef<Amity.Unsubscriber[]>([]); // For message subscription
   const reactionDisposers = useRef<Amity.Unsubscriber[]>([]); // For reactions and users
-  const isMessageTopicSubscribed = useRef(false);
   const isReactionSubscribed = useRef(false);
   const isUserSubscribed = useRef<Record<string, boolean>>({});
 
-  // Update messageDataRef
+  // Force re-render on cache change (listen via state)
+  const [failed, setFailed] = useState(failedReactions.get(messageId) || false);
+
+  // Update local state if cache changes (e.g., from other instances)
   useEffect(() => {
-    messageDataRef.current = message;
-  }, [message]);
-
-  // Message subscription (persists for component lifetime)
-  useEffect(() => {
-    if (!messageId) {
-      console.warn('No messageId provided, skipping fetch');
-      setMessage(null);
-      setReactions({});
-      return;
-    }
-
-    const processMessage = (message: Amity.Message | undefined) => {
-      if (message) {
-        setMessage(message);
-        setReactions(message.reactions || {});
-
-        // Subscribe to message topic with REACTION level
-        if (!isMessageTopicSubscribed.current) {
-          isMessageTopicSubscribed.current = true;
-          const unsubscribeTopic = subscribeTopic(getMessageTopic(message));
-          messageDisposers.current.push(unsubscribeTopic);
-        }
-      } else {
-        console.warn('No message data received');
-        setReactions({});
-        setMessage(null);
-      }
-    };
-
-    let unsubscribeMessage: Amity.Unsubscriber;
-
-    try {
-      unsubscribeMessage = MessageRepository.getMessage(messageId, ({ data, loading, error }) => {
-        if (error) {
-          console.error('Error in live object response:', error);
-          setReactions({});
-          setMessage(null);
-          return;
-        }
-
-        processMessage(data);
-      });
-
-      messageDisposers.current.push(unsubscribeMessage);
-    } catch (error) {
-      console.error('Error in MessageRepository.getMessage:', error);
-      setReactions({});
-      setMessage(null);
-    }
-
-    return () => {
-      messageDisposers.current.forEach((unsub) => unsub());
-      messageDisposers.current = [];
-      isMessageTopicSubscribed.current = false;
-    };
+    setFailed(failedReactions.get(messageId) || false);
   }, [messageId]);
 
   // Reaction subscriptions cleanup (tied to showReactionUsers)
@@ -233,10 +184,6 @@ const Message = ({
             // Avoid duplicate message topic subscription
             if (!liveCollection.loading && liveCollection.data && !isReactionSubscribed.current) {
               isReactionSubscribed.current = true;
-              if (messageDataRef.current && !isMessageTopicSubscribed.current) {
-                const unsubscribeTopic = subscribeTopic(getMessageTopic(messageDataRef.current));
-                messageDisposers.current.push(unsubscribeTopic); // Use messageDisposers
-              }
             }
           },
         );
@@ -296,27 +243,7 @@ const Message = ({
   const handleReact = useCallback(
     async (newReaction: string) => {
       try {
-        // Verify message exists
-        if (!messageDataRef.current) {
-          console.error('No message data available for reaction. Refetching...');
-          let unsubscribe: Amity.Unsubscriber;
-          const message = await new Promise<Amity.Message | null>((resolve) => {
-            unsubscribe = MessageRepository.getMessage(messageId, ({ data }) => {
-              resolve(data);
-            });
-          });
-          unsubscribe!();
-          if (!message) {
-            throw new Error('Message not found');
-          }
-          setMessage(message);
-          messageDataRef.current = message;
-        }
-
-        const userReactions: string[] = Array.isArray(messageDataRef.current?.myReactions)
-          ? messageDataRef.current.myReactions
-          : [];
-
+        const userReactions: string[] = localMyReactions;
         const isDuplicateReaction = userReactions.includes(newReaction);
 
         // Remove existing reactions
@@ -327,6 +254,7 @@ const Message = ({
             reactionName,
           );
           if (isRemoved) {
+            setLocalMyReactions((prev) => prev.filter((r) => r !== reactionName));
             setReactions((prev) => {
               const updated = { ...prev };
               updated[reactionName] = Math.max((updated[reactionName] || 1) - 1, 0);
@@ -342,26 +270,10 @@ const Message = ({
 
         // Add new reaction if not a duplicate
         if (!isDuplicateReaction) {
-          let isAdded = await ReactionRepository.addReaction('message', messageId, newReaction);
-          if (!isAdded) {
-            console.warn(
-              `First attempt to add reaction ${newReaction} failed. Retrying after refetch...`,
-            );
-            // Refetch message to refresh state
-            let unsubscribe: Amity.Unsubscriber;
-            const message = await new Promise<Amity.Message | null>((resolve) => {
-              unsubscribe = MessageRepository.getMessage(messageId, ({ data }) => {
-                resolve(data);
-              });
-            });
-            unsubscribe!();
-            if (message) {
-              setMessage(message);
-              messageDataRef.current = message;
-              isAdded = await ReactionRepository.addReaction('message', messageId, newReaction);
-            }
-          }
+          const isAdded = await ReactionRepository.addReaction('message', messageId, newReaction);
+
           if (isAdded) {
+            setLocalMyReactions((prev) => [...prev, newReaction]);
             setReactions((prev) => ({
               ...prev,
               [newReaction]: (prev[newReaction] || 0) + 1,
@@ -373,25 +285,35 @@ const Message = ({
 
         setShowReactions(false);
       } catch (error: any) {
-        console.error('Error handling reaction:', error, error.response?.data);
-        if (error.response?.status === 404) {
-          console.error('404 Error: Message not found. Message ID:', messageId);
+        console.log('Error code:', error.code, 'Error message:', error.message);
+        if (
+          error.code === 400400 || // ItemNotFound
+          error.code === 400000 || // BadRequestError (validation)
+          error.code === 400301 || // PermissionDenied
+          error.code === 400300 || // ForbiddenError
+          error.response?.status === 404 // Fallback for HTTP-like errors
+        ) {
+          // Mark as failed for this message
+          failedReactions.set(messageId, true);
+          setFailed(true); // Trigger re-render to hide button
+          setShowReactions(false); // Close the tray immediately
         }
       }
     },
-    [messageId],
+    [messageId, localMyReactions],
   );
 
   const handleEmptyReactionClick = useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
+      if (failed) return; // Prevent opening if already failed
       if (messageRef.current && isIncoming) {
         const rect = messageRef.current.getBoundingClientRect();
         setReactionTrayPosition({ x: rect.left + rect.width / 2, y: rect.bottom - 55 });
         setShowReactions(true);
       }
     },
-    [isIncoming],
+    [isIncoming, failed],
   );
 
   const timeDifference = (timestamp: Date, locale: string) => {
@@ -469,12 +391,12 @@ const Message = ({
               .map(([reactionName, count]) => (
                 <ReactionBubble
                   key={reactionName}
-                  isfromme={message?.myReactions?.includes(reactionName)}
+                  isfromme={localMyReactions.includes(reactionName)}
                   onClick={(event) => {
                     const reactor: Amity.Reactor = {
-                      reactionId: message?.messageId ?? '',
+                      reactionId: messageId ?? '',
                       reactionName,
-                      userId: message?.creatorId ?? '',
+                      userId: creatorId ?? '',
                     };
                     handleReactionClick(reactor, event);
                   }}
@@ -482,7 +404,7 @@ const Message = ({
                   {reactionName} {count}
                 </ReactionBubble>
               ))}
-            {isIncoming && <EmptyReactionBubble onClick={handleEmptyReactionClick} />}
+            {isIncoming && !failed && <EmptyReactionBubble onClick={handleEmptyReactionClick} />}
           </ReactionDisplay>
           {showReactionUsers && selectedReaction && (
             <Backdrop onClick={() => setShowReactionUsers(false)}>

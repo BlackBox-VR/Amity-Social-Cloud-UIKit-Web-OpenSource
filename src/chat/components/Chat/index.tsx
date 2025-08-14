@@ -34,7 +34,6 @@ const Chat = ({
 
   const { isModerator } = useChannelPermission(channelId);
   const channel = useChannel(channelId);
-  console.log('Channel:', channel);
 
   const sendMessage = async (text: string) => {
     return MessageRepository.createMessage({

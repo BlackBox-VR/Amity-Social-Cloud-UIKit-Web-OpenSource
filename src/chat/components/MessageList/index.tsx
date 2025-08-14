@@ -44,6 +44,9 @@ const MessageItem = React.memo(
         client={client}
         bannerCode={bannerShortcode[0]?.shortcode?.toLowerCase() || ''}
         xpTitle={xpTitle?.title || ''}
+        reactions={message.reactions || {}}
+        myReactions={message.myReactions || []}
+        creatorId={message.creatorId}
       />
     );
   },
@@ -92,7 +95,6 @@ const MessageList = ({ subChannelId }: MessageListProps) => {
 
     // Check if we've scrolled to within 10 pixels of the top
     if (Math.abs(scrollTop) >= maxScrollTop - 10 && hasMore) {
-      console.log('Loading more messages...');
       setIsLoading(true);
       scrollPositionRef.current = scrollTop;
       loadMore();
