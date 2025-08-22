@@ -47,6 +47,7 @@ const MessageItem = React.memo(
         reactions={message.reactions || {}}
         myReactions={message.myReactions || []}
         creatorId={message.creatorId}
+        message={message}
       />
     );
   },

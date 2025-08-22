@@ -84,6 +84,7 @@ interface MessageProps {
   reactions?: { [key: string]: number }; // Adjusted to match the expected type
   myReactions?: string[];
   creatorId: string;
+  message: Amity.Message;
 }
 
 const failedReactions = new Map<string, boolean>(); // Global cache for messages where addReaction failed (key: messageId)
@@ -107,6 +108,7 @@ const Message = ({
   reactions: initialReactions = {},
   myReactions: initialMyReactions = [],
   creatorId,
+  message,
 }: MessageProps) => {
   // Auto-post related state vars
   const isSupportedMessageType = ['text', 'custom'].includes(type);
@@ -248,11 +250,8 @@ const Message = ({
 
         // Remove existing reactions
         for (const reactionName of userReactions) {
-          const isRemoved = await ReactionRepository.removeReaction(
-            'message',
-            messageId,
-            reactionName,
-          );
+          const isRemoved = await message.removeReaction(reactionName);
+
           if (isRemoved) {
             setLocalMyReactions((prev) => prev.filter((r) => r !== reactionName));
             setReactions((prev) => {
@@ -270,7 +269,7 @@ const Message = ({
 
         // Add new reaction if not a duplicate
         if (!isDuplicateReaction) {
-          const isAdded = await ReactionRepository.addReaction('message', messageId, newReaction);
+          const isAdded = await message.addReaction(newReaction);
 
           if (isAdded) {
             setLocalMyReactions((prev) => [...prev, newReaction]);
