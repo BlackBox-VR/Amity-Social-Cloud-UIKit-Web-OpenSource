@@ -217,11 +217,6 @@ export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
     }, 100);
   }, [containerRef.current, isLoading, isInvitationLoading, community, scrollPosition]);
 
-  const handleScroll = (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
-    if (initialLoad.current) return;
-    onScroll(event);
-  };
-
   const isShowFailed = (!isLoading && community?.isDeleted) || error;
 
   return (
