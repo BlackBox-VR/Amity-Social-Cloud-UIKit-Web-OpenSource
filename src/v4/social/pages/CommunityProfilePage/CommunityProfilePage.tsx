@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './CommunityProfilePage.module.css';
 import { useAmityPage } from '~/v4/core/hooks/uikit';
 import { CommunityHeader } from '~/v4/social/components/CommunityHeader';
@@ -231,7 +231,7 @@ export const CommunityProfilePage: React.FC<CommunityProfileProps> = ({
       accessibilityId={accessibilityId}
       onTouchEndCallback={handleRefresh}
       className={styles.communityProfilePage__container}
-      onScroll={handleScroll}
+      onScroll={onScroll}
     >
       {(isLoading || isInvitationLoading) && <CommunityProfileSkeleton />}
       {isShowFailed && <FailedToShow pageId={pageId} onBack={onBack} />}

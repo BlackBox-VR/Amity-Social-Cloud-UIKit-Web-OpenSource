@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAmityComponent } from '~/v4/core/hooks/uikit';
 import { PostContent } from '~/v4/social/components/PostContent';
 import {
@@ -15,8 +15,9 @@ import usePinnedPostsCollection from '~/v4/social/hooks/collections/usePinnedPos
 import { Typography } from '~/v4/core/components';
 import useIntersectionObserver from '~/v4/core/hooks/useIntersectionObserver';
 import { NoInternetConnectionHoc } from '~/v4/social/internal-components/NoInternetConnection/NoInternetConnectionHoc';
+import { useFeedScrollContext } from '~/v4/core/providers/FeedScrollProvider';
 import styles from './CommunityFeed.module.css';
-import {GlobalFeedFilterTypes} from "~/social/constants";
+import { GlobalFeedFilterTypes } from '~/social/constants';
 
 export const CommunityFeedPostContentSkeleton = () => {
   return (
@@ -44,12 +45,20 @@ interface CommunityFeedProps {
   filterValues?: string[]; // Values to filter by, e.g., user IDs, gym IDs, etc.
 }
 
-export const CommunityFeed = ({ pageId = '*', communityId, filterBy, filterValues }: CommunityFeedProps) => {
+export const CommunityFeed = ({
+  pageId = '*',
+  communityId,
+  filterBy,
+  filterValues,
+}: CommunityFeedProps) => {
   const componentId = 'community_feed_component';
   const { isExcluded, accessibilityId, themeStyles } = useAmityComponent({
     pageId,
     componentId,
   });
+
+  const { scrollPosition } = useFeedScrollContext();
+  const hasRestoredScroll = useRef(false);
 
   const { community } = useCommunity({ communityId, shouldCall: !!communityId });
 
@@ -59,12 +68,16 @@ export const CommunityFeed = ({ pageId = '*', communityId, filterBy, filterValue
     loadMore,
     isLoading,
     refresh: refreshPosts,
-  } = usePostsCollection({
-    feedType: 'published',
-    targetId: communityId,
-    targetType: 'community',
-    limit: 10,
-  }, filterBy, filterValues);
+  } = usePostsCollection(
+    {
+      feedType: 'published',
+      targetId: communityId,
+      targetType: 'community',
+      limit: 10,
+    },
+    filterBy,
+    filterValues,
+  );
 
   const { pinnedPost: allPinnedPost, refresh: refreshPinnedPosts } = usePinnedPostsCollection({
     communityId,
@@ -128,6 +141,27 @@ export const CommunityFeed = ({ pageId = '*', communityId, filterBy, filterValue
     refreshPosts();
     refreshPinnedPosts();
   }, []);
+
+  // Scroll restoration effect - runs when posts are loaded
+  useEffect(() => {
+    // Only restore scroll when we have posts and content is loaded
+    if (scrollPosition > 0 && posts.length > 0 && !isLoading && !hasRestoredScroll.current) {
+      const scrollContainer = document.getElementById('community_profile_page/*/*');
+
+      if (scrollContainer) {
+        scrollContainer.scrollTo({
+          top: scrollPosition,
+          behavior: 'auto',
+        });
+        hasRestoredScroll.current = true;
+      }
+    }
+  }, [posts, isLoading, scrollPosition, pageId]);
+
+  // Reset scroll restoration flag when community changes
+  useEffect(() => {
+    hasRestoredScroll.current = false;
+  }, [communityId]);
 
   if (isExcluded) return null;
 
