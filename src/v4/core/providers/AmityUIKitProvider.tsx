@@ -1,7 +1,7 @@
 import './index.css';
 import '~/v4/styles/global.css';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, createContext, useContext } from 'react';
 import useUser from '~/core/hooks/useUser';
 
 import SDKConnectorProviderV3 from '~/core/providers/SDKConnectorProvider';
@@ -50,6 +50,8 @@ import { useNetworkConfig } from '~/v4/core/hooks/useNetworkConfig';
 import { ClipProvider } from '~/v4/social/providers/ClipProvider';
 import { FeedScrollProvider } from '~/v4/core/providers/FeedScrollProvider';
 
+let StreamCustomWebhookContext = createContext('');
+
 const InternalComponent = ({
   apiKey,
   apiRegion,
@@ -69,7 +71,9 @@ const InternalComponent = ({
   onRouteChange,
   seoOptimizationEnabled = false,
   syncNetworkConfig = false,
+  streamCustomWebhookUrl,
 }: AmityUIKitProviderProps) => {
+  StreamCustomWebhookContext = createContext(streamCustomWebhookUrl || '');
   const currentUser = useUser(userId);
   const { error } = useNotifications();
   const [client, setClient] = useState<Amity.Client | null>(null);
@@ -260,6 +264,7 @@ interface AmityUIKitProviderProps {
   onRouteChange?: (route: AmityRoute) => void;
   seoOptimizationEnabled?: boolean;
   syncNetworkConfig?: boolean;
+  streamCustomWebhookUrl?: string;
 }
 
 const queryClient = new QueryClient();
@@ -291,3 +296,7 @@ const AmityUIKitProvider: React.FC<AmityUIKitProviderProps> = (props) => {
 };
 
 export default AmityUIKitProvider;
+
+export function useStreamCustomWebhook() {
+  return useContext(StreamCustomWebhookContext);
+}
