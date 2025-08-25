@@ -50,7 +50,7 @@ type PresenceData = {
   event?: 'join' | 'leave';
 };
 
-function sendJson(url: string, data: PresenceData) {
+function sendJson(url: string, data: PresenceData, credentials?: RequestCredentials | 'omit') {
   const json = JSON.stringify(data);
   const blob = new Blob([json], { type: 'application/json' });
   if (navigator.sendBeacon(url, blob)) {
@@ -63,6 +63,7 @@ function sendJson(url: string, data: PresenceData) {
       headers: { 'Content-Type': 'application/json' },
       body: json,
       keepalive: true,
+      credentials,
     }).catch((e) => {
       // Silently ignore
     });
