@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import Plyr from 'plyr';
 import { Avatar, Typography } from '~/v4/core/components';
 import { useAmityPage } from '~/v4/core/hooks/uikit';
@@ -37,12 +37,83 @@ import { CommunityAvatar } from '~/v4/social/elements/CommunityAvatar';
 import useCommunityMembersCollection from '~/v4/social/hooks/collections/useCommunityMembersCollection';
 import useSDK from '~/v4/core/hooks/useSDK';
 import {
-  AmityPostCategory,
-  AmityPostContentComponentStyle,
-  PostContent,
-} from '~/v4/social/components/PostContent/PostContent';
-import EmptyPost from '~/v4/icons/EmptyPost';
-import { CommunityFeedPostContentSkeleton } from '~/v4/social/components/CommunityFeed/CommunityFeed';
+  useStreamCustomWebhook,
+  useCurrentDisplayName,
+} from '~/v4/core/providers/AmityUIKitProvider';
+
+type PresenceData = {
+  userName: string;
+  userId: string;
+  streamId: string;
+  channelId: string;
+  sessionId?: string;
+  event?: 'join' | 'leave';
+};
+
+function sendJson(url: string, data: PresenceData) {
+  const json = JSON.stringify(data);
+  const blob = new Blob([json], { type: 'application/json' });
+  if (navigator.sendBeacon(url, blob)) {
+    return;
+  }
+
+  try {
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: json,
+      keepalive: true,
+    }).catch((e) => {
+      // Silently ignore
+    });
+  } catch (e) {
+    // Silently ignore
+  }
+}
+
+function useLivePresence(url: string, presenceData: PresenceData) {
+  const sessionId = useMemo(() => crypto.randomUUID(), []);
+  const hasSentLeftRef = useRef(false);
+
+  useEffect(() => {
+    sendJson(url, { ...presenceData, sessionId, event: 'join' });
+  }, [
+    url,
+    sessionId,
+    presenceData.userId,
+    presenceData.streamId,
+    presenceData.userName,
+    presenceData.channelId,
+  ]);
+
+  useEffect(() => {
+    const sendLeftOnUnload = () => {
+      if (hasSentLeftRef.current) return;
+
+      hasSentLeftRef.current = true;
+      sendJson(url, { ...presenceData, sessionId, event: 'leave' });
+    };
+
+    const onPageHide = () => sendLeftOnUnload();
+    const onBeforeUnload = () => sendLeftOnUnload();
+
+    window.addEventListener('pagehide', onPageHide, { passive: true });
+    window.addEventListener('beforeunload', onBeforeUnload, { passive: true });
+
+    return () => {
+      sendLeftOnUnload();
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+    };
+  }, [
+    url,
+    sessionId,
+    presenceData.userId,
+    presenceData.streamId,
+    presenceData.userName,
+    presenceData.channelId,
+  ]);
+}
 
 export type LiveStreamPlayerPageProps = {
   post?: Amity.Post;
@@ -257,6 +328,7 @@ export function LiveStreamPlayerPage({
   allowGuestAccessToChannel = false,
   isModal = true,
 }: LiveStreamPlayerPageProps) {
+  const streamWebhookUrl = (useStreamCustomWebhook() || '').trim();
   const pageId = 'livestream_player_page';
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement>(null); // ✅ non-modal wrapper ref
@@ -300,10 +372,15 @@ export function LiveStreamPlayerPage({
   });
 
   const myMembership = members.find((member) => member.userId === currentUserId);
-
   const onClose = useCallback(() => setStreamPlayer(null), []);
-
   const isUserBanned = stream?.isBanned || (myMembership && myMembership.isBanned);
+
+  useLivePresence(streamWebhookUrl, {
+    userName: useCurrentDisplayName() || 'unknown',
+    userId: currentUserId || 'unknown',
+    streamId: stream?.streamId || 'unknown',
+    channelId: channel?.channelId || 'unknown',
+  });
 
   useEffect(() => {
     if (keyboardOffset) setHideChatFeed(true);
