@@ -51,6 +51,7 @@ import { ClipProvider } from '~/v4/social/providers/ClipProvider';
 import { FeedScrollProvider } from '~/v4/core/providers/FeedScrollProvider';
 
 let StreamCustomWebhookContext = createContext('');
+let CurrentDisplayName = createContext('');
 
 const InternalComponent = ({
   apiKey,
@@ -74,6 +75,7 @@ const InternalComponent = ({
   streamCustomWebhookUrl,
 }: AmityUIKitProviderProps) => {
   StreamCustomWebhookContext = createContext(streamCustomWebhookUrl || '');
+  CurrentDisplayName = createContext(displayName || '');
   const currentUser = useUser(userId);
   const { error } = useNotifications();
   const [client, setClient] = useState<Amity.Client | null>(null);
@@ -299,4 +301,8 @@ export default AmityUIKitProvider;
 
 export function useStreamCustomWebhook() {
   return useContext(StreamCustomWebhookContext);
+}
+
+export function useCurrentDisplayName() {
+  return useContext(CurrentDisplayName);
 }
