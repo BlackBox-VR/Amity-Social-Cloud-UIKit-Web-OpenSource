@@ -52,10 +52,6 @@ type PresenceData = {
 
 function sendJson(url: string, data: PresenceData, credentials?: RequestCredentials | 'omit') {
   const json = JSON.stringify(data);
-  const blob = new Blob([json], { type: 'application/json' });
-  if (navigator.sendBeacon(url, blob)) {
-    return;
-  }
 
   try {
     fetch(url, {
@@ -74,25 +70,43 @@ function sendJson(url: string, data: PresenceData, credentials?: RequestCredenti
 
 function useLivePresence(url: string, presenceData: PresenceData) {
   const sessionId = useMemo(() => crypto.randomUUID(), []);
+  const urlRef = useRef(url);
+  const dataRef = useRef(presenceData);
+  useEffect(() => {
+    urlRef.current = url;
+  }, [url]);
+  useEffect(() => {
+    dataRef.current = presenceData;
+  }, [presenceData]);
+
   const hasSentLeftRef = useRef(false);
+  const hasSentJoinRef = useRef(false);
+
+  const ready =
+    !!presenceData.userId &&
+    presenceData.userId !== 'unknown' &&
+    !!presenceData.streamId &&
+    presenceData.streamId !== 'unknown' &&
+    !!presenceData.userName &&
+    presenceData.userName !== 'unknown' &&
+    !!presenceData.channelId &&
+    presenceData.channelId !== 'unknown';
 
   useEffect(() => {
-    sendJson(url, { ...presenceData, sessionId, event: 'join' });
-  }, [
-    url,
-    sessionId,
-    presenceData.userId,
-    presenceData.streamId,
-    presenceData.userName,
-    presenceData.channelId,
-  ]);
+    if (!hasSentJoinRef.current && ready) {
+      hasSentJoinRef.current = true;
+      const data = dataRef.current;
+      sendJson(url, { ...data, sessionId, event: 'join' });
+    }
+  }, [ready, sessionId]);
 
   useEffect(() => {
     const sendLeftOnUnload = () => {
-      if (hasSentLeftRef.current) return;
+      if (hasSentLeftRef.current || !hasSentJoinRef.current) return;
 
       hasSentLeftRef.current = true;
-      sendJson(url, { ...presenceData, sessionId, event: 'leave' });
+      const data = dataRef.current;
+      sendJson(url, { ...data, sessionId, event: 'leave' });
     };
 
     const onPageHide = () => sendLeftOnUnload();
@@ -106,14 +120,7 @@ function useLivePresence(url: string, presenceData: PresenceData) {
       window.removeEventListener('pagehide', onPageHide);
       window.removeEventListener('beforeunload', onBeforeUnload);
     };
-  }, [
-    url,
-    sessionId,
-    presenceData.userId,
-    presenceData.streamId,
-    presenceData.userName,
-    presenceData.channelId,
-  ]);
+  }, [sessionId]);
 }
 
 export type LiveStreamPlayerPageProps = {
