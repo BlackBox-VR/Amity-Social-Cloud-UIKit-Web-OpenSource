@@ -42,7 +42,7 @@ import {
 } from '~/v4/core/providers/AmityUIKitProvider';
 
 type PresenceData = {
-  userName: string;
+  username: string;
   userId: string;
   streamId: string;
   channelId: string;
@@ -87,8 +87,8 @@ function useLivePresence(url: string, presenceData: PresenceData) {
     presenceData.userId !== 'unknown' &&
     !!presenceData.streamId &&
     presenceData.streamId !== 'unknown' &&
-    !!presenceData.userName &&
-    presenceData.userName !== 'unknown' &&
+    !!presenceData.username &&
+    presenceData.username !== 'unknown' &&
     !!presenceData.channelId &&
     presenceData.channelId !== 'unknown';
 
@@ -384,7 +384,7 @@ export function LiveStreamPlayerPage({
   const isUserBanned = stream?.isBanned || (myMembership && myMembership.isBanned);
 
   useLivePresence(streamWebhookUrl, {
-    userName: useCurrentDisplayName() || 'unknown',
+    username: useCurrentDisplayName() || 'unknown',
     userId: currentUserId || 'unknown',
     streamId: stream?.streamId || 'unknown',
     channelId: channel?.channelId || 'unknown',
