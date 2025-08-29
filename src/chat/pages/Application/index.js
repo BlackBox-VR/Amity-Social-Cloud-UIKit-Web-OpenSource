@@ -65,7 +65,7 @@ const ChatApplication = ({
 
   const { currentUserId, client } = useSDK();
   const [systemMessage, setSystemMessage] = useState('');
-  const [channels] = useChannelsList();
+  let [channels] = useChannelsList();
   const [channelCreated, setChannelCreated] = useState(false);
 
   useEffect(() => {
@@ -108,6 +108,8 @@ const ChatApplication = ({
 
           if (userModel && userModel.metadata.teamId) 
           {
+            channels = useChannelsList(userModel.metadata.teamName);
+            
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
             const joinChannel = await ChannelRepository.joinChannel({channelId: userModel.metadata.teamId});
