@@ -14,34 +14,34 @@ import CreateChatModal from '~/chat/components/Chat/CreateChatModal';
 import { useSDK } from '~/core/hooks/useSDK';
 import useUser from '~/core/hooks/useUser';
 import { UserRepository } from '@amityco/js-sdk';
-import useChannelsList from '~/chat/hooks/useChannelsList';
 
 const channelRepo = new ChannelRepository();
 
 const ChatApplication = ({
-  membershipFilter,
-  defaultChannelId,
-  onMemberSelect,
-  onChannelSelect,
-  onAddNewChannel,
-  onEditChatMember,
-}) => {
+                           membershipFilter,
+                           defaultChannelId,
+                           onMemberSelect,
+                           onChannelSelect,
+                           onAddNewChannel,
+                           onEditChatMember,
+                         }) => {
   const { formatMessage } = useIntl();
   const [currentChannelData, setCurrentChannelData] = useState(null);
   const [shouldShowChatDetails, setShouldShowChatDetails] = useState(false);
+  const [isChatModalOpened, setChatModalOpened] = useState(false);
+  const [systemMessage, setSystemMessage] = useState('');
+  const [channelCreated, setChannelCreated] = useState(false);
 
   const showChatDetails = () => setShouldShowChatDetails(true);
   const hideChatDetails = () => setShouldShowChatDetails(false);
-
-  const [isChatModalOpened, setChatModalOpened] = useState(false);
   const openChatModal = () => setChatModalOpened(true);
 
-  const handleChannelSelect = (newChannelData) => 
-  {
-    console.log(`Activating chat channel: '${newChannelData?.channelId}'!`);
-    if (currentChannelData?.channelId === newChannelData?.channelId) return;
-    if (currentChannelData?.channelId == newChannelData?.channelId) return;
+  const { currentUserId } = useSDK();
 
+  const handleChannelSelect = (newChannelData) => {
+    if (currentChannelData?.channelId === newChannelData?.channelId) return;
+
+    console.log(`Activating chat channel: '${newChannelData?.channelId}'`);
     hideChatDetails();
     onChannelSelect(newChannelData);
     setCurrentChannelData(newChannelData);
@@ -49,158 +49,143 @@ const ChatApplication = ({
 
   const leaveChat = () => {
     ChannelRepository.leaveChannel(currentChannelData?.channelId)
-      .then(() => {
-        notification.success({
-          content: formatMessage({ id: 'chat.leaveChat.success' }),
+        .then(() => {
+          notification.success({
+            content: formatMessage({ id: 'chat.leaveChat.success' }),
+          });
+        })
+        .catch(() => {
+          notification.error({
+            content: formatMessage({ id: 'chat.leaveChat.error' }),
+          });
         });
-      })
-      .catch(() => {
-        notification.error({
-          content: formatMessage({ id: 'chat.leaveChat.error' }),
-        });
-      });
 
     setCurrentChannelData(null);
   };
 
-  const { currentUserId, client } = useSDK();
-  const [systemMessage, setSystemMessage] = useState('');
-  const [channels] = useChannelsList();
-  const [channelCreated, setChannelCreated] = useState(false);
-
   useEffect(() => {
+    let userLiveObj;
+    let channelLiveObj;
+    let createdLiveChannel;
+
+    const once = (liveObj, event) =>
+        new Promise((resolve, reject) => {
+          const onUpdate = (data) => {
+            cleanup();
+            resolve(data);
+          };
+          const onError = (err) => {
+            cleanup();
+            reject(err);
+          };
+          const cleanup = () => {
+            liveObj.off('dataUpdated', onUpdate);
+            liveObj.off('dataError', onError);
+          };
+          liveObj.once('dataUpdated', onUpdate);
+          liveObj.once('dataError', onError);
+        });
+
     const initChat = async () => {
       try {
-        console.log("--- Channels List ---");
-        console.log(channels);
+        // 1) Load current user once
+        userLiveObj = UserRepository.getUser(currentUserId);
+        const userModel = await once(userLiveObj, 'dataUpdated').catch(() => null);
 
-        // Get user data once at the start
-        const userModel = await new Promise((resolve) => 
-        {
-          const liveObject = UserRepository.getUser(currentUserId);
-          liveObject.once('dataUpdated', user => 
-          {
-            console.log("Loaded user: " + JSON.stringify(user));
-            resolve(user);
-          });
-          liveObject.once('dataError', error => {
-            reject(error);
-          });
-        }).catch((error) => {
-          return null;
-        });
-        
-          console.log(`Channels array didn't exist, now checking team data...`);
-          console.log("Checking user and their metadata...");
+        if (!userModel || !userModel.metadata?.teamId) {
+          console.log('Retrieved user, but without proper team metadata. Returning.');
+          return;
+        }
 
-          if (userModel && userModel.metadata.teamId) 
-          {
-            console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
+        const teamId = userModel.metadata.teamId;
+        const teamName = userModel.metadata.teamName;
+        const isLeader = userModel.userId === userModel.metadata.teamLeaderId;
 
-            const joinChannel = await ChannelRepository.joinChannel({channelId: userModel.metadata.teamId});
+        // 2) Try to load exactly the one channel by id (no broad queries)
+        console.log(`Looking up team channel '${teamId}'`);
+        channelLiveObj = ChannelRepository.getChannel(teamId);
 
-            const channelData = await new Promise ((resolve) =>
-            {
-              const searchingChannel = ChannelRepository.getChannel(userModel.metadata.teamId);
-              searchingChannel.once('dataUpdated', data => 
-              {
-                console.log("Searching channel was successful!");
-                resolve(data);                
-              });
-              searchingChannel.once('dataError', error => 
-              {
-                console.log("Searching channel failed... " + JSON.stringify(error));
-                reject(error);
-              });
-            }).catch((error) => 
-            {
-              console.log("Searching channel was unsuccessful... " + JSON.stringify(error));
-              return null;
-            });          
+        const channelData = await once(channelLiveObj, 'dataUpdated').catch(() => null);
 
-            if (channelData && channelData.channelId) 
-            {
-              console.log("Channel '" + channelData.displayName + "' exists. Entering.");
-
-              // ChannelRepository.joinChannel({
-              //   channelId: data.channelId
-              // });
-            } // channel not found
-            else 
-            {
-              console.log('User loaded, and metadata loaded, but no channel exists with that teamId');
-
-              // Check if you're the leader of the team,
-              if (userModel.userId === userModel.metadata.teamLeaderId) 
-              {
-                // if you're the leader, create the channel
-                console.log("This user is the leader; creating the team...");
-                
-                const liveChannel = ChannelRepository.createChannel({
-                  channelId: userModel.metadata.teamId,
-                  type: ChannelType.Live,
-                  displayName: userModel.metadata.teamName,
-                  userIds: [userModel.userId],
-                });
-
-                liveChannel.once('dataUpdated', (model) => 
-                {
-                  console.log(`Channel created successfully! ${model.channelId}`);
-                  setSystemMessage('');
-                  setChannelCreated(prev => !prev);
-                });
-
-                liveChannel.once('dataError', (error) => 
-                {
-                  console.log("Channel didn't get created: " + error);
-                });
-              }
-              // if you're not the team leader, display message "Please wait for leader to log-in and establish a team chat channel."
-              else 
-              {
-                console.log("The user '" + userModel.displayName + "' (" + userModel.userId + ') is not the team leader. Channel creation delayed. Returning.');
-
-                // Display message that leader needs to log-in first to create chat channel
-                setSystemMessage("The Team Leader is required to log-in to generate this team's chat channel!");
-                return;
-              }
-            }
-          } 
-          else 
-          {
-            console.log('Retrieved user, but without proper team metadata. Returning.');
+        if (channelData?.channelId) {
+          console.log(`Found team channel '${channelData.channelId}', joining (if needed) and entering.`);
+          try {
+            await ChannelRepository.joinChannel({ channelId: channelData.channelId });
+          } catch (e) {
+            // If already a member, joinChannel may fail; that’s fine.
+            console.log('joinChannel skipped or failed (likely already joined). Proceeding.');
           }
-      } 
-      catch (error) 
-      {
+          handleChannelSelect({ channelId: channelData.channelId, channelType: channelData.type ?? ChannelType.Standard });
+          setSystemMessage('');
+          return;
+        }
+
+        // 3) Channel not found — create only if leader
+        if (!isLeader) {
+          console.log(`No channel exists for team '${teamId}', and user is not the team leader. Showing message.`);
+          setSystemMessage('The Team Leader must log in to create this team\'s chat channel.');
+          return;
+        }
+
+        console.log(`Creating team channel '${teamId}' as leader...`);
+        createdLiveChannel = ChannelRepository.createChannel({
+          channelId: teamId,
+          type: ChannelType.Live,
+          displayName: teamName || `Team ${teamId}`,
+          userIds: [userModel.userId],
+        });
+
+        const created = await once(createdLiveChannel, 'dataUpdated');
+        console.log(`Channel created successfully! ${created.channelId}`);
+
+        // Join (should be auto-added as creator, but ensure)
+        try {
+          await ChannelRepository.joinChannel({ channelId: created.channelId });
+        } catch (e) {
+          console.log('joinChannel after create skipped or failed (likely already member).');
+        }
+
+        setSystemMessage('');
+        setChannelCreated((prev) => !prev);
+        handleChannelSelect({ channelId: created.channelId, channelType: created.type ?? ChannelType.Live });
+      } catch (error) {
         console.error('An error occurred: ', error);
       }
     };
 
     initChat();
-  }, [channels, channelCreated]);
+
+    return () => {
+      // best-effort listener cleanup if any remain
+      try {
+        userLiveObj?.removeAllListeners?.();
+        channelLiveObj?.removeAllListeners?.();
+        createdLiveChannel?.removeAllListeners?.();
+      } catch { /* noop */ }
+    };
+  }, [currentUserId]); // no channels dependency — we no longer query the list
 
   return (
-    <ApplicationContainer>
-      {currentChannelData && (
-        <Chat
-          channelId={currentChannelData.channelId}
-          shouldShowChatDetails={shouldShowChatDetails}
-          onChatDetailsClick={showChatDetails}
-          chatSystemMessage={systemMessage}
-        />
-      )}
-      {shouldShowChatDetails && currentChannelData && (
-        <ChatDetails
-          channelId={currentChannelData.channelId}
-          leaveChat={leaveChat}
-          onEditChatMemberClick={onEditChatMember}
-          onMemberSelect={onMemberSelect}
-          onClose={hideChatDetails}
-        />
-      )}
-      {isChatModalOpened && <CreateChatModal onClose={() => setChatModalOpened(false)} />}
-    </ApplicationContainer>
+      <ApplicationContainer>
+        {currentChannelData && (
+            <Chat
+                channelId={currentChannelData.channelId}
+                shouldShowChatDetails={shouldShowChatDetails}
+                onChatDetailsClick={showChatDetails}
+                chatSystemMessage={systemMessage}
+            />
+        )}
+        {shouldShowChatDetails && currentChannelData && (
+            <ChatDetails
+                channelId={currentChannelData.channelId}
+                leaveChat={leaveChat}
+                onEditChatMemberClick={onEditChatMember}
+                onMemberSelect={onMemberSelect}
+                onClose={hideChatDetails}
+            />
+        )}
+        {isChatModalOpened && <CreateChatModal onClose={() => setChatModalOpened(false)} />}
+      </ApplicationContainer>
   );
 };
 
