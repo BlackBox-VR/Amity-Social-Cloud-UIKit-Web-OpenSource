@@ -65,14 +65,13 @@ const ChatApplication = ({
 
   const { currentUserId, client } = useSDK();
   const [systemMessage, setSystemMessage] = useState('');
-  let [channels] = useChannelsList();
   const [channelCreated, setChannelCreated] = useState(false);
+  let channel = null;
 
   useEffect(() => {
     const initChat = async () => {
       try {
         console.log("--- Channels List ---");
-        console.log(channels);
 
         // Get user data once at the start
         const userModel = await new Promise((resolve) => 
@@ -89,26 +88,13 @@ const ChatApplication = ({
         }).catch((error) => {
           return null;
         });
-
-        if (channels != null && channels.length > 0) 
-        {
-          if (userModel && userModel.metadata.teamId) 
-          {
-            const teamChannel = channels.find(channel => channel.channelId === userModel.metadata.teamId);
-            if (teamChannel) {
-              console.log('Found matching team channel, entering... ', teamChannel.channelId);
-              handleChannelSelect({channelId: teamChannel.channelId, channelType: ChannelType.Standard});
-            }
-          }
-        } 
-        else 
-        {
+        
           console.log(`Channels array didn't exist, now checking team data...`);
           console.log("Checking user and their metadata...");
 
           if (userModel && userModel.metadata.teamId) 
           {
-            [ channels ] = useChannelsList(userModel.metadata.teamName);
+            channel = channelRepo.getChannel(userModel.metadata.teamId);
             
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
@@ -185,7 +171,6 @@ const ChatApplication = ({
           {
             console.log('Retrieved user, but without proper team metadata. Returning.');
           }
-        }
       } 
       catch (error) 
       {
@@ -194,7 +179,7 @@ const ChatApplication = ({
     };
 
     initChat();
-  }, [channels, channelCreated]);
+  }, [channel, channelCreated]);
 
   return (
     <ApplicationContainer>
