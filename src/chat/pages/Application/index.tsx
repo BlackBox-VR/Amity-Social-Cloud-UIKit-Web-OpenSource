@@ -76,40 +76,54 @@ const ChatApplication = ({
     }
   };
 
-  const { channels } = useChannelsCollection({
-    membership: membershipFilter,
-    sortBy: 'lastActivity',
-    limit: 20,
-  });
-
   const { currentUserId } = useSDK();
   const userModel = useUser(currentUserId);
 
+  // New state for the team channel
+  const [teamChannel, setTeamChannel] = useState<Amity.Channel | null>(null);
+
+  // New effect to fetch the specific team channel
   useEffect(() => {
-    if (!defaultChannelId) {
-      if (channels != null && channels.length > 0) {
-        if (userModel && userModel?.metadata?.teamId) {
-          const teamChannel = channels.find(
-            (channel) => channel.channelId === userModel?.metadata?.teamId,
-          );
-          if (teamChannel) {
-            setShouldShowChatHeader(false);
-            handleChannelSelect({
-              channelId: teamChannel.channelId,
-              defaultSubChannelId: teamChannel.defaultSubChannelId,
-              type: 'live',
-            });
-          }
-        }
+    const teamId = userModel?.metadata?.teamId;
+    if (!teamId) {
+      setTeamChannel(null);
+      return;
+    }
+
+    const unsubscribe = ChannelRepository.getChannel(teamId, ({ data: channel, error }) => {
+      if (error) {
+        console.error('Failed to fetch team channel:', error);
+        setTeamChannel(null);
+        return;
       }
-    } else {
+
+      if (channel) {
+        setTeamChannel(channel);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [userModel?.metadata?.teamId, formatMessage, notification]);
+
+  useEffect(() => {
+    if (defaultChannelId) {
       handleChannelSelect({
         channelId: defaultChannelId,
         defaultSubChannelId: defaultChannelId,
         type: 'live',
       });
+      return;
     }
-  }, [defaultChannelId, channels, userModel]);
+
+    if (teamChannel) {
+      setShouldShowChatHeader(false);
+      handleChannelSelect({
+        channelId: teamChannel.channelId,
+        defaultSubChannelId: teamChannel.defaultSubChannelId,
+        type: teamChannel.type || 'live', // Use actual type from channel
+      });
+    }
+  }, [defaultChannelId, teamChannel]);
 
   return (
     <ApplicationContainer>
