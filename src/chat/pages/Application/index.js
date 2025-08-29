@@ -108,7 +108,7 @@ const ChatApplication = ({
 
           if (userModel && userModel.metadata.teamId) 
           {
-            channels = useChannelsList(userModel.metadata.teamName);
+            [ channels ] = useChannelsList(userModel.metadata.teamName);
             
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
