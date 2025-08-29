@@ -65,13 +65,14 @@ const ChatApplication = ({
 
   const { currentUserId, client } = useSDK();
   const [systemMessage, setSystemMessage] = useState('');
+  const [channels] = useChannelsList();
   const [channelCreated, setChannelCreated] = useState(false);
-  let channel = null;
 
   useEffect(() => {
     const initChat = async () => {
       try {
         console.log("--- Channels List ---");
+        console.log(channels);
 
         // Get user data once at the start
         const userModel = await new Promise((resolve) => 
@@ -94,8 +95,6 @@ const ChatApplication = ({
 
           if (userModel && userModel.metadata.teamId) 
           {
-            channel = channelRepo.getChannel(userModel.metadata.teamId);
-            
             console.log("User had successful team metadata for team '" + userModel.metadata.teamId + "'");
 
             const joinChannel = await ChannelRepository.joinChannel({channelId: userModel.metadata.teamId});
@@ -179,7 +178,7 @@ const ChatApplication = ({
     };
 
     initChat();
-  }, [channel, channelCreated]);
+  }, [channels, channelCreated]);
 
   return (
     <ApplicationContainer>
