@@ -32,7 +32,7 @@ export const MessageBubble: FC<MessageBubbleProps> = ({
   const { isDesktop } = useResponsive();
   const { openPopup } = usePopupContext();
   const { isModerator } = useChannelPermission(message.channelId);
-  const isOwner = currentUserId != 'BBVR_WEB_GUEST' && message.creatorId === currentUserId;
+  const isOwner = currentUserId?.includes('BBVR_WEB_GUEST') && message.creatorId === currentUserId;
 
   const { deleteMessage } = useDeleteMessage();
   const { setDrawerData, removeDrawerData } = useDrawer();
