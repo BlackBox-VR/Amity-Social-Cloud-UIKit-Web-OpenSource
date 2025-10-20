@@ -79,7 +79,7 @@ export function SelectPostTargetPage({ isClipPost = false }: { isClipPost?: bool
         <Title pageId={pageId} titleClassName={styles.selectPostTargetPage__title} />
         <div />
       </div>
-      <div className={styles.selectPostTargetPage__timelineContainer}>
+      {/* <div className={styles.selectPostTargetPage__timelineContainer}>
         {isClipPost ? (
           <FileTrigger
             acceptedFileTypes={['video/*']}
@@ -146,7 +146,7 @@ export function SelectPostTargetPage({ isClipPost = false }: { isClipPost?: bool
             <MyTimelineText pageId={pageId} />
           </Button>
         )}
-      </div>
+      </div> */}
       <div className={styles.selectPostTargetPage__line} />
       <div className={styles.selectPostTargetPage__myCommunities}>My Communities</div>
       <div className={styles.selectPostTargetPage__myCommunitiesList}>
