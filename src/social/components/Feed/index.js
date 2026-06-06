@@ -91,65 +91,67 @@ const FeedBody = ({
   return (
     <FeedScrollContainer className={containerClassName} dataLength={posts.length}>
       <ConditionalRender condition={!isHiddenProfile}>
-        {showPostCreator && (
-          <PostCreator
-            data-qa-anchor="feed-post-creator-textarea"
-            targetType={targetType}
-            targetId={targetId}
-            communities={communities}
-            enablePostTargetPicker={enablePostTargetPicker}
-            hasMoreCommunities={hasMoreCommunities}
-            loadMoreCommunities={loadMoreCommunities}
-            onCreateSuccess={handlePostCreated}
-          />
-        )}
+        <>
+          {showPostCreator && (
+            <PostCreator
+              data-qa-anchor="feed-post-creator-textarea"
+              targetType={targetType}
+              targetId={targetId}
+              communities={communities}
+              enablePostTargetPicker={enablePostTargetPicker}
+              hasMoreCommunities={hasMoreCommunities}
+              loadMoreCommunities={loadMoreCommunities}
+              onCreateSuccess={handlePostCreated}
+            />
+          )}
 
-        {loading && renderLoadingSkeleton()}
+          {loading && renderLoadingSkeleton()}
 
-        {error && (
-          <FeedError>
-            <p>{error}</p>
-            <button type="button" onClick={retry}>
-              Retry
-            </button>
-          </FeedError>
-        )}
+          {error && (
+            <FeedError>
+              <p>{error}</p>
+              <button type="button" onClick={retry}>
+                Retry
+              </button>
+            </FeedError>
+          )}
 
-        {!loading &&
-          posts.length > 0 &&
-          !useContentSearch &&
-          targetType !== PostTargetType.GlobalFeed &&
-          posts.filter((post) => post.postedUserId === targetId).length < 10 &&
-          hasMore &&
-          loadMore()}
+          {!loading &&
+            posts.length > 0 &&
+            !useContentSearch &&
+            targetType !== PostTargetType.GlobalFeed &&
+            posts.filter((post) => post.postedUserId === targetId).length < 10 &&
+            hasMore &&
+            loadMore()}
 
-        {!loading && posts.length > 0 && (
-          <LoadMore
-            hasMore={hasMore && !loadingMore}
-            loadMore={loadMore}
-            className="load-more no-border"
-          >
-            {getVisiblePosts().map(({ postId }) => (
-              <Post
-                key={postId}
-                postId={postId}
-                hidePostTarget
-                readonly={readonly}
-                showOptionMenu={showOptionMenu}
-              />
-            ))}
-            {loadingMore && renderLoadingSkeleton()}
-          </LoadMore>
-        )}
+          {posts.length > 0 && (
+            <LoadMore
+              hasMore={hasMore && !loadingMore}
+              loadMore={loadMore}
+              className="load-more no-border"
+            >
+              {getVisiblePosts().map(({ postId }) => (
+                <Post
+                  key={postId}
+                  postId={postId}
+                  hidePostTarget
+                  readonly={readonly}
+                  showOptionMenu={showOptionMenu}
+                />
+              ))}
+              {loadingMore && renderLoadingSkeleton()}
+            </LoadMore>
+          )}
 
-        {showEmptyFeed && (
-          <EmptyFeed
-            targetType={targetType}
-            goToExplore={goToExplore}
-            canPost={showPostCreator}
-            feedType={feedType}
-          />
-        )}
+          {showEmptyFeed && (
+            <EmptyFeed
+              targetType={targetType}
+              goToExplore={goToExplore}
+              canPost={showPostCreator}
+              feedType={feedType}
+            />
+          )}
+        </>
         <PrivateFeed />
       </ConditionalRender>
     </FeedScrollContainer>
@@ -177,14 +179,23 @@ const SdkFeed = (props) => {
   );
 };
 
+const getQueryUserId = () => {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return new URLSearchParams(window.location.search).get('userId') || '';
+};
+
 const ContentSearchFeed = (props) => {
-  const { currentUserId } = useSDK();
+  const { currentUserId, client } = useSDK();
+  const loginUserId = currentUserId || client?.currentUserId || getQueryUserId();
   const { targetType, targetId, searchType, showTargetId } = props;
   const { posts, hasMore, loadMore, loading, loadingMore, error, prependPost, retry } =
     useSearchFeed({
       targetType,
       targetId,
-      loginUserId: currentUserId,
+      loginUserId,
       searchType,
       showTargetId,
       defaultNumber,

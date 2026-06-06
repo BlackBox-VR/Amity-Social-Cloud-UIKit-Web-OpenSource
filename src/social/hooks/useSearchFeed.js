@@ -9,6 +9,7 @@ import {
 } from '~/constants';
 
 const COMMUNITY_TARGET_TYPE = 'community';
+const FEED_DEBUG_KEY = '__BBVR_FEED_DEBUG__';
 
 const resolveSearchParams = ({ targetType, targetId, searchType, showTargetId, loginUserId }) => {
   if (searchType) {
@@ -58,22 +59,14 @@ const useSearchFeed = ({
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
-  const abortControllerRef = useRef(null);
-  const mountedRef = useRef(true);
+  const dataRef = useRef(data);
 
-  const abortInflightRequest = useCallback(() => {
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = null;
-  }, []);
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   const fetchData = useCallback(
     async (currentPage) => {
-      abortInflightRequest();
-
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-      const { signal } = controller;
-
       const {
         targetType: resolvedTargetType,
         targetId: resolvedTargetId,
@@ -111,82 +104,103 @@ const useSearchFeed = ({
         query.query.metadata = { type: 'unityGemItemPurchased,unityGemsEarned' };
       }
 
-      try {
-        const response = await fetch(CONTENT_SEARCH_API_URL, {
-          method: 'POST',
-          body: JSON.stringify(query),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          signal,
-        });
+      const response = await fetch(CONTENT_SEARCH_API_URL, {
+        method: 'POST',
+        body: JSON.stringify(query),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-        if (signal.aborted) {
-          return false;
-        }
+      if (!response.ok) {
+        throw new Error(`Content search failed (${response.status})`);
+      }
 
-        if (!response.ok) {
-          throw new Error(`Content search failed (${response.status})`);
-        }
+      const result = await response.json();
 
-        const result = await response.json();
+      if (!result?.success) {
+        throw new Error(result?.message || 'Content search failed');
+      }
 
-        if (signal.aborted) {
-          return false;
-        }
+      const newData = (result?.postIds || []).map((id) => ({ postId: id }));
 
-        if (!result?.success) {
-          throw new Error(result?.message || 'Content search failed');
-        }
+      if (typeof window !== 'undefined') {
+        window[FEED_DEBUG_KEY] = {
+          loginUserId,
+          count: newData.length,
+          ids: newData.slice(0, 3).map((post) => post.postId),
+          currentPage,
+        };
+      }
 
-        const newData = (result?.postIds || []).map((id) => ({ postId: id }));
+      setError(null);
+      setHasMore(newData.length === pageSize);
 
-        setError(null);
-        setHasMore(newData.length === pageSize);
-
-        if (currentPage === 0) {
-          setData(newData);
-        } else {
-          setData((prev) => [...prev, ...newData]);
-        }
-
-        return true;
-      } catch (err) {
-        if (err?.name === 'AbortError' || signal.aborted) {
-          return false;
-        }
-
-        setError(err?.message || 'Failed to load feed');
-
-        if (currentPage === 0) {
-          setData([]);
-        }
-
-        setHasMore(false);
-        return false;
-      } finally {
-        if (abortControllerRef.current === controller) {
-          abortControllerRef.current = null;
-        }
+      if (currentPage === 0) {
+        setData(newData);
+      } else {
+        setData([...dataRef.current, ...newData]);
       }
     },
-    [
-      abortInflightRequest,
-      defaultNumber,
-      loginUserId,
-      queryLimit,
-      searchType,
-      showTargetId,
-      targetId,
-      targetType,
-    ],
+    [defaultNumber, loginUserId, queryLimit, searchType, showTargetId, targetId, targetType],
   );
 
-  const refresh = useCallback(async () => {
-    if (!mountedRef.current) {
-      return;
+  useEffect(() => {
+    if (!enabled || !loginUserId) {
+      setLoading(false);
+      setLoadingMore(false);
+      setData([]);
+      setHasMore(false);
+      setError(null);
+      return undefined;
     }
 
+    let cancelled = false;
+
+    async function init() {
+      setLoading(true);
+      setError(null);
+      setPage(0);
+      setHasMore(true);
+
+      try {
+        await fetchData(0);
+      } catch (err) {
+        if (!cancelled) {
+          setError(err?.message || 'Failed to load feed');
+          setData([]);
+          setHasMore(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    init();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [enabled, fetchData, loginUserId]);
+
+  const loadMore = useCallback(async () => {
+    const newPage = page + 1;
+    setLoadingMore(true);
+    setPage(newPage);
+
+    try {
+      await fetchData(newPage);
+    } catch (err) {
+      setError(err?.message || 'Failed to load feed');
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [fetchData, page]);
+
+  const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
     setPage(0);
@@ -194,10 +208,12 @@ const useSearchFeed = ({
 
     try {
       await fetchData(0);
+    } catch (err) {
+      setError(err?.message || 'Failed to load feed');
+      setData([]);
+      setHasMore(false);
     } finally {
-      if (mountedRef.current) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   }, [fetchData]);
 
@@ -213,77 +229,6 @@ const useSearchFeed = ({
     });
     setError(null);
   }, []);
-
-  useEffect(() => {
-    mountedRef.current = true;
-
-    return () => {
-      mountedRef.current = false;
-      abortInflightRequest();
-    };
-  }, [abortInflightRequest]);
-
-  useEffect(() => {
-    if (!enabled) {
-      abortInflightRequest();
-      setLoading(false);
-      setLoadingMore(false);
-      setError(null);
-      setData([]);
-      setHasMore(false);
-      return undefined;
-    }
-
-    if (!loginUserId) {
-      abortInflightRequest();
-      setLoading(false);
-      setData([]);
-      setHasMore(false);
-      return undefined;
-    }
-
-    let active = true;
-
-    async function init() {
-      setLoading(true);
-      setError(null);
-      setPage(0);
-      setHasMore(true);
-
-      try {
-        await fetchData(0);
-      } finally {
-        if (active && mountedRef.current) {
-          setLoading(false);
-        }
-      }
-    }
-
-    init();
-
-    return () => {
-      active = false;
-      abortInflightRequest();
-    };
-  }, [abortInflightRequest, enabled, fetchData, loginUserId]);
-
-  const loadMore = useCallback(async () => {
-    if (!mountedRef.current) {
-      return;
-    }
-
-    const newPage = page + 1;
-    setLoadingMore(true);
-
-    try {
-      setPage(newPage);
-      await fetchData(newPage);
-    } finally {
-      if (mountedRef.current) {
-        setLoadingMore(false);
-      }
-    }
-  }, [fetchData, page]);
 
   return {
     posts: data,
