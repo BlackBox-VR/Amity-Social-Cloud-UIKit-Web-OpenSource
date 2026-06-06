@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PostTargetType } from '@amityco/js-sdk';
 
 import {
@@ -10,7 +10,7 @@ import {
 
 const COMMUNITY_TARGET_TYPE = 'community';
 
-const resolveSearchParams = ({ targetType, targetId, searchType, showTargetId }) => {
+const resolveSearchParams = ({ targetType, targetId, searchType, showTargetId, loginUserId }) => {
   if (searchType) {
     return {
       targetType: COMMUNITY_TARGET_TYPE,
@@ -25,7 +25,7 @@ const resolveSearchParams = ({ targetType, targetId, searchType, showTargetId })
       targetType: COMMUNITY_TARGET_TYPE,
       targetId: BBVR_GLOBAL_COMMUNITY_ID,
       searchType: 'user',
-      showTargetId: targetId,
+      showTargetId: targetId || (targetType === PostTargetType.MyFeed ? loginUserId : ''),
     };
   }
 
@@ -58,15 +58,27 @@ const useSearchFeed = ({
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
+  const abortControllerRef = useRef(null);
+
+  const abortInflightRequest = useCallback(() => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+  }, []);
 
   const fetchData = useCallback(
     async (currentPage) => {
+      abortInflightRequest();
+
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      const { signal } = controller;
+
       const {
         targetType: resolvedTargetType,
         targetId: resolvedTargetId,
         searchType: resolvedSearchType,
         showTargetId: resolvedShowTargetId,
-      } = resolveSearchParams({ targetType, targetId, searchType, showTargetId });
+      } = resolveSearchParams({ targetType, targetId, searchType, showTargetId, loginUserId });
 
       const pageSize = currentPage === 0 ? defaultNumber : queryLimit;
       const query = {
@@ -105,13 +117,22 @@ const useSearchFeed = ({
           headers: {
             'Content-Type': 'application/json',
           },
+          signal,
         });
+
+        if (signal.aborted) {
+          return false;
+        }
 
         if (!response.ok) {
           throw new Error(`Content search failed (${response.status})`);
         }
 
         const result = await response.json();
+
+        if (signal.aborted) {
+          return false;
+        }
 
         if (!result?.success) {
           throw new Error(result?.message || 'Content search failed');
@@ -130,6 +151,10 @@ const useSearchFeed = ({
 
         return true;
       } catch (err) {
+        if (err?.name === 'AbortError' || signal.aborted) {
+          return false;
+        }
+
         setError(err?.message || 'Failed to load feed');
 
         if (currentPage === 0) {
@@ -138,9 +163,22 @@ const useSearchFeed = ({
 
         setHasMore(false);
         return false;
+      } finally {
+        if (abortControllerRef.current === controller) {
+          abortControllerRef.current = null;
+        }
       }
     },
-    [defaultNumber, loginUserId, queryLimit, searchType, showTargetId, targetId, targetType],
+    [
+      abortInflightRequest,
+      defaultNumber,
+      loginUserId,
+      queryLimit,
+      searchType,
+      showTargetId,
+      targetId,
+      targetType,
+    ],
   );
 
   const refresh = useCallback(async () => {
@@ -170,7 +208,25 @@ const useSearchFeed = ({
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!enabled) {
+      abortInflightRequest();
+      setLoading(false);
+      setLoadingMore(false);
+      setError(null);
+      setData([]);
+      setHasMore(false);
+      return undefined;
+    }
+
+    if (!loginUserId) {
+      abortInflightRequest();
+      setLoading(false);
+      setData([]);
+      setHasMore(false);
+      return undefined;
+    }
+
+    let active = true;
 
     async function init() {
       setLoading(true);
@@ -181,33 +237,19 @@ const useSearchFeed = ({
       try {
         await fetchData(0);
       } finally {
-        if (!cancelled) {
+        if (active) {
           setLoading(false);
         }
       }
     }
 
-    if (!enabled) {
-      setLoading(false);
-      setLoadingMore(false);
-      setError(null);
-      setData([]);
-      setHasMore(false);
-      return undefined;
-    }
-
-    if (loginUserId) {
-      init();
-    } else {
-      setLoading(false);
-      setData([]);
-      setHasMore(false);
-    }
+    init();
 
     return () => {
-      cancelled = true;
+      active = false;
+      abortInflightRequest();
     };
-  }, [enabled, fetchData, loginUserId]);
+  }, [abortInflightRequest, enabled, fetchData, loginUserId]);
 
   const loadMore = useCallback(async () => {
     const newPage = page + 1;
