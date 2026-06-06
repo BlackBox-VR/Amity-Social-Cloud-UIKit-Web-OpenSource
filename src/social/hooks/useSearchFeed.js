@@ -59,6 +59,7 @@ const useSearchFeed = ({
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const abortControllerRef = useRef(null);
+  const mountedRef = useRef(true);
 
   const abortInflightRequest = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -182,6 +183,10 @@ const useSearchFeed = ({
   );
 
   const refresh = useCallback(async () => {
+    if (!mountedRef.current) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setPage(0);
@@ -190,7 +195,9 @@ const useSearchFeed = ({
     try {
       await fetchData(0);
     } finally {
-      setLoading(false);
+      if (mountedRef.current) {
+        setLoading(false);
+      }
     }
   }, [fetchData]);
 
@@ -206,6 +213,15 @@ const useSearchFeed = ({
     });
     setError(null);
   }, []);
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+      abortInflightRequest();
+    };
+  }, [abortInflightRequest]);
 
   useEffect(() => {
     if (!enabled) {
@@ -237,7 +253,7 @@ const useSearchFeed = ({
       try {
         await fetchData(0);
       } finally {
-        if (active) {
+        if (active && mountedRef.current) {
           setLoading(false);
         }
       }
@@ -252,6 +268,10 @@ const useSearchFeed = ({
   }, [abortInflightRequest, enabled, fetchData, loginUserId]);
 
   const loadMore = useCallback(async () => {
+    if (!mountedRef.current) {
+      return;
+    }
+
     const newPage = page + 1;
     setLoadingMore(true);
 
@@ -259,7 +279,9 @@ const useSearchFeed = ({
       setPage(newPage);
       await fetchData(newPage);
     } finally {
-      setLoadingMore(false);
+      if (mountedRef.current) {
+        setLoadingMore(false);
+      }
     }
   }, [fetchData, page]);
 

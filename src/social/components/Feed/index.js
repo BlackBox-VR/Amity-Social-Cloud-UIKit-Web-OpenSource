@@ -26,13 +26,11 @@ const queryParams = { filter: CommunityFilter.Member };
 const renderLoadingSkeleton = () =>
   new Array(3).fill(3).map((x, index) => <DefaultPostRenderer key={index} loading />);
 
-const Feed = ({
+const FeedBody = ({
   className = null,
   feedType,
   targetType = PostTargetType.MyFeed,
   targetId = '',
-  searchType,
-  showTargetId,
   useContentSearch = false,
   showPostCreator = false,
   onPostCreated,
@@ -41,39 +39,16 @@ const Feed = ({
   isHiddenProfile = false,
   showOptionMenu,
   isHideWhenEmpty = false,
+  posts,
+  hasMore,
+  loadMore,
+  loading,
+  loadingMore,
+  error = null,
+  retry = () => {},
+  prependPost = () => {},
 }) => {
-  const { currentUserId } = useSDK();
   const enablePostTargetPicker = false;
-
-  const sdkFeed = useFeed({
-    targetType,
-    targetId,
-    feedType,
-  });
-  const contentSearchFeed = useSearchFeed({
-    targetType,
-    targetId,
-    loginUserId: currentUserId,
-    searchType,
-    showTargetId,
-    defaultNumber,
-    queryLimit: perPageNumber,
-    enabled: useContentSearch,
-  });
-
-  const [posts, hasMore, loadMore, loading, loadingMore] = useContentSearch
-    ? [
-        contentSearchFeed.posts,
-        contentSearchFeed.hasMore,
-        contentSearchFeed.loadMore,
-        contentSearchFeed.loading,
-        contentSearchFeed.loadingMore,
-      ]
-    : sdkFeed;
-
-  const { error, prependPost, retry } = useContentSearch
-    ? contentSearchFeed
-    : { error: null, prependPost: () => {}, retry: () => {} };
 
   const [communities, hasMoreCommunities, loadMoreCommunities] = useCommunitiesList(
     queryParams,
@@ -181,6 +156,65 @@ const Feed = ({
   );
 };
 
+const SdkFeed = (props) => {
+  const { feedType, targetType, targetId } = props;
+  const [posts, hasMore, loadMore, loading, loadingMore] = useFeed({
+    targetType,
+    targetId,
+    feedType,
+  });
+
+  return (
+    <FeedBody
+      {...props}
+      posts={posts}
+      hasMore={hasMore}
+      loadMore={loadMore}
+      loading={loading}
+      loadingMore={loadingMore}
+      useContentSearch={false}
+    />
+  );
+};
+
+const ContentSearchFeed = (props) => {
+  const { currentUserId } = useSDK();
+  const { targetType, targetId, searchType, showTargetId } = props;
+  const { posts, hasMore, loadMore, loading, loadingMore, error, prependPost, retry } =
+    useSearchFeed({
+      targetType,
+      targetId,
+      loginUserId: currentUserId,
+      searchType,
+      showTargetId,
+      defaultNumber,
+      queryLimit: perPageNumber,
+    });
+
+  return (
+    <FeedBody
+      {...props}
+      posts={posts}
+      hasMore={hasMore}
+      loadMore={loadMore}
+      loading={loading}
+      loadingMore={loadingMore}
+      error={error}
+      retry={retry}
+      prependPost={prependPost}
+      useContentSearch
+    />
+  );
+};
+
+const Feed = ({ useContentSearch = false, ...props }) => {
+  if (useContentSearch) {
+    return <ContentSearchFeed {...props} useContentSearch />;
+  }
+
+  return <SdkFeed {...props} />;
+};
+
 Feed.propTypes = {
   className: PropTypes.string,
   feedType: PropTypes.oneOf(Object.values(FeedType)),
@@ -190,11 +224,11 @@ Feed.propTypes = {
   showTargetId: PropTypes.string,
   useContentSearch: PropTypes.bool,
   showPostCreator: PropTypes.bool,
-  goToExplore: PropTypes.func,
   readonly: PropTypes.bool,
   isHiddenProfile: PropTypes.bool,
   showOptionMenu: PropTypes.bool,
   isHideWhenEmpty: PropTypes.bool,
+  goToExplore: PropTypes.func,
   onPostCreated: PropTypes.func,
 };
 
