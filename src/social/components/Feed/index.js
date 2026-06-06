@@ -1,19 +1,24 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { PostTargetType, FeedType, CommunityFilter } from '@amityco/js-sdk';
-import DefaultPostRenderer from '~/social/components/post/Post/DefaultPostRenderer';
 
+import { useSDK } from '~/core/hooks/useSDK';
 import useCommunitiesList from '~/social/hooks/useCommunitiesList';
+import useSearchFeed from '~/social/hooks/useSearchFeed';
+
+import customizableComponent from '~/core/hocs/customization';
+
+import DefaultPostRenderer from '~/social/components/post/Post/DefaultPostRenderer';
 import PostCreator from '~/social/components/post/Creator';
 import Post from '~/social/components/post/Post';
-import customizableComponent from '~/core/hocs/customization';
 import ConditionalRender from '~/core/components/ConditionalRender';
-import EmptyFeed from '~/social/components/EmptyFeed';
 import LoadMore from '~/social/components/LoadMore';
-import useFeed from '~/social/hooks/useFeed';
-import { FeedScrollContainer } from './styles';
 import PrivateFeed from '~/social/components/PrivateFeed';
 
+import { FeedScrollContainer } from './styles';
+
+const defaultNumber = 10;
+const perPageNumber = 10;
 const queryParams = { filter: CommunityFilter.Member };
 
 const Feed = ({
@@ -21,18 +26,28 @@ const Feed = ({
   feedType,
   targetType = PostTargetType.MyFeed,
   targetId = '',
+  searchType,
+  showTargetId,
   showPostCreator = false,
   onPostCreated,
   goToExplore,
   readonly = false,
   isHiddenProfile = false,
+  showOptionMenu,
 }) => {
-  const enablePostTargetPicker = false;
+  const { currentUserId } = useSDK();
 
-  const [posts, hasMore, loadMore, loading, loadingMore] = useFeed({
+  const enablePostTargetPicker = false;
+  const [page, setPage] = useState(1);
+
+  const [posts, hasMore, loadMore, loading, loadingMore] = useSearchFeed({
     targetType,
     targetId,
-    feedType,
+    loginUserId: currentUserId,
+    searchType,
+    showTargetId,
+    defaultNumber,
+    queryLimit: perPageNumber,
   });
   const [communities, hasMoreCommunities, loadMoreCommunities] = useCommunitiesList(
     queryParams,
@@ -40,16 +55,23 @@ const Feed = ({
     () => !showPostCreator && !enablePostTargetPicker,
   );
 
-  function renderLoadingSkeleton() {
+  const renderLoadingSkeleton = () => {
     return new Array(3).fill(3).map((x, index) => <DefaultPostRenderer key={index} loading />);
+  };
+
+  const onNextPage = () => {
+    setPage(page + 1);
+    loadMore();
+  };
+
+  if (!loading && !hasMore && posts.length === 0) {
+    return <></>;
   }
 
   return (
     <FeedScrollContainer
-      className={className}
+      className={posts.length > 0 || loading ? `show-padding ${className}` : className}
       dataLength={posts.length}
-      next={loadMore}
-      hasMore={hasMore}
     >
       <ConditionalRender condition={!isHiddenProfile}>
         <>
@@ -68,41 +90,23 @@ const Feed = ({
 
           {loading && renderLoadingSkeleton()}
 
-          {!loading && posts.length > 0 && targetType !== PostTargetType.GlobalFeed && 
-              posts.filter((post) => post.postedUserId === targetId).length < 10 && hasMore && loadMore()}
-                  
-
-          {!loading && posts.length > 0 && (
-            <LoadMore hasMore={hasMore} loadMore={loadMore} className="load-more no-border">
-              {targetType !== PostTargetType.GlobalFeed && posts.filter((post) => post.postedUserId === targetId).
-              sort((a, b) => b.createdAt - a.createdAt).map(({ postId }) => (
-                <Post
-                    key={postId}
-                    postId={postId}
-                    hidePostTarget={true}
-                    readonly={readonly}
-                />
-                ))}
-              
-              {targetType === PostTargetType.GlobalFeed && posts.sort((a, b) => b.createdAt - a.createdAt).map(({ postId }) => (
+          {posts.length > 0 && (
+            <LoadMore
+              hasMore={hasMore && !loadingMore}
+              loadMore={onNextPage}
+              className="load-more no-border"
+            >
+              {posts.map(({ postId }) => (
                 <Post
                   key={postId}
                   postId={postId}
                   hidePostTarget={true}
                   readonly={readonly}
+                  showOptionMenu={showOptionMenu}
                 />
               ))}
               {loadingMore && renderLoadingSkeleton()}
             </LoadMore>
-          )}
-
-          {!loading && posts.length === 0 && (
-            <EmptyFeed
-              targetType={targetType}
-              goToExplore={goToExplore}
-              canPost={showPostCreator}
-              feedType={feedType}
-            />
           )}
         </>
         <PrivateFeed />
@@ -116,11 +120,13 @@ Feed.propTypes = {
   feedType: PropTypes.oneOf(Object.values(FeedType)),
   targetType: PropTypes.oneOf(Object.values(PostTargetType)),
   targetId: PropTypes.string,
+  searchType: PropTypes.string,
+  showTargetId: PropTypes.string,
   showPostCreator: PropTypes.bool,
-  // below is to be refactored
   goToExplore: PropTypes.func,
   readonly: PropTypes.bool,
   isHiddenProfile: PropTypes.bool,
+  showOptionMenu: PropTypes.bool,
   onPostCreated: PropTypes.func,
 };
 

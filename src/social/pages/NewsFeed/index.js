@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { PostTargetType } from '@amityco/js-sdk';
 
+import { BBVR_GLOBAL_COMMUNITY_ID } from '~/constants';
 import { PageTypes } from '~/social/constants';
 import Feed from '~/social/components/Feed';
 
@@ -25,7 +26,8 @@ const NewsFeed = forwardRef(({ isLandingPage }, ref) => {
         </Header>
       )}
       <Feed
-        targetType={PostTargetType.GlobalFeed}
+        targetType={PostTargetType.CommunityFeed}
+        targetId={BBVR_GLOBAL_COMMUNITY_ID}
         goToExplore={() => onChangePage(PageTypes.Explore)}
         showPostCreator
       />
