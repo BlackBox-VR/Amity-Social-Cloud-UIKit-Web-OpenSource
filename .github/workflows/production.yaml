@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-node@v2
 
       - name: cache deps
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         id: cache-deps
         with:
           path: |

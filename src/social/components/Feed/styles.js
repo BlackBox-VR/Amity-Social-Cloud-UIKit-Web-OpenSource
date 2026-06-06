@@ -53,3 +53,23 @@ export const PrivateFeedBody = styled.div`
   font-size: 14px;
   color: ${({ theme }) => theme.palette.base.shade1};
 `;
+
+export const FeedError = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  color: ${({ theme }) => theme.palette.base.main};
+  ${({ theme }) => theme.typography.body};
+
+  button {
+    cursor: pointer;
+    border: 1px solid ${({ theme }) => theme.palette.primary.main};
+    background: transparent;
+    color: ${({ theme }) => theme.palette.primary.main};
+    border-radius: 4px;
+    padding: 8px 16px;
+  }
+`;

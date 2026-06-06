@@ -1,18 +1,16 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { PostTargetType } from '@amityco/js-sdk';
 
 import { BBVR_GLOBAL_COMMUNITY_ID } from '~/constants';
-import { PageTypes } from '~/social/constants';
 import Feed from '~/social/components/Feed';
-
+import { PageTypes } from '~/social/constants';
 import { useNavigation } from '~/social/providers/NavigationProvider';
 
 import { Wrapper } from './styles';
 import { BackButton, Header, Title } from '~/social/pages/CategoryCommunities/styles';
 import ArrowLeft from '~/icons/ArrowLeft';
-import PropTypes from 'prop-types';
 
-const NewsFeed = forwardRef(({ isLandingPage }, ref) => {
+const NewsFeed = () => {
   const { onBack, lastPage, onChangePage } = useNavigation();
 
   return (
@@ -22,10 +20,11 @@ const NewsFeed = forwardRef(({ isLandingPage }, ref) => {
           <BackButton onClick={onBack}>
             <ArrowLeft height={14} />
           </BackButton>
-          <Title>{'Search & Communities'}</Title>
+          <Title>Search & Communities</Title>
         </Header>
       )}
       <Feed
+        useContentSearch
         targetType={PostTargetType.CommunityFeed}
         targetId={BBVR_GLOBAL_COMMUNITY_ID}
         goToExplore={() => onChangePage(PageTypes.Explore)}
@@ -33,10 +32,6 @@ const NewsFeed = forwardRef(({ isLandingPage }, ref) => {
       />
     </Wrapper>
   );
-});
-
-NewsFeed.propTypes = {
-  isLandingPage: PropTypes.bool,
 };
 
 export default NewsFeed;

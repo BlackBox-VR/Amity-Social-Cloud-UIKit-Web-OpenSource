@@ -50,12 +50,14 @@ const useSearchFeed = ({
   showTargetId,
   queryLimit,
   defaultNumber,
+  enabled = true,
 }) => {
   const [page, setPage] = useState(0);
   const [data, setData] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchData = useCallback(
     async (currentPage) => {
@@ -96,60 +98,140 @@ const useSearchFeed = ({
         query.query.metadata = { type: 'unityGemItemPurchased,unityGemsEarned' };
       }
 
-      const response = await fetch(CONTENT_SEARCH_API_URL, {
-        method: 'POST',
-        body: JSON.stringify(query),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      try {
+        const response = await fetch(CONTENT_SEARCH_API_URL, {
+          method: 'POST',
+          body: JSON.stringify(query),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      const result = await response.json();
-      const newData = (result?.postIds || []).map((id) => ({ postId: id }));
+        if (!response.ok) {
+          throw new Error(`Content search failed (${response.status})`);
+        }
 
-      setHasMore(newData.length === pageSize);
+        const result = await response.json();
 
-      if (currentPage === 0) {
-        setData(newData);
-      } else {
-        setData((prev) => [...prev, ...newData]);
+        if (!result?.success) {
+          throw new Error(result?.message || 'Content search failed');
+        }
+
+        const newData = (result?.postIds || []).map((id) => ({ postId: id }));
+
+        setError(null);
+        setHasMore(newData.length === pageSize);
+
+        if (currentPage === 0) {
+          setData(newData);
+        } else {
+          setData((prev) => [...prev, ...newData]);
+        }
+
+        return true;
+      } catch (err) {
+        setError(err?.message || 'Failed to load feed');
+
+        if (currentPage === 0) {
+          setData([]);
+        }
+
+        setHasMore(false);
+        return false;
       }
     },
     [defaultNumber, loginUserId, queryLimit, searchType, showTargetId, targetId, targetType],
   );
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    setPage(0);
+    setHasMore(true);
+
+    try {
+      await fetchData(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchData]);
+
+  const prependPost = useCallback((postId) => {
+    if (!postId) return;
+
+    setData((prev) => {
+      if (prev.some((post) => post.postId === postId)) {
+        return prev;
+      }
+
+      return [{ postId }, ...prev];
+    });
+    setError(null);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     async function init() {
       setLoading(true);
+      setError(null);
       setPage(0);
       setHasMore(true);
-      await fetchData(0);
 
-      if (!cancelled) {
-        setLoading(false);
+      try {
+        await fetchData(0);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
+    }
+
+    if (!enabled) {
+      setLoading(false);
+      setLoadingMore(false);
+      setError(null);
+      setData([]);
+      setHasMore(false);
+      return undefined;
     }
 
     if (loginUserId) {
       init();
+    } else {
+      setLoading(false);
+      setData([]);
+      setHasMore(false);
     }
 
     return () => {
       cancelled = true;
     };
-  }, [fetchData, loginUserId]);
+  }, [enabled, fetchData, loginUserId]);
 
-  const loadMore = async () => {
+  const loadMore = useCallback(async () => {
     const newPage = page + 1;
     setLoadingMore(true);
-    setPage(newPage);
-    await fetchData(newPage);
-    setLoadingMore(false);
-  };
 
-  return [data, hasMore, loadMore, loading, loadingMore];
+    try {
+      setPage(newPage);
+      await fetchData(newPage);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [fetchData, page]);
+
+  return {
+    posts: data,
+    hasMore,
+    loadMore,
+    loading,
+    loadingMore,
+    error,
+    refresh,
+    prependPost,
+    retry: refresh,
+  };
 };
 
 export default useSearchFeed;
